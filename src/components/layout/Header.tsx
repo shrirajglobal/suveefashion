@@ -56,16 +56,12 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container flex h-16 items-center justify-between md:h-20">
-        <Link to="/" className="flex flex-col items-center gap-0.5">
-          <img src={logo} alt="Suvee Fashion" className="h-12 w-auto object-contain md:h-14" />
-          <motion.span
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-[9px] font-semibold uppercase tracking-[0.2em] text-foreground"
-          >
-            Kurtis & more...
-          </motion.span>
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="Suvee Fashion" className="h-10 w-auto object-contain md:h-12" />
+          <div className="hidden h-8 w-px bg-border sm:block" />
+          <span className="hidden text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground sm:block">
+            Kurtis &amp; more
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
