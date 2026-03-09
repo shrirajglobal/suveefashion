@@ -72,10 +72,10 @@ serve(async (req) => {
       order_number: order.order_number,
       seller: {
         name: "Suvee Fashion",
-        address: "Factory Unit, Metiabruz Industrial Area, Kolkata - 700024",
+        address: "20/21 Bhawan Ganguly Lane, 5th Floor, Howrah 711101",
         state: "West Bengal",
-        gstin: "19XXXXX0000X0ZX", // Placeholder
-        phone: "+91 99999 99999",
+        gstin: "19AHOPL4954B1Z4",
+        phone: "+91 98316 40808",
       },
       buyer: {
         name: buyer.business_name || "N/A",

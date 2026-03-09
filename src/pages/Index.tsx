@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote, Sparkles, ShieldCheck, Phone, CheckCircle } from "lucide-react";
+import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote, Sparkles, ShieldCheck, Phone, CheckCircle, Play } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import casualImg from "@/assets/category-casual.jpg";
 import festiveImg from "@/assets/category-festive.jpg";
 import cottonImg from "@/assets/category-cotton.jpg";
 import designerImg from "@/assets/category-designer.jpg";
+import useEmblaCarousel from "embla-carousel-react";
 
 const testimonials = [
   {
@@ -45,9 +46,49 @@ const stats = [
   { icon: Truck, key: "about.stat_cities" as const },
 ];
 
+interface YouTubeVideo {
+  videoId: string;
+  title: string;
+  thumbnail: string;
+}
+
+function YouTubeCard({ video }: { video: YouTubeVideo }) {
+  const [playing, setPlaying] = useState(false);
+
+  if (playing) {
+    return (
+      <div className="aspect-video w-full overflow-hidden rounded-xl">
+        <iframe
+          src={`https://www.youtube.com/embed/${video.videoId}?autoplay=1`}
+          title={video.title}
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+          className="h-full w-full"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <button onClick={() => setPlaying(true)} className="group relative aspect-video w-full overflow-hidden rounded-xl">
+      <img src={video.thumbnail} alt={video.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+      <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 transition-colors group-hover:bg-foreground/30">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive shadow-lg transition-transform group-hover:scale-110">
+          <Play className="h-6 w-6 fill-white text-white" />
+        </div>
+      </div>
+      <p className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/80 to-transparent p-3 text-left text-xs font-medium text-white line-clamp-2">
+        {video.title}
+      </p>
+    </button>
+  );
+}
+
 export default function Index() {
   const { t, language } = useLanguage();
   const [newArrivals, setNewArrivals] = useState<any[]>([]);
+  const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
+  const [emblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
 
   useEffect(() => {
     supabase
@@ -56,6 +97,21 @@ export default function Index() {
       .eq("is_new_arrival", true)
       .limit(4)
       .then(({ data }) => setNewArrivals(data ?? []));
+  }, []);
+
+  // Fetch YouTube videos
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("youtube-feed");
+        if (!error && data?.videos?.length) {
+          setYoutubeVideos(data.videos);
+        }
+      } catch {
+        // silently fail — fallback UI will show
+      }
+    };
+    fetchVideos();
   }, []);
 
   return (
@@ -238,6 +294,47 @@ export default function Index() {
         </div>
       </section>
 
+      {/* YouTube Section */}
+      <section className="bg-card py-16 md:py-24">
+        <div className="container">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center">
+            <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">▶ Latest from Our YouTube</h2>
+            <p className="mt-2 text-muted-foreground">New catalogues, styling tips & behind-the-scenes from our factory</p>
+          </motion.div>
+
+          {youtubeVideos.length > 0 ? (
+            <div className="mt-10 overflow-hidden" ref={emblaRef}>
+              <div className="flex gap-4">
+                {youtubeVideos.map((video, i) => (
+                  <motion.div
+                    key={video.videoId}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="min-w-0 flex-[0_0_85%] sm:flex-[0_0_45%] lg:flex-[0_0_30%]"
+                  >
+                    <YouTubeCard video={video} />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="mt-10 text-center">
+              <p className="text-sm text-muted-foreground">Check out our latest videos for new catalogues and styling tips!</p>
+            </div>
+          )}
+
+          <div className="mt-8 text-center">
+            <Button variant="outline" asChild>
+              <a href="https://youtube.com/@suveefashion" target="_blank" rel="noopener noreferrer">
+                Visit Our YouTube Channel <ArrowRight className="ml-1 h-4 w-4" />
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="gradient-maroon py-16 md:py-24">
         <div className="container text-center">
@@ -253,8 +350,13 @@ export default function Index() {
                   💬 WhatsApp Us
                 </Button>
               </a>
+              <a href="https://chat.whatsapp.com/EPcMwkcqbhXBSGL2ZhZInL" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white">
+                  📢 Join WhatsApp Community
+                </Button>
+              </a>
             </div>
-            <p className="mt-4 text-xs text-white/60">Free registration • No hidden charges • 500+ retailers already onboard</p>
+            <p className="mt-4 text-xs text-white/60">Free registration • No hidden charges • 3700+ retailers already onboard</p>
           </motion.div>
         </div>
       </section>

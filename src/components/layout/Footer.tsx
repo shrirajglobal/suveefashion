@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { Phone, Mail } from "lucide-react";
+import { Phone, Mail, MapPin, Instagram } from "lucide-react";
+import logo from "@/assets/logo-final.png";
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -12,9 +13,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full gradient-maroon">
-                <span className="font-display text-base font-bold text-primary-foreground">S</span>
-              </div>
+              <img src={logo} alt="Suvee Fashion Logo" className="h-9 w-9 rounded-full object-cover" />
               <span className="font-display text-lg font-bold text-foreground">Suvee Fashion</span>
             </div>
             <p className="mt-3 text-sm text-muted-foreground">{t("footer.tagline")}</p>
@@ -23,7 +22,7 @@ export default function Footer() {
                 ✓ {t("footer.gst")}
               </span>
               <span className="rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
-                ✓ 500+ Retailers
+                ✓ 3700+ Retailers
               </span>
             </div>
           </div>
@@ -61,7 +60,10 @@ export default function Footer() {
               {t("footer.contact_us")}
             </h4>
             <div className="mt-4 flex flex-col gap-3 text-sm text-muted-foreground">
-              <p>{t("contact.address")}</p>
+              <div className="flex items-start gap-2">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{t("contact.address")}</span>
+              </div>
               <a href="tel:+919831640808" className="inline-flex items-center gap-2 hover:text-foreground transition-colors">
                 <Phone className="h-4 w-4" /> +91 98316 40808
               </a>
@@ -77,6 +79,22 @@ export default function Footer() {
                 💬 {t("contact.whatsapp")}
               </a>
               <a
+                href="https://chat.whatsapp.com/EPcMwkcqbhXBSGL2ZhZInL"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-green-600 hover:underline"
+              >
+                📢 Join WhatsApp Community
+              </a>
+              <a
+                href="https://instagram.com/suvee.fashion"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-pink-600 hover:underline"
+              >
+                <Instagram className="h-4 w-4" /> @suvee.fashion
+              </a>
+              <a
                 href="https://youtube.com/@suveefashion"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -84,12 +102,25 @@ export default function Footer() {
               >
                 ▶ YouTube Channel
               </a>
+              <a
+                href="https://share.google/eY0h3fuAOBMvPACID"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-blue-600 hover:underline"
+              >
+                📍 View on Google Maps
+              </a>
             </div>
           </div>
         </div>
 
-        <div className="mt-10 border-t border-border pt-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Suvee Fashion. {t("footer.rights")}
+        <div className="mt-10 border-t border-border pt-6 text-center">
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Suvee Fashion. {t("footer.rights")}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground/60">
+            Curated & Developed by S R Global, Kolkata
+          </p>
         </div>
       </div>
     </footer>

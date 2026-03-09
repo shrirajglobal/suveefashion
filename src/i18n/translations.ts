@@ -40,9 +40,9 @@ export const translations = {
     bn: "ঐতিহ্যে তৈরি, ব্যবসার জন্য ডিজাইন করা",
   },
   "hero.subtitle": {
-    en: "Premium wholesale kurtis from Kolkata — trusted by 500+ retailers across India",
-    hi: "कोलकाता से प्रीमियम होलसेल कुर्ती — भारत भर के 500+ रिटेलर्स का भरोसा",
-    bn: "কলকাতা থেকে প্রিমিয়াম পাইকারি কুর্তি — ভারত জুড়ে ৫০০+ খুচরা বিক্রেতার বিশ্বাস",
+    en: "Premium wholesale kurtis from Kolkata — trusted by 3700+ retailers across India",
+    hi: "कोलकाता से प्रीमियम होलसेल कुर्ती — भारत भर के 3700+ रिटेलर्स का भरोसा",
+    bn: "কলকাতা থেকে প্রিমিয়াম পাইকারি কুর্তি — ভারত জুড়ে ৩৭০০+ খুচরা বিক্রেতার বিশ্বাস",
   },
   "hero.cta_catalogue": {
     en: "Browse Catalogues",
@@ -62,24 +62,24 @@ export const translations = {
     bn: "সুভি ফ্যাশন সম্পর্কে",
   },
   "about.description": {
-    en: "Born in the heart of Kolkata, Suvee Fashion has been crafting premium kurtis for over a decade. Our state-of-the-art manufacturing facility combines traditional artistry with modern production techniques to deliver consistent quality at wholesale scale.",
-    hi: "कोलकाता के दिल में जन्मी, सुवी फैशन एक दशक से अधिक समय से प्रीमियम कुर्ती बना रही है। हमारी अत्याधुनिक विनिर्माण सुविधा पारंपरिक कलात्मकता को आधुनिक उत्पादन तकनीकों के साथ जोड़ती है।",
-    bn: "কলকাতার হৃদয়ে জন্ম নেওয়া, সুভি ফ্যাশন এক দশকেরও বেশি সময় ধরে প্রিমিয়াম কুর্তি তৈরি করে আসছে। আমাদের আধুনিক উত্পাদন সুবিধা ঐতিহ্যবাহী শিল্পকলার সাথে আধুনিক উত্পাদন কৌশল একত্রিত করে।",
+    en: "Born in the heart of Howrah, Suvee Fashion has been crafting premium kurtis for over 7 years. Our state-of-the-art manufacturing facility combines traditional artistry with modern production techniques to deliver consistent quality at wholesale scale.",
+    hi: "हावड़ा के दिल में जन्मी, सुवी फैशन 7 वर्षों से अधिक समय से प्रीमियम कुर्ती बना रही है। हमारी अत्याधुनिक विनिर्माण सुविधा पारंपरिक कलात्मकता को आधुनिक उत्पादन तकनीकों के साथ जोड़ती है।",
+    bn: "হাওড়ার হৃদয়ে জন্ম নেওয়া, সুভি ফ্যাশন ৭ বছরেরও বেশি সময় ধরে প্রিমিয়াম কুর্তি তৈরি করে আসছে। আমাদের আধুনিক উত্পাদন সুবিধা ঐতিহ্যবাহী শিল্পকলার সাথে আধুনিক উত্পাদন কৌশল একত্রিত করে।",
   },
   "about.stat_retailers": {
-    en: "500+ Retailers",
-    hi: "500+ रिटेलर्स",
-    bn: "৫০০+ খুচরা বিক্রেতা",
+    en: "3700+ Retailers",
+    hi: "3700+ रिटेलर्स",
+    bn: "৩৭০০+ খুচরা বিক্রেতা",
   },
   "about.stat_designs": {
-    en: "2000+ Designs",
-    hi: "2000+ डिज़ाइन",
-    bn: "২০০০+ ডিজাইন",
+    en: "850+ Designs",
+    hi: "850+ डिज़ाइन",
+    bn: "৮৫০+ ডিজাইন",
   },
   "about.stat_years": {
-    en: "10+ Years",
-    hi: "10+ वर्ष",
-    bn: "১০+ বছর",
+    en: "7+ Years",
+    hi: "7+ वर्ष",
+    bn: "৭+ বছর",
   },
   "about.stat_cities": {
     en: "Pan-India Delivery",
@@ -140,9 +140,9 @@ export const translations = {
 
   // Footer
   "footer.tagline": {
-    en: "Premium Kurti Manufacturer from Kolkata",
-    hi: "कोलकाता से प्रीमियम कुर्ती निर्माता",
-    bn: "কলকাতার প্রিমিয়াম কুর্তি প্রস্তুতকারক",
+    en: "Premium Kurti Manufacturer from Howrah, Kolkata",
+    hi: "हावड़ा, कोलकाता से प्रीमियम कुर्ती निर्माता",
+    bn: "হাওড়া, কলকাতার প্রিমিয়াম কুর্তি প্রস্তুতকারক",
   },
   "footer.quick_links": {
     en: "Quick Links",
@@ -155,9 +155,9 @@ export const translations = {
     bn: "যোগাযোগ করুন",
   },
   "footer.gst": {
-    en: "GST Registered",
-    hi: "GST पंजीकृत",
-    bn: "GST নিবন্ধিত",
+    en: "GST: 19AHOPL4954B1Z4",
+    hi: "GST: 19AHOPL4954B1Z4",
+    bn: "GST: 19AHOPL4954B1Z4",
   },
   "footer.rights": {
     en: "All rights reserved.",
@@ -207,9 +207,9 @@ export const translations = {
     bn: "WhatsApp-এ চ্যাট করুন",
   },
   "contact.address": {
-    en: "Kolkata, West Bengal, India",
-    hi: "कोलकाता, पश्चिम बंगाल, भारत",
-    bn: "কলকাতা, পশ্চিমবঙ্গ, ভারত",
+    en: "20/21 Bhawan Ganguly Lane, 5th Floor, Howrah 711101",
+    hi: "20/21 भवन गंगुली लेन, 5वीं मंजिल, हावड़ा 711101",
+    bn: "২০/২১ ভবন গঙ্গুলী লেন, ৫ম তলা, হাওড়া ৭১১১০১",
   },
 
   // About Page
@@ -219,9 +219,9 @@ export const translations = {
     bn: "আমাদের কাহিনী",
   },
   "about.page_subtitle": {
-    en: "From a small workshop in Kolkata to a trusted name in wholesale kurtis across India.",
-    hi: "कोलकाता की एक छोटी कार्यशाला से भारत भर में होलसेल कुर्ती में एक विश्वसनीय नाम तक।",
-    bn: "কলকাতার একটি ছোট কর্মশালা থেকে সারা ভারতে পাইকারি কুর্তিতে একটি বিশ্বস্ত নাম।",
+    en: "From a small workshop in Howrah to a trusted name in wholesale kurtis across India.",
+    hi: "हावड़ा की एक छोटी कार्यशाला से भारत भर में होलसेल कुर्ती में एक विश्वसनीय नाम तक।",
+    bn: "হাওড়ার একটি ছোট কর্মশালা থেকে সারা ভারতে পাইকারি কুর্তিতে একটি বিশ্বস্ত নাম।",
   },
   "about.mission_title": {
     en: "Our Mission",
@@ -239,9 +239,9 @@ export const translations = {
     bn: "আমাদের কারখানা",
   },
   "about.factory_text": {
-    en: "Our modern production facility in Kolkata is equipped with the latest machinery and employs skilled artisans who bring decades of experience in kurti craftsmanship. We maintain strict quality control at every stage — from fabric sourcing to final stitching.",
-    hi: "कोलकाता में हमारी आधुनिक उत्पादन सुविधा नवीनतम मशीनरी से सुसज्जित है और कुशल कारीगरों को रोजगार देती है जो कुर्ती शिल्प कौशल में दशकों का अनुभव रखते हैं।",
-    bn: "কলকাতায় আমাদের আধুনিক উৎপাদন সুবিধা সর্বশেষ যন্ত্রপাতি দিয়ে সজ্জিত এবং দক্ষ কারিগরদের নিয়োগ করে যারা কুর্তি কারিগরিতে কয়েক দশকের অভিজ্ঞতা নিয়ে আসে।",
+    en: "Our modern production facility in Howrah is equipped with the latest machinery and employs skilled artisans who bring decades of experience in kurti craftsmanship. We maintain strict quality control at every stage — from fabric sourcing to final stitching.",
+    hi: "हावड़ा में हमारी आधुनिक उत्पादन सुविधा नवीनतम मशीनरी से सुसज्जित है और कुशल कारीगरों को रोजगार देती है जो कुर्ती शिल्प कौशल में दशकों का अनुभव रखते हैं।",
+    bn: "হাওড়ায় আমাদের আধুনিক উৎপাদন সুবিধা সর্বশেষ যন্ত্রপাতি দিয়ে সজ্জিত এবং দক্ষ কারিগরদের নিয়োগ করে যারা কুর্তি কারিগরিতে কয়েক দশকের অভিজ্ঞতা নিয়ে আসে।",
   },
 
   // Advisor

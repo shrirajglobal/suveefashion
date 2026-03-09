@@ -80,7 +80,7 @@ export default function Login() {
               <p className="mb-2 text-xs font-semibold text-foreground">What you get as a Suvee buyer:</p>
               <div className="flex flex-col gap-1.5">
                 <span className="flex items-center gap-2 text-xs text-muted-foreground"><Tag className="h-3 w-3 text-secondary" /> Wholesale prices up to 60% below MRP</span>
-                <span className="flex items-center gap-2 text-xs text-muted-foreground"><ShoppingBag className="h-3 w-3 text-secondary" /> Access to 2000+ exclusive designs</span>
+                <span className="flex items-center gap-2 text-xs text-muted-foreground"><ShoppingBag className="h-3 w-3 text-secondary" /> Access to 850+ exclusive designs</span>
               </div>
             </div>
 
