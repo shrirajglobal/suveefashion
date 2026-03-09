@@ -20,7 +20,7 @@ import heroProduct4 from "@/assets/hero-product-4.jpg";
 import heroProduct5 from "@/assets/hero-product-5.jpg";
 import heroProduct6 from "@/assets/hero-product-6.jpg";
 
-const heroSlides = [heroProduct1, heroProduct2, heroProduct3, heroProduct4, heroProduct5, heroProduct6];
+const fallbackSlides = [heroProduct1, heroProduct2, heroProduct3, heroProduct4, heroProduct5, heroProduct6];
 
 const testimonials = [
   {
