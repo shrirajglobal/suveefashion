@@ -154,9 +154,7 @@ export default function Index() {
         <div className="container flex items-center justify-center gap-3 text-center">
           <Sparkles className="h-5 w-5 text-foreground" />
           <p className="text-sm font-semibold text-foreground">{t("seasonal.subtitle")}</p>
-          <Button size="sm" variant="outline" className="border-foreground/30 text-foreground hover:bg-foreground/10" asChild>
-            <Link to="/catalogues">{t("seasonal.cta")}</Link>
-          </Button>
+          <span className="rounded-full bg-foreground/10 px-3 py-1 text-xs font-medium text-foreground">Coming Soon</span>
         </div>
       </section>
 
