@@ -96,9 +96,24 @@ export default function Index() {
   const { t, language } = useLanguage();
   const [newArrivals, setNewArrivals] = useState<any[]>([]);
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
+  const [heroSlides, setHeroSlides] = useState<string[]>(fallbackSlides);
   const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
   const [heroEmblaRef, heroApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: false })]);
   const [activeSlide, setActiveSlide] = useState(0);
+
+  // Fetch hero banners from database
+  useEffect(() => {
+    supabase
+      .from("hero_banners")
+      .select("image_url")
+      .eq("is_active", true)
+      .order("display_order", { ascending: true })
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setHeroSlides(data.map(b => b.image_url));
+        }
+      });
+  }, []);
 
   useEffect(() => {
     if (!heroApi) return;
