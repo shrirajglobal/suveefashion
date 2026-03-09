@@ -369,6 +369,40 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Dada Se Pucho Highlight */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 py-16 md:py-24 dark:from-amber-950/20 dark:to-orange-950/20">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mx-auto max-w-2xl text-center"
+          >
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-4xl shadow-xl">
+              🧔
+            </div>
+            <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">
+              {t("advisor.homepage_title" as any)}
+            </h2>
+            <p className="mx-auto mt-4 max-w-lg text-muted-foreground">
+              {t("advisor.homepage_subtitle" as any)}
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold hover:opacity-90 shadow-lg" asChild>
+                <Link to="/advisor">
+                  🧔 {t("nav.advisor")} — It's FREE! <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
+              <span>✓ 100% Free</span>
+              <span>✓ Hindi / English / Bengali</span>
+              <span>✓ Instant Advice</span>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* YouTube Section */}
       <section className="bg-card py-16 md:py-24">
         <div className="container">
