@@ -94,7 +94,6 @@ function YouTubeCard({ video }: { video: YouTubeVideo }) {
 
 export default function Index() {
   const { t, language } = useLanguage();
-  const [newArrivals, setNewArrivals] = useState<any[]>([]);
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
   const [heroSlides, setHeroSlides] = useState<string[]>(fallbackSlides);
   const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
@@ -123,15 +122,6 @@ export default function Index() {
     return () => { heroApi.off("select", onSelect); };
   }, [heroApi]);
 
-  useEffect(() => {
-    supabase
-      .from("products")
-      .select("id, name, image_url, fabric, is_new_arrival")
-      .eq("is_new_arrival", true)
-      .limit(4)
-      .then(({ data }) => setNewArrivals(data ?? []));
-  }, []);
-
   // Fetch YouTube videos
   useEffect(() => {
     const fetchVideos = async () => {
@@ -154,9 +144,7 @@ export default function Index() {
         <div className="container flex items-center justify-center gap-3 text-center">
           <Sparkles className="h-5 w-5 text-foreground" />
           <p className="text-sm font-semibold text-foreground">{t("seasonal.subtitle")}</p>
-          <Button size="sm" variant="outline" className="border-foreground/30 text-foreground hover:bg-foreground/10" asChild>
-            <Link to="/catalogues">{t("seasonal.cta")}</Link>
-          </Button>
+          <span className="rounded-full bg-foreground/10 px-3 py-1 text-xs font-medium text-foreground">Coming Soon</span>
         </div>
       </section>
 
@@ -191,11 +179,6 @@ export default function Index() {
                 {t("hero.subtitle")}
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <Button size="lg" className="gradient-gold text-foreground font-semibold hover:opacity-90 w-full sm:w-auto" asChild>
-                  <Link to="/catalogues">
-                    {t("hero.cta_catalogue")} <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </Button>
                 <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold hover:opacity-90 w-full sm:w-auto" asChild>
                   <Link to="/advisor">
                     🧔 {t("hero.cta_advisor")}
@@ -203,6 +186,11 @@ export default function Index() {
                 </Button>
                 <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white w-full sm:w-auto" asChild>
                   <Link to="/register">Register Free →</Link>
+                </Button>
+                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white w-full sm:w-auto" asChild>
+                  <Link to="/catalogues">
+                    {t("hero.cta_catalogue")} <span className="ml-1 text-xs opacity-70">(Coming Soon)</span>
+                  </Link>
                 </Button>
               </div>
               <div className="mt-6 flex flex-wrap gap-4 text-xs text-white/70">
@@ -261,82 +249,29 @@ export default function Index() {
         </div>
       </section>
 
-      {/* New Arrivals */}
-      {newArrivals.length > 0 && (
-        <section className="py-16 md:py-24">
-          <div className="container">
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center">
-              <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">{t("new_arrivals.title")}</h2>
-              <p className="mt-2 text-muted-foreground">{t("new_arrivals.subtitle")}</p>
-            </motion.div>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {newArrivals.map((p, i) => (
-                <motion.div
-                  key={p.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <Link to="/catalogues" className="group block">
-                    <Card className="overflow-hidden border-0 shadow-md transition-shadow hover:shadow-xl">
-                      <div className="relative aspect-square overflow-hidden">
-                        <img src={p.image_url || casualImg} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                        <span className="absolute left-2 top-2 rounded-full bg-secondary px-3 py-1 text-xs font-bold text-secondary-foreground">NEW</span>
-                      </div>
-                      <CardContent className="p-4">
-                        <h3 className="font-display text-sm font-semibold text-foreground">{p.name}</h3>
-                        {p.fabric && <p className="text-xs text-muted-foreground">{p.fabric}</p>}
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-            <div className="mt-8 text-center">
-              <Button variant="outline" asChild>
-                <Link to="/catalogues">View All Products <ArrowRight className="ml-1 h-4 w-4" /></Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* About Preview */}
-      <section className={`py-16 md:py-24 ${newArrivals.length > 0 ? "bg-card" : ""}`}>
-        <div className="container grid items-center gap-10 md:grid-cols-2">
-          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-            <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">{t("about.title")}</h2>
-            <p className="mt-4 text-muted-foreground leading-relaxed">{t("about.description")}</p>
-            <Button variant="outline" className="mt-6" asChild>
-              <Link to="/about">{t("nav.about")} <ArrowRight className="ml-1 h-4 w-4" /></Link>
-            </Button>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="overflow-hidden rounded-2xl">
-            <img src={factoryImage} alt="Suvee Fashion Factory" className="w-full rounded-2xl object-cover shadow-lg" />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Collections */}
+      {/* Collections — Coming Soon */}
       <section className="bg-card py-16 md:py-24">
         <div className="container">
-          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center font-display text-3xl font-bold text-foreground md:text-4xl">
-            {t("categories.title")}
-          </motion.h2>
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center">
+            <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">{t("categories.title")}</h2>
+            <p className="mt-2 text-muted-foreground">Our full digital catalogue is coming soon!</p>
+          </motion.div>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {categories.map(({ key, img }, i) => (
               <motion.div key={key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <Link to="/catalogues" className="group block">
-                  <Card className="overflow-hidden border-0 shadow-md transition-shadow hover:shadow-xl">
-                    <div className="aspect-square overflow-hidden">
-                      <img src={img} alt={t(`categories.${key}` as any)} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <div className="group block">
+                  <Card className="overflow-hidden border-0 shadow-md">
+                    <div className="relative aspect-square overflow-hidden">
+                      <img src={img} alt={t(`categories.${key}` as any)} className="h-full w-full object-cover opacity-70" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-foreground/20">
+                        <span className="rounded-full bg-background/90 px-4 py-2 text-sm font-bold text-foreground shadow">Coming Soon</span>
+                      </div>
                     </div>
                     <CardContent className="p-4 text-center">
                       <h3 className="font-display text-lg font-semibold text-foreground">{t(`categories.${key}` as any)}</h3>
                     </CardContent>
                   </Card>
-                </Link>
+                </div>
               </motion.div>
             ))}
           </div>
