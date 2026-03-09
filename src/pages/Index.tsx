@@ -6,13 +6,21 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import heroImage from "@/assets/hero-kurtis.jpg";
 import factoryImage from "@/assets/factory.jpg";
 import casualImg from "@/assets/category-casual.jpg";
 import festiveImg from "@/assets/category-festive.jpg";
 import cottonImg from "@/assets/category-cotton.jpg";
 import designerImg from "@/assets/category-designer.jpg";
 import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+import heroProduct1 from "@/assets/hero-product-1.jpg";
+import heroProduct2 from "@/assets/hero-product-2.jpg";
+import heroProduct3 from "@/assets/hero-product-3.jpg";
+import heroProduct4 from "@/assets/hero-product-4.jpg";
+import heroProduct5 from "@/assets/hero-product-5.jpg";
+import heroProduct6 from "@/assets/hero-product-6.jpg";
+
+const heroSlides = [heroProduct1, heroProduct2, heroProduct3, heroProduct4, heroProduct5, heroProduct6];
 
 const testimonials = [
   {
