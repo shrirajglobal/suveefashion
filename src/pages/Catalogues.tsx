@@ -10,9 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Lock, Search, Filter, ShoppingBag, AlertCircle } from "lucide-react";
+import { Lock, Search, Filter, ShoppingBag, AlertCircle, MessageCircle, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import casualImg from "@/assets/category-casual.jpg";
 import festiveImg from "@/assets/category-festive.jpg";
@@ -110,7 +109,6 @@ export default function Catalogues() {
       return;
     }
 
-    // Save to DB
     const { error } = await supabase.from("inquiries").insert({
       ...inquiryForm,
       products_interested: inquiryProduct,
@@ -120,7 +118,6 @@ export default function Catalogues() {
       return;
     }
 
-    // Build WhatsApp message and redirect user
     const msg = `Hi Suvee Fashion! I'm interested in: *${inquiryProduct}*%0A%0A` +
       `Business: ${inquiryForm.business_name}%0A` +
       `Contact: ${inquiryForm.contact_person}%0A` +
@@ -131,7 +128,7 @@ export default function Catalogues() {
 
     window.open(`https://wa.me/919831640808?text=${msg}`, "_blank");
 
-    toast({ title: "Inquiry submitted!", description: "You're being redirected to WhatsApp." });
+    toast({ title: "Inquiry submitted! ✅", description: "You're being redirected to WhatsApp for faster response." });
     setInquiryOpen(false);
     setInquiryForm({ business_name: "", contact_person: "", phone: "", email: "", expected_quantity: "", message: "" });
   };
@@ -176,6 +173,9 @@ export default function Catalogues() {
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-display text-3xl font-bold text-white md:text-5xl">
             {t("categories.title")}
           </motion.h1>
+          <p className="mx-auto mt-2 max-w-lg text-sm text-white/70">
+            {filtered.length} products available • MOQ starts at 50 pcs • GST invoices provided
+          </p>
         </div>
       </section>
 
@@ -186,10 +186,13 @@ export default function Catalogues() {
             <div className="flex items-center gap-2">
               <Lock className="h-5 w-5 text-primary" />
               <p className="text-sm font-medium text-foreground">
-                Want bulk order discounts? <span className="text-primary font-semibold">Register as a Suvee buyer</span> to see wholesale prices and place orders.
+                Prices are hidden — <Link to="/register" className="text-primary font-semibold hover:underline">Register free</Link> to see wholesale rates & place orders
               </p>
             </div>
-            <Button size="sm" asChild><Link to="/register">{t("cta.register_button")}</Link></Button>
+            <div className="flex gap-2">
+              <Button size="sm" asChild><Link to="/register">Register Free →</Link></Button>
+              <Button size="sm" variant="outline" asChild><Link to="/login">Sign In</Link></Button>
+            </div>
           </div>
         </section>
       )}
@@ -197,7 +200,7 @@ export default function Catalogues() {
         <section className="border-b border-border bg-accent">
           <div className="container flex items-center gap-2 py-4">
             <AlertCircle className="h-5 w-5 text-secondary" />
-            <p className="text-sm font-medium text-foreground">Your account is under review. Our team will verify and approve within 24-48 hours.</p>
+            <p className="text-sm font-medium text-foreground">Your account is under review. Our team will verify and approve within 24 hours. <a href="https://wa.me/919831640808?text=Hi%2C%20please%20approve%20my%20buyer%20account" target="_blank" rel="noopener noreferrer" className="text-primary font-semibold hover:underline">Speed up via WhatsApp →</a></p>
           </div>
         </section>
       )}
@@ -205,7 +208,7 @@ export default function Catalogues() {
         <section className="border-b border-border bg-destructive/10">
           <div className="container flex items-center gap-2 py-4">
             <AlertCircle className="h-5 w-5 text-destructive" />
-            <p className="text-sm font-medium text-destructive">Your registration was not approved. Please contact us on WhatsApp for assistance.</p>
+            <p className="text-sm font-medium text-destructive">Your registration was not approved. <a href="https://wa.me/919831640808" target="_blank" rel="noopener noreferrer" className="font-semibold underline">Contact us on WhatsApp</a> for assistance.</p>
           </div>
         </section>
       )}
@@ -216,7 +219,7 @@ export default function Catalogues() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search products..."
+              placeholder="Search kurtis by name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -248,7 +251,13 @@ export default function Catalogues() {
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="py-20 text-center text-muted-foreground">No products found</div>
+            <div className="py-20 text-center">
+              <p className="text-lg font-medium text-foreground">No products found</p>
+              <p className="mt-1 text-sm text-muted-foreground">Try adjusting your search or filter</p>
+              <Button variant="outline" className="mt-4" onClick={() => { setSearchQuery(""); setSelectedCategory("all"); }}>
+                Clear Filters
+              </Button>
+            </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filtered.map((product, i) => (
@@ -299,7 +308,7 @@ export default function Catalogues() {
                         <div className="mt-3 flex items-center gap-2 rounded-md bg-accent px-3 py-2">
                           <Lock className="h-4 w-4 text-primary" />
                           <span className="text-xs font-medium text-primary">
-                            {user ? "Approval pending — prices hidden" : "Login to see wholesale price"}
+                            {user ? "Approval pending — prices hidden" : <Link to="/register" className="hover:underline">Register free to see price →</Link>}
                           </span>
                         </div>
                       )}
@@ -308,21 +317,24 @@ export default function Catalogues() {
                         <Dialog open={inquiryOpen && inquiryProduct === product.name} onOpenChange={(open) => { setInquiryOpen(open); if (open) setInquiryProduct(product.name); }}>
                           <DialogTrigger asChild>
                             <Button variant="outline" size="sm" className="mt-3 w-full">
-                              <ShoppingBag className="mr-1 h-4 w-4" /> Express Interest
+                              <MessageCircle className="mr-1 h-4 w-4" /> Enquire on WhatsApp
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <DialogTitle className="font-display">Express Interest — {product.name}</DialogTitle>
+                              <DialogTitle className="font-display">Enquire — {product.name}</DialogTitle>
                             </DialogHeader>
+                            <p className="text-xs text-muted-foreground">Fill this form and we'll connect with you on WhatsApp instantly</p>
                             <form onSubmit={handleInquiry} className="space-y-3">
                               <Input placeholder="Business Name *" value={inquiryForm.business_name} onChange={(e) => setInquiryForm({ ...inquiryForm, business_name: e.target.value })} maxLength={100} />
                               <Input placeholder="Contact Person *" value={inquiryForm.contact_person} onChange={(e) => setInquiryForm({ ...inquiryForm, contact_person: e.target.value })} maxLength={100} />
                               <Input placeholder="Phone *" value={inquiryForm.phone} onChange={(e) => setInquiryForm({ ...inquiryForm, phone: e.target.value })} maxLength={15} />
                               <Input placeholder="Email" value={inquiryForm.email} onChange={(e) => setInquiryForm({ ...inquiryForm, email: e.target.value })} maxLength={255} />
-                              <Input placeholder="Expected Quantity" value={inquiryForm.expected_quantity} onChange={(e) => setInquiryForm({ ...inquiryForm, expected_quantity: e.target.value })} maxLength={50} />
-                              <Textarea placeholder="Message" value={inquiryForm.message} onChange={(e) => setInquiryForm({ ...inquiryForm, message: e.target.value })} maxLength={500} />
-                              <Button type="submit" className="w-full">Submit Inquiry</Button>
+                              <Input placeholder="Expected Quantity (pcs)" value={inquiryForm.expected_quantity} onChange={(e) => setInquiryForm({ ...inquiryForm, expected_quantity: e.target.value })} maxLength={50} />
+                              <Textarea placeholder="Any specific requirements?" value={inquiryForm.message} onChange={(e) => setInquiryForm({ ...inquiryForm, message: e.target.value })} maxLength={500} />
+                              <Button type="submit" className="w-full">
+                                <MessageCircle className="mr-1 h-4 w-4" /> Submit & Connect on WhatsApp
+                              </Button>
                             </form>
                           </DialogContent>
                         </Dialog>
@@ -344,6 +356,25 @@ export default function Catalogues() {
           )}
         </div>
       </section>
+
+      {/* Bottom CTA for non-logged users */}
+      {!user && products.length > 0 && (
+        <section className="border-t border-border bg-accent py-8">
+          <div className="container flex flex-col items-center gap-4 text-center">
+            <CheckCircle className="h-8 w-8 text-secondary" />
+            <h3 className="font-display text-xl font-bold text-foreground">Want wholesale prices?</h3>
+            <p className="max-w-md text-sm text-muted-foreground">Register as a Suvee buyer — it's free, takes 2 minutes, and unlocks exclusive wholesale rates for all products.</p>
+            <div className="flex gap-3">
+              <Button asChild><Link to="/register">Register Free →</Link></Button>
+              <Button variant="outline" asChild>
+                <a href="https://wa.me/919831640808?text=Hi%20Suvee%20Fashion!%20I%20want%20to%20know%20about%20wholesale%20pricing." target="_blank" rel="noopener noreferrer">
+                  💬 Ask on WhatsApp
+                </a>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

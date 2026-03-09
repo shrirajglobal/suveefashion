@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote, Sparkles } from "lucide-react";
+import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote, Sparkles, ShieldCheck, Phone, CheckCircle } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -97,8 +97,15 @@ export default function Index() {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white" asChild>
-                <Link to="/advisor">{t("hero.cta_advisor")}</Link>
+                <Link to="/register">Register Free →</Link>
               </Button>
+            </div>
+            {/* Hero micro-trust */}
+            <div className="mt-6 flex flex-wrap gap-4 text-xs text-white/70">
+              <span className="flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" /> MOQ 50 pcs</span>
+              <span className="flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5" /> GST Invoices</span>
+              <span className="flex items-center gap-1"><Truck className="h-3.5 w-3.5" /> Pan-India Shipping</span>
+              <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> +91 98316 40808</span>
             </div>
           </motion.div>
         </div>
@@ -154,6 +161,11 @@ export default function Index() {
                   </Link>
                 </motion.div>
               ))}
+            </div>
+            <div className="mt-8 text-center">
+              <Button variant="outline" asChild>
+                <Link to="/catalogues">View All Products <ArrowRight className="ml-1 h-4 w-4" /></Link>
+              </Button>
             </div>
           </div>
         </section>
@@ -232,9 +244,17 @@ export default function Index() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <h2 className="font-display text-3xl font-bold text-white md:text-4xl">{t("cta.register_title")}</h2>
             <p className="mx-auto mt-4 max-w-2xl text-white/80">{t("cta.register_subtitle")}</p>
-            <Button size="lg" className="mt-8 gradient-gold text-foreground font-semibold hover:opacity-90" asChild>
-              <Link to="/register">{t("cta.register_button")}</Link>
-            </Button>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <Button size="lg" className="gradient-gold text-foreground font-semibold hover:opacity-90" asChild>
+                <Link to="/register">Register Free — Takes 2 Min →</Link>
+              </Button>
+              <a href="https://wa.me/919831640808?text=Hi%20Suvee%20Fashion!%20I%20want%20to%20know%20about%20wholesale%20pricing." target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white">
+                  💬 WhatsApp Us
+                </Button>
+              </a>
+            </div>
+            <p className="mt-4 text-xs text-white/60">Free registration • No hidden charges • 500+ retailers already onboard</p>
           </motion.div>
         </div>
       </section>
