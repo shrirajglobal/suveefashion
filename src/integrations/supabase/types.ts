@@ -62,6 +62,38 @@ export type Database = {
         }
         Relationships: []
       }
+      cart_items: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
@@ -134,6 +166,93 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          id: string
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          order_number: string
+          shipping_address: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          total_amount: number
+          total_items: number
+          tracking_info: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_number: string
+          shipping_address?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          total_amount?: number
+          total_items?: number
+          tracking_info?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_number?: string
+          shipping_address?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          total_amount?: number
+          total_items?: number
+          tracking_info?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           bulk_price_100: number | null
@@ -199,6 +318,50 @@ export type Database = {
           },
         ]
       }
+      sample_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          product_id: string | null
+          product_name: string
+          status: Database["public"]["Enums"]["sample_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id?: string | null
+          product_name: string
+          status?: Database["public"]["Enums"]["sample_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id?: string | null
+          product_name?: string
+          status?: Database["public"]["Enums"]["sample_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sample_requests_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -238,6 +401,18 @@ export type Database = {
       app_role: "admin" | "buyer"
       business_type: "retailer" | "wholesaler"
       buyer_status: "pending" | "approved" | "rejected"
+      order_status:
+        | "placed"
+        | "confirmed"
+        | "dispatched"
+        | "delivered"
+        | "cancelled"
+      sample_status:
+        | "requested"
+        | "approved"
+        | "dispatched"
+        | "delivered"
+        | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -368,6 +543,20 @@ export const Constants = {
       app_role: ["admin", "buyer"],
       business_type: ["retailer", "wholesaler"],
       buyer_status: ["pending", "approved", "rejected"],
+      order_status: [
+        "placed",
+        "confirmed",
+        "dispatched",
+        "delivered",
+        "cancelled",
+      ],
+      sample_status: [
+        "requested",
+        "approved",
+        "dispatched",
+        "delivered",
+        "rejected",
+      ],
     },
   },
 } as const
