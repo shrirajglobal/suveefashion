@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Lock, Search, Filter, ShoppingBag, AlertCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -118,6 +119,38 @@ export default function Catalogues() {
       toast({ title: "Inquiry submitted!", description: "Team Suvee will contact you soon." });
       setInquiryOpen(false);
       setInquiryForm({ business_name: "", contact_person: "", phone: "", email: "", expected_quantity: "", message: "" });
+    }
+  };
+
+  const addToCart = async (product: Product) => {
+    if (!user) return;
+    const { error } = await supabase.from("cart_items").upsert({
+      user_id: user.id,
+      product_id: product.id,
+      quantity: product.moq,
+    }, { onConflict: "user_id,product_id" });
+    if (error) {
+      toast({ title: "Failed to add to cart", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Added to cart! 🛒", description: `${product.name} (${product.moq} pcs)` });
+    }
+  };
+
+  const requestSample = async (product: Product) => {
+    if (!user) return;
+    const { error } = await supabase.from("sample_requests").insert({
+      user_id: user.id,
+      product_id: product.id,
+      product_name: product.name,
+    });
+    if (error) {
+      if (error.message.includes("duplicate")) {
+        toast({ title: "Sample already requested for this product" });
+      } else {
+        toast({ title: "Failed to request sample", description: error.message, variant: "destructive" });
+      }
+    } else {
+      toast({ title: "Sample requested! 🧪", description: `We'll process your request for ${product.name} shortly.` });
     }
   };
 
@@ -280,9 +313,14 @@ export default function Catalogues() {
                           </DialogContent>
                         </Dialog>
                       ) : canSeePrices ? (
-                        <Button size="sm" className="mt-3 w-full">
-                          <ShoppingBag className="mr-1 h-4 w-4" /> Add to Cart
-                        </Button>
+                        <div className="mt-3 flex gap-2">
+                          <Button size="sm" className="flex-1" onClick={() => addToCart(product)}>
+                            <ShoppingBag className="mr-1 h-4 w-4" /> Add to Cart
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => requestSample(product)}>
+                            Sample
+                          </Button>
+                        </div>
                       ) : null}
                     </CardContent>
                   </Card>
