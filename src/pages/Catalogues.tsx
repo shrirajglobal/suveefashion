@@ -281,9 +281,14 @@ export default function Catalogues() {
                           </DialogContent>
                         </Dialog>
                       ) : canSeePrices ? (
-                        <Button size="sm" className="mt-3 w-full">
-                          <ShoppingBag className="mr-1 h-4 w-4" /> Add to Cart
-                        </Button>
+                        <div className="mt-3 flex gap-2">
+                          <Button size="sm" className="flex-1" onClick={() => addToCart(product)}>
+                            <ShoppingBag className="mr-1 h-4 w-4" /> Add to Cart
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => requestSample(product)}>
+                            Sample
+                          </Button>
+                        </div>
                       ) : null}
                     </CardContent>
                   </Card>
