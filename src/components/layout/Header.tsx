@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Globe, Menu, LogOut, User } from "lucide-react";
+import { Globe, Menu, LogOut, User, ShoppingCart, LayoutDashboard } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Language } from "@/i18n/translations";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -20,6 +21,7 @@ export default function Header() {
   const navigate = useNavigate();
   const [langOpen, setLangOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   const navItems = [
     { path: "/", label: t("nav.home") },
@@ -30,6 +32,19 @@ export default function Header() {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  // Fetch cart count for approved buyers
+  useEffect(() => {
+    if (user && buyerStatus === "approved") {
+      supabase
+        .from("cart_items")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .then(({ count }) => setCartCount(count ?? 0));
+    } else {
+      setCartCount(0);
+    }
+  }, [user, buyerStatus, location.pathname]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -75,12 +90,26 @@ export default function Header() {
             )}
           </div>
 
+          {/* Cart icon for approved buyers */}
+          {user && buyerStatus === "approved" && (
+            <Button variant="ghost" size="sm" asChild className="relative">
+              <Link to="/cart">
+                <ShoppingCart className="h-4 w-4" />
+                {cartCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-secondary text-[10px] font-bold text-secondary-foreground">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </Button>
+          )}
+
           {/* Auth buttons */}
           {user ? (
-            <div className="hidden items-center gap-2 md:flex">
-              {buyerStatus === "approved" && (
-                <span className="text-xs text-muted-foreground"><User className="mr-1 inline h-3 w-3" /> Buyer</span>
-              )}
+            <div className="hidden items-center gap-1 md:flex">
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/dashboard"><LayoutDashboard className="h-4 w-4" /></Link>
+              </Button>
               {isAdmin && (
                 <Button variant="outline" size="sm" asChild><Link to="/admin">Admin</Link></Button>
               )}
@@ -107,6 +136,12 @@ export default function Header() {
                 ))}
                 {user ? (
                   <>
+                    <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="rounded-md px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-muted">Dashboard</Link>
+                    {buyerStatus === "approved" && (
+                      <Link to="/cart" onClick={() => setMobileOpen(false)} className="rounded-md px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-muted">
+                        Cart {cartCount > 0 && `(${cartCount})`}
+                      </Link>
+                    )}
                     {isAdmin && (
                       <Link to="/admin" onClick={() => setMobileOpen(false)} className="rounded-md px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-muted">Admin Panel</Link>
                     )}
