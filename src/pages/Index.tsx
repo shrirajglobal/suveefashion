@@ -169,7 +169,7 @@ export default function Index() {
                 <img
                   src={slide}
                   alt={`Suvee Fashion Collection ${i + 1}`}
-                  className="h-[70vh] w-full object-cover object-top md:h-[80vh]"
+                  className="h-[60vh] w-full object-cover object-top md:h-[80vh]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/60 to-transparent" />
               </div>
