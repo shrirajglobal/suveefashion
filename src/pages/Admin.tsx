@@ -4,12 +4,13 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LayoutDashboard, Users, Package, ShoppingCart, MessageSquare } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { LayoutDashboard, Users, Package, ShoppingCart, MessageSquare, BarChart3 } from "lucide-react";
 import AdminBuyers from "@/components/admin/AdminBuyers";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminOrders from "@/components/admin/AdminOrders";
 import AdminInquiries from "@/components/admin/AdminInquiries";
+import AdminAnalytics from "@/components/admin/AdminAnalytics";
 
 export default function Admin() {
   const { user, isAdmin, loading } = useAuth();
@@ -56,7 +57,6 @@ export default function Admin() {
           <LayoutDashboard className="mr-2 inline h-8 w-8" /> Admin Panel
         </motion.h1>
 
-        {/* Stats */}
         <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-5">
           {statCards.map((s) => (
             <Card key={s.label} className="border-0 shadow-md">
@@ -70,17 +70,19 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="buyers" className="mt-8">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="buyers"><Users className="mr-1 h-4 w-4" /> Buyers</TabsTrigger>
             <TabsTrigger value="products"><Package className="mr-1 h-4 w-4" /> Products</TabsTrigger>
             <TabsTrigger value="orders"><ShoppingCart className="mr-1 h-4 w-4" /> Orders</TabsTrigger>
             <TabsTrigger value="inquiries"><MessageSquare className="mr-1 h-4 w-4" /> Inquiries</TabsTrigger>
+            <TabsTrigger value="analytics"><BarChart3 className="mr-1 h-4 w-4" /> Analytics</TabsTrigger>
           </TabsList>
 
           <TabsContent value="buyers"><AdminBuyers onUpdate={fetchStats} /></TabsContent>
           <TabsContent value="products"><AdminProducts onUpdate={fetchStats} /></TabsContent>
           <TabsContent value="orders"><AdminOrders /></TabsContent>
           <TabsContent value="inquiries"><AdminInquiries /></TabsContent>
+          <TabsContent value="analytics"><AdminAnalytics /></TabsContent>
         </Tabs>
       </div>
     </div>
