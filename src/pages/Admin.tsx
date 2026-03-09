@@ -72,12 +72,13 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="buyers" className="mt-8">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="buyers"><Users className="mr-1 h-4 w-4" /> Buyers</TabsTrigger>
             <TabsTrigger value="products"><Package className="mr-1 h-4 w-4" /> Products</TabsTrigger>
             <TabsTrigger value="banners"><Image className="mr-1 h-4 w-4" /> Banners</TabsTrigger>
             <TabsTrigger value="orders"><ShoppingCart className="mr-1 h-4 w-4" /> Orders</TabsTrigger>
             <TabsTrigger value="inquiries"><MessageSquare className="mr-1 h-4 w-4" /> Inquiries</TabsTrigger>
+            <TabsTrigger value="insights"><Brain className="mr-1 h-4 w-4" /> Insights</TabsTrigger>
             <TabsTrigger value="analytics"><BarChart3 className="mr-1 h-4 w-4" /> Analytics</TabsTrigger>
           </TabsList>
 
@@ -86,6 +87,7 @@ export default function Admin() {
           <TabsContent value="banners"><AdminBanners /></TabsContent>
           <TabsContent value="orders"><AdminOrders /></TabsContent>
           <TabsContent value="inquiries"><AdminInquiries /></TabsContent>
+          <TabsContent value="insights"><AdminInsights /></TabsContent>
           <TabsContent value="analytics"><AdminAnalytics /></TabsContent>
         </Tabs>
       </div>

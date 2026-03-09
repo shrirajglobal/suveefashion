@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Bot, User } from "lucide-react";
+import { Send, User } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ReactMarkdown from "react-markdown";
+import AdvisorOnboarding from "@/components/advisor/AdvisorOnboarding";
+import ChatFeedback from "@/components/advisor/ChatFeedback";
 
 interface Message {
   role: "user" | "assistant";
@@ -12,22 +14,52 @@ interface Message {
   timestamp: Date;
 }
 
+interface UserContext {
+  state: string;
+  businessType: string;
+}
+
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/business-advisor`;
+const INSIGHTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/extract-chat-insights`;
 
 export default function Advisor() {
   const { t, language } = useLanguage();
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: t("advisor.welcome"), timestamp: new Date() },
-  ]);
+  const [userContext, setUserContext] = useState<UserContext | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [exchangeCount, setExchangeCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const handleOnboardingComplete = (ctx: UserContext) => {
+    setUserContext(ctx);
+    setMessages([{ role: "assistant", content: t("advisor.welcome"), timestamp: new Date() }]);
+  };
+
   const chips = [t("advisor.chip1"), t("advisor.chip2"), t("advisor.chip3"), t("advisor.chip4")];
+
+  // Extract insights asynchronously after 4+ exchanges
+  const maybeExtractInsights = async (allMessages: Message[]) => {
+    const userMsgCount = allMessages.filter((m) => m.role === "user").length;
+    if (userMsgCount < 2) return;
+    try {
+      await fetch(INSIGHTS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          messages: allMessages.map((m) => ({ role: m.role, content: m.content })),
+          userContext,
+        }),
+      });
+    } catch {}
+  };
 
   const handleSend = async (text?: string) => {
     const messageText = (text || input).trim();
@@ -52,6 +84,7 @@ export default function Advisor() {
           messages: updatedMessages
             .filter((m) => m.role === "user" || m.role === "assistant")
             .map((m) => ({ role: m.role, content: m.content })),
+          userContext,
         }),
       });
 
@@ -117,6 +150,16 @@ export default function Advisor() {
           } catch {}
         }
       }
+
+      // Track exchanges and extract insights async
+      const newCount = exchangeCount + 1;
+      setExchangeCount(newCount);
+      if (newCount >= 2) {
+        setMessages((prev) => {
+          maybeExtractInsights(prev);
+          return prev;
+        });
+      }
     } catch (err: any) {
       setMessages((prev) => [
         ...prev,
@@ -129,6 +172,15 @@ export default function Advisor() {
 
   const formatTime = (date: Date) => date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
+  // Show onboarding if no context yet
+  if (!userContext) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-4" style={{ minHeight: "calc(100vh - 5rem)" }}>
+        <AdvisorOnboarding onComplete={handleOnboardingComplete} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col" style={{ height: "calc(100vh - 5rem)" }}>
       {/* Header */}
@@ -140,7 +192,9 @@ export default function Advisor() {
           <div>
             <h1 className="font-display text-lg font-bold text-foreground">{t("advisor.title")}</h1>
             <p className="text-xs text-muted-foreground">
-              {language === "hi" ? "अपना बिजनेस बढ़ाओ, दादा से पूछो! — FREE" : language === "bn" ? "ব্যবসা বাড়াও, দাদা সে পুছো! — FREE" : "Apna business badhao, Dada se pucho! — FREE"}
+              📍 {userContext.state} · {userContext.businessType === "new" ? "🌱 New" : userContext.businessType === "wholesaler" ? "📦 Wholesaler" : "🏪 Retailer"}
+              {" · "}
+              {language === "hi" ? "FREE" : "FREE"}
             </p>
           </div>
           <span className="ml-auto rounded-full bg-green-500/10 px-3 py-1 text-xs font-bold text-green-600">
@@ -167,9 +221,14 @@ export default function Advisor() {
                   <div className="prose prose-sm max-w-none text-sm [&_p]:m-0">
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
                   </div>
-                  <p className={`mt-1 text-[10px] ${msg.role === "user" ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
-                    {formatTime(msg.timestamp)}
-                  </p>
+                  <div className="mt-1 flex items-center gap-2">
+                    <p className={`text-[10px] ${msg.role === "user" ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+                      {formatTime(msg.timestamp)}
+                    </p>
+                    {msg.role === "assistant" && i > 0 && (
+                      <ChatFeedback messageContent={msg.content} userState={userContext.state} />
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))}
