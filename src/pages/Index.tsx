@@ -96,7 +96,17 @@ export default function Index() {
   const { t, language } = useLanguage();
   const [newArrivals, setNewArrivals] = useState<any[]>([]);
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
-  const [emblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
+  const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
+  const [heroEmblaRef, heroApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: false })]);
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    if (!heroApi) return;
+    const onSelect = () => setActiveSlide(heroApi.selectedScrollSnap());
+    heroApi.on("select", onSelect);
+    onSelect();
+    return () => { heroApi.off("select", onSelect); };
+  }, [heroApi]);
 
   useEffect(() => {
     supabase
