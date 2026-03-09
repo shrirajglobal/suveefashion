@@ -43,10 +43,10 @@ export default function AdvisorOnboarding({ onComplete }: Props) {
         </div>
         <div>
           <h2 className="font-display text-lg font-bold text-foreground">
-            {language === "hi" ? "पहले अपने बारे में बताओ!" : "Pehle apne baare mein batao!"}
+            {language === "hi" ? "पहले अपने बारे में बताइए!" : "Pehle apne baare mein bataiye!"}
           </h2>
           <p className="text-xs text-muted-foreground">
-            {language === "hi" ? "ताकि Dada सही सलाह दे सके" : "Taaki Dada sahi advice de sake"}
+            {language === "hi" ? "ताकि Dada आपको सही सलाह दे सकें" : "Taaki Dada aapko sahi advice de sakein"}
           </p>
         </div>
       </div>
@@ -55,7 +55,7 @@ export default function AdvisorOnboarding({ onComplete }: Props) {
         <div>
           <div className="mb-3 flex items-center gap-2 text-sm font-medium text-foreground">
             <MapPin className="h-4 w-4 text-primary" />
-            {language === "hi" ? "तुम कहाँ से हो?" : "Tu kahaan se hai?"}
+            {language === "hi" ? "आप कहाँ से हैं?" : "Aap kahaan se hain?"}
           </div>
           <div className="flex flex-wrap gap-2">
             {STATES.map((s) => (
@@ -78,7 +78,7 @@ export default function AdvisorOnboarding({ onComplete }: Props) {
           </div>
           <div className="mb-3 flex items-center gap-2 text-sm font-medium text-foreground">
             <Store className="h-4 w-4 text-primary" />
-            {language === "hi" ? "बिज़नेस कैसा है?" : "Business kaisa hai?"}
+            {language === "hi" ? "आपका बिज़नेस कैसा है?" : "Aapka business kaisa hai?"}
           </div>
           <div className="flex flex-col gap-2">
             {BUSINESS_TYPES.map((bt) => (
