@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, Palette, Clock, Truck, Award, ShieldCheck, Factory, Heart } from "lucide-react";
+import { Users, Palette, Clock, Truck, Award, ShieldCheck, Factory, Heart, MapPin } from "lucide-react";
 import factoryImage from "@/assets/factory.jpg";
 
 const values = [
   { icon: Award, titleEn: "Quality First", titleHi: "गुणवत्ता सबसे पहले", titleBn: "গুণমান প্রথমে", descEn: "Every kurti undergoes strict quality checks before dispatch.", descHi: "हर कुर्ती डिस्पैच से पहले सख्त क्वालिटी चेक से गुजरती है।", descBn: "প্রতিটি কুর্তি প্রেরণের আগে কঠোর মান পরীক্ষার মধ্য দিয়ে যায়।" },
   { icon: Heart, titleEn: "Artisan Craft", titleHi: "कारीगर शिल्प", titleBn: "কারিগর শিল্প", descEn: "Handcrafted details by skilled artisans with decades of experience.", descHi: "दशकों के अनुभव वाले कुशल कारीगरों द्वारा हस्तनिर्मित विवरण।", descBn: "দশকের অভিজ্ঞতা সম্পন্ন দক্ষ কারিগরদের দ্বারা হাতে তৈরি।" },
-  { icon: ShieldCheck, titleEn: "GST Registered", titleHi: "GST पंजीकृत", titleBn: "GST নিবন্ধিত", descEn: "Fully compliant with GST regulations for hassle-free business.", descHi: "परेशानी मुक्त व्यापार के लिए GST नियमों का पूर्ण अनुपालन।", descBn: "ঝামেলামুক্ত ব্যবসার জন্য GST প্রবিধানের সাথে সম্পূর্ণ সঙ্গতিপূর্ণ।" },
+  { icon: ShieldCheck, titleEn: "GST: 19AHOPL4954B1Z4", titleHi: "GST: 19AHOPL4954B1Z4", titleBn: "GST: 19AHOPL4954B1Z4", descEn: "Fully compliant with GST regulations for hassle-free business.", descHi: "परेशानी मुक्त व्यापार के लिए GST नियमों का पूर्ण अनुपालन।", descBn: "ঝামেলামুক্ত ব্যবসার জন্য GST প্রবিধানের সাথে সম্পূর্ণ সঙ্গতিপূর্ণ।" },
   { icon: Factory, titleEn: "In-House Production", titleHi: "इन-हाउस प्रोडक्शन", titleBn: "ইন-হাউস উৎপাদন", descEn: "Complete control over manufacturing ensures consistency.", descHi: "विनिर्माण पर पूर्ण नियंत्रण स्थिरता सुनिश्चित करता है।", descBn: "উৎপাদনের উপর সম্পূর্ণ নিয়ন্ত্রণ ধারাবাহিকতা নিশ্চিত করে।" },
 ];
 
@@ -100,6 +100,28 @@ export default function About() {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* Google Maps Trust */}
+      <section className="border-t border-border bg-card py-10">
+        <div className="container text-center">
+          <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <div className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5">
+              <MapPin className="h-5 w-5 text-secondary" />
+              <span className="text-sm font-medium text-foreground">20/21 Bhawan Ganguly Lane, 5th Floor, Howrah 711101</span>
+            </div>
+            <div className="mt-3">
+              <a
+                href="https://share.google/eY0h3fuAOBMvPACID"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+              >
+                📍 Find us on Google Maps →
+              </a>
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>

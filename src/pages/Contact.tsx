@@ -107,6 +107,14 @@ export default function Contact() {
                 <div>
                   <h3 className="font-display text-lg font-semibold text-foreground">Office Address</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{t("contact.address")}</p>
+                  <a
+                    href="https://share.google/eY0h3fuAOBMvPACID"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                  >
+                    📍 View on Google Maps →
+                  </a>
                 </div>
               </CardContent>
             </Card>
