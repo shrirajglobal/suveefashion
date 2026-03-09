@@ -16,6 +16,7 @@ import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
+import Delivery from "./pages/Delivery";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
