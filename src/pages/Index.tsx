@@ -229,6 +229,19 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Trust Bar */}
+      <section className="border-b border-border bg-accent/50">
+        <div className="container flex flex-wrap items-center justify-center gap-4 py-3 text-xs font-medium text-foreground md:gap-8 md:text-sm">
+          <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-green-600" /> GST Verified</span>
+          <span className="h-4 w-px bg-border hidden md:block" />
+          <span className="flex items-center gap-1.5"><Clock className="h-4 w-4 text-secondary" /> 7+ Years</span>
+          <span className="h-4 w-px bg-border hidden md:block" />
+          <span className="flex items-center gap-1.5"><Users className="h-4 w-4 text-secondary" /> 3700+ Retailers</span>
+          <span className="h-4 w-px bg-border hidden md:block" />
+          <span className="flex items-center gap-1.5"><Truck className="h-4 w-4 text-secondary" /> Pan-India Delivery</span>
+        </div>
+      </section>
+
       {/* Stats */}
       <section className="border-b border-border bg-card">
         <div className="container grid grid-cols-2 gap-4 py-8 md:grid-cols-4 md:py-12">
@@ -242,7 +255,7 @@ export default function Index() {
               className="flex flex-col items-center gap-2 text-center"
             >
               <Icon className="h-7 w-7 text-secondary" />
-              <span className="font-display text-lg font-bold text-foreground">{t(key)}</span>
+              <span className="font-display text-xl font-extrabold text-foreground">{t(key)}</span>
             </motion.div>
           ))}
         </div>
