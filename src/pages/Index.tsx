@@ -94,7 +94,6 @@ function YouTubeCard({ video }: { video: YouTubeVideo }) {
 
 export default function Index() {
   const { t, language } = useLanguage();
-  const [newArrivals, setNewArrivals] = useState<any[]>([]);
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
   const [heroSlides, setHeroSlides] = useState<string[]>(fallbackSlides);
   const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
@@ -122,15 +121,6 @@ export default function Index() {
     onSelect();
     return () => { heroApi.off("select", onSelect); };
   }, [heroApi]);
-
-  useEffect(() => {
-    supabase
-      .from("products")
-      .select("id, name, image_url, fabric, is_new_arrival")
-      .eq("is_new_arrival", true)
-      .limit(4)
-      .then(({ data }) => setNewArrivals(data ?? []));
-  }, []);
 
   // Fetch YouTube videos
   useEffect(() => {
