@@ -55,7 +55,7 @@ export default function AdvisorOnboarding({ onComplete }: Props) {
         <div>
           <div className="mb-3 flex items-center gap-2 text-sm font-medium text-foreground">
             <MapPin className="h-4 w-4 text-primary" />
-            {language === "hi" ? "तुम कहाँ से हो?" : "Tu kahaan se hai?"}
+            {language === "hi" ? "आप कहाँ से हैं?" : "Aap kahaan se hain?"}
           </div>
           <div className="flex flex-wrap gap-2">
             {STATES.map((s) => (
