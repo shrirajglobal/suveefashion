@@ -66,8 +66,10 @@ export default function Header() {
 
         <nav className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => (
-            <Link key={item.path} to={item.path} className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${isActive(item.path) ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
-              {item.label}
+            <Link key={item.path} to={item.path} className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${isActive(item.path) ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"} ${item.path === "/advisor" ? "flex items-center gap-1.5" : ""}`}>
+              {item.path === "/advisor" ? (
+                <>🧔 {item.label} <span className="rounded-full bg-green-500/10 px-1.5 py-0.5 text-[10px] font-bold text-green-600">FREE</span></>
+              ) : item.label}
             </Link>
           ))}
         </nav>
