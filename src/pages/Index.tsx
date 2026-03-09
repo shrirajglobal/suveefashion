@@ -321,7 +321,7 @@ export default function Index() {
           </motion.div>
 
           {youtubeVideos.length > 0 ? (
-            <div className="mt-10 overflow-hidden" ref={emblaRef}>
+            <div className="mt-10 overflow-hidden" ref={ytEmblaRef}>
               <div className="flex gap-4">
                 {youtubeVideos.map((video, i) => (
                   <motion.div
