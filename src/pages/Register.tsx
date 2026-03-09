@@ -14,7 +14,7 @@ const benefits = [
   { icon: Tag, text: "Unlock wholesale prices & bulk discounts" },
   { icon: Shield, text: "GST-compliant invoices for your business" },
   { icon: Truck, text: "Priority dispatch & free shipping on large orders" },
-  { icon: CheckCircle, text: "Access 2000+ exclusive kurti designs" },
+  { icon: CheckCircle, text: "Access 850+ exclusive kurti designs" },
 ];
 
 export default function Register() {
@@ -104,7 +104,7 @@ export default function Register() {
           className="hidden lg:col-span-2 lg:block"
         >
           <h2 className="font-display text-2xl font-bold text-foreground">Why register with Suvee?</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Join 500+ retailers across India who trust Suvee Fashion for their kurti sourcing.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Join 3700+ retailers across India who trust Suvee Fashion for their kurti sourcing.</p>
           <div className="mt-8 space-y-5">
             {benefits.map(({ icon: Icon, text }, i) => (
               <motion.div

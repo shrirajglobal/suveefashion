@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Globe, Menu, LogOut, User, ShoppingCart, LayoutDashboard } from "lucide-react";
+import { motion } from "framer-motion";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Language } from "@/i18n/translations";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import logo from "@/assets/logo-final.png";
 
 const languages: { code: Language; label: string; flag: string }[] = [
   { code: "en", label: "English", flag: "🇬🇧" },
@@ -55,12 +57,17 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container flex h-16 items-center justify-between md:h-20">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full gradient-maroon">
-            <span className="font-display text-lg font-bold text-primary-foreground">S</span>
-          </div>
+          <img src={logo} alt="Suvee Fashion Logo" className="h-10 w-10 rounded-full object-cover" />
           <div className="flex flex-col">
             <span className="font-display text-lg font-bold leading-tight text-foreground md:text-xl">Suvee Fashion</span>
-            <span className="hidden text-[10px] font-medium uppercase tracking-widest text-muted-foreground md:block">Premium Kurtis</span>
+            <motion.span
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="text-[10px] font-medium uppercase tracking-widest text-secondary"
+            >
+              Kurtis & more...
+            </motion.span>
           </div>
         </Link>
 
