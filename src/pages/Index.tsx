@@ -190,13 +190,18 @@ export default function Index() {
               <p className="mt-4 text-base text-white/80 md:text-lg">
                 {t("hero.subtitle")}
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button size="lg" className="gradient-gold text-foreground font-semibold hover:opacity-90" asChild>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Button size="lg" className="gradient-gold text-foreground font-semibold hover:opacity-90 w-full sm:w-auto" asChild>
                   <Link to="/catalogues">
                     {t("hero.cta_catalogue")} <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white" asChild>
+                <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold hover:opacity-90 w-full sm:w-auto" asChild>
+                  <Link to="/advisor">
+                    🧔 {t("hero.cta_advisor")}
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white w-full sm:w-auto" asChild>
                   <Link to="/register">Register Free →</Link>
                 </Button>
               </div>
