@@ -132,8 +132,10 @@ export default function Header() {
               <SheetTitle className="font-display text-lg">Menu</SheetTitle>
               <nav className="mt-6 flex flex-col gap-1">
                 {navItems.map((item) => (
-                  <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)} className={`rounded-md px-4 py-3 text-sm font-medium transition-colors ${isActive(item.path) ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
-                    {item.label}
+                  <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)} className={`rounded-md px-4 py-3 text-sm font-medium transition-colors ${isActive(item.path) ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"} ${item.path === "/advisor" ? "flex items-center gap-2 bg-gradient-to-r from-amber-500/10 to-orange-500/10 font-bold" : ""}`}>
+                    {item.path === "/advisor" ? (
+                      <>🧔 {item.label} <span className="rounded-full bg-green-500/10 px-1.5 py-0.5 text-[10px] font-bold text-green-600">FREE</span></>
+                    ) : item.label}
                   </Link>
                 ))}
                 {user ? (

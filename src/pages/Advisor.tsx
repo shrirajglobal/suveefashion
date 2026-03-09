@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Bot, User, Sparkles } from "lucide-react";
+import { Send, Bot, User } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -103,7 +103,6 @@ export default function Advisor() {
         }
       }
 
-      // Final flush
       if (textBuffer.trim()) {
         for (let raw of textBuffer.split("\n")) {
           if (!raw) continue;
@@ -121,7 +120,7 @@ export default function Advisor() {
     } catch (err: any) {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: `Sorry, I'm having trouble connecting right now. Please try again or contact Team Suvee on WhatsApp. 🙏`, timestamp: new Date() },
+        { role: "assistant", content: `Arre yaar, kuch technical problem aa rahi hai. Thodi der mein phir try kar ya Team Suvee ko WhatsApp kar de. 🙏`, timestamp: new Date() },
       ]);
     }
 
@@ -132,20 +131,25 @@ export default function Advisor() {
 
   return (
     <div className="flex flex-col" style={{ height: "calc(100vh - 5rem)" }}>
+      {/* Header */}
       <div className="border-b border-border bg-card px-4 py-3">
         <div className="container flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full gradient-maroon">
-            <Sparkles className="h-5 w-5 text-white" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-2xl shadow-lg">
+            🧔
           </div>
           <div>
             <h1 className="font-display text-lg font-bold text-foreground">{t("advisor.title")}</h1>
             <p className="text-xs text-muted-foreground">
-              {language === "hi" ? "मुफ्त बिजनेस सलाह" : language === "bn" ? "বিনামূল্যে ব্যবসায়িক পরামর্শ" : "Free business advice for kurti retailers"}
+              {language === "hi" ? "अपना बिजनेस बढ़ाओ, दादा से पूछो! — FREE" : language === "bn" ? "ব্যবসা বাড়াও, দাদা সে পুছো! — FREE" : "Apna business badhao, Dada se pucho! — FREE"}
             </p>
           </div>
+          <span className="ml-auto rounded-full bg-green-500/10 px-3 py-1 text-xs font-bold text-green-600">
+            ● ONLINE
+          </span>
         </div>
       </div>
 
+      {/* Messages */}
       <div className="flex-1 overflow-y-auto bg-background px-4 py-6">
         <div className="container max-w-3xl space-y-4">
           <AnimatePresence>
@@ -156,8 +160,8 @@ export default function Advisor() {
                 animate={{ opacity: 1, y: 0 }}
                 className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
               >
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${msg.role === "assistant" ? "gradient-maroon" : "bg-secondary"}`}>
-                  {msg.role === "assistant" ? <Bot className="h-4 w-4 text-white" /> : <User className="h-4 w-4 text-secondary-foreground" />}
+                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${msg.role === "assistant" ? "bg-gradient-to-br from-amber-500 to-orange-600 text-sm" : "bg-secondary"}`}>
+                  {msg.role === "assistant" ? "🧔" : <User className="h-4 w-4 text-secondary-foreground" />}
                 </div>
                 <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${msg.role === "user" ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-card text-card-foreground shadow-sm rounded-tl-sm"}`}>
                   <div className="prose prose-sm max-w-none text-sm [&_p]:m-0">
@@ -173,14 +177,17 @@ export default function Advisor() {
 
           {isLoading && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full gradient-maroon">
-                <Bot className="h-4 w-4 text-white" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-sm">
+                🧔
               </div>
               <div className="rounded-2xl rounded-tl-sm bg-card px-4 py-3 shadow-sm">
-                <div className="flex gap-1">
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "0ms" }} />
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "150ms" }} />
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "300ms" }} />
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Dada soch raha hai...</span>
+                  <div className="flex gap-1">
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "0ms" }} />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "150ms" }} />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "300ms" }} />
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -189,12 +196,13 @@ export default function Advisor() {
         </div>
       </div>
 
+      {/* Quick Chips */}
       {messages.length <= 1 && (
         <div className="border-t border-border bg-card px-4 py-3">
           <div className="container max-w-3xl">
             <div className="flex flex-wrap gap-2">
               {chips.map((chip) => (
-                <button key={chip} onClick={() => handleSend(chip)} className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent">
+                <button key={chip} onClick={() => handleSend(chip)} className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:border-accent">
                   {chip}
                 </button>
               ))}
@@ -203,11 +211,12 @@ export default function Advisor() {
         </div>
       )}
 
+      {/* Input */}
       <div className="border-t border-border bg-card px-4 py-3">
         <div className="container max-w-3xl">
           <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex gap-2">
             <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder={t("advisor.placeholder")} className="flex-1" maxLength={500} disabled={isLoading} />
-            <Button type="submit" size="icon" disabled={!input.trim() || isLoading}>
+            <Button type="submit" size="icon" disabled={!input.trim() || isLoading} className="bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:opacity-90">
               <Send className="h-4 w-4" />
             </Button>
           </form>

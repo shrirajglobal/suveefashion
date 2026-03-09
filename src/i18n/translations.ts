@@ -244,41 +244,51 @@ export const translations = {
     bn: "হাওড়ায় আমাদের আধুনিক উৎপাদন সুবিধা সর্বশেষ যন্ত্রপাতি দিয়ে সজ্জিত এবং দক্ষ কারিগরদের নিয়োগ করে যারা কুর্তি কারিগরিতে কয়েক দশকের অভিজ্ঞতা নিয়ে আসে।",
   },
 
-  // Advisor
+  // Advisor — "Dada Se Pucho"
   "advisor.title": {
-    en: "Suvee Business Advisor",
-    hi: "सुवी बिजनेस सलाहकार",
-    bn: "সুভি ব্যবসায়িক পরামর্শদাতা",
+    en: "Dada Se Pucho",
+    hi: "दादा से पूछो",
+    bn: "দাদা সে পুছো",
   },
   "advisor.welcome": {
-    en: "Namaste! I'm Suvee's business advisor. Ask me anything about running a kurti business — pricing, customers, collections, or anything else. I'm here to help you grow! 🙏",
-    hi: "नमस्ते! मैं सुवी का बिजनेस सलाहकार हूँ। कुर्ती बिजनेस चलाने के बारे में कुछ भी पूछें — प्राइसिंग, कस्टमर्स, कलेक्शन, या कुछ और। मैं आपकी ग्रोथ में मदद के लिए यहाँ हूँ! 🙏",
-    bn: "নমস্কার! আমি সুভির ব্যবসায়িক পরামর্শদাতা। কুর্তি ব্যবসা চালানোর বিষয়ে যেকোনো কিছু জিজ্ঞাসা করুন — মূল্য নির্ধারণ, গ্রাহক, কালেকশন, বা অন্য কিছু। আমি আপনাকে বাড়তে সাহায্য করতে এখানে আছি! 🙏",
+    en: "Arre bhai! Main hoon tera Dada — kurti business ka purana khiladi. Bol, kya problem hai? Pricing, customers, collection, kuch bhi puch — bilkul FREE! 💪",
+    hi: "अरे भाई! मैं हूँ तेरा दादा — कुर्ती बिजनेस का पुराना खिलाड़ी। बोल, क्या प्रॉब्लम है? प्राइसिंग, कस्टमर्स, कलेक्शन, कुछ भी पूछ — बिल्कुल FREE! 💪",
+    bn: "আরে ভাই! আমি তোর দাদা — কুর্তি ব্যবসার পুরনো খেলোয়াড়। বল, কী সমস্যা? প্রাইসিং, কাস্টমার, কালেকশন, যা খুশি জিজ্ঞেস কর — একদম FREE! 💪",
   },
   "advisor.placeholder": {
-    en: "Ask me about kurti business...",
-    hi: "कुर्ती बिजनेस के बारे में पूछें...",
-    bn: "কুর্তি ব্যবসা সম্পর্কে জিজ্ঞাসা করুন...",
+    en: "Dada se kuch bhi pucho...",
+    hi: "दादा से कुछ भी पूछो...",
+    bn: "দাদাকে কিছু জিজ্ঞেস করো...",
   },
   "advisor.chip1": {
-    en: "How to start kurti business?",
-    hi: "कुर्ती बिजनेस कैसे शुरू करें?",
-    bn: "কুর্তি ব্যবসা কীভাবে শুরু করব?",
+    en: "Dada, kurti business kaise start karu?",
+    hi: "दादा, कुर्ती बिजनेस कैसे शुरू करूं?",
+    bn: "দাদা, কুর্তি ব্যবসা কীভাবে শুরু করব?",
   },
   "advisor.chip2": {
-    en: "How to get more customers?",
-    hi: "ज़्यादा कस्टमर कैसे लाएं?",
-    bn: "কীভাবে বেশি গ্রাহক পাব?",
+    en: "Customers kaise badhau?",
+    hi: "कस्टमर्स कैसे बढ़ाऊं?",
+    bn: "কাস্টমার কীভাবে বাড়াব?",
   },
   "advisor.chip3": {
-    en: "Tips for managing funds",
-    hi: "फंड मैनेज करने के टिप्स",
-    bn: "তহবিল পরিচালনার টিপস",
+    en: "Paisa manage kaise karu?",
+    hi: "पैसा मैनेज कैसे करूं?",
+    bn: "টাকা ম্যানেজ কীভাবে করব?",
   },
   "advisor.chip4": {
-    en: "Best kurtis for summer?",
-    hi: "गर्मियों के लिए बेस्ट कुर्ती?",
-    bn: "গ্রীষ্মের জন্য সেরা কুর্তি?",
+    en: "Garmi mein kaunsi kurti chalegi?",
+    hi: "गर्मी में कौनसी कुर्ती चलेगी?",
+    bn: "গরমে কোন কুর্তি চলবে?",
+  },
+  "advisor.homepage_title": {
+    en: "Business mein problem? Dada se pucho!",
+    hi: "बिजनेस में प्रॉब्लम? दादा से पूछो!",
+    bn: "ব্যবসায় সমস্যা? দাদা সে পুছো!",
+  },
+  "advisor.homepage_subtitle": {
+    en: "Free business advice from an experienced kurti industry expert. Pricing, customers, trends — ask anything!",
+    hi: "कुर्ती इंडस्ट्री के अनुभवी एक्सपर्ट से फ्री बिजनेस एडवाइस। प्राइसिंग, कस्टमर्स, ट्रेंड्स — कुछ भी पूछो!",
+    bn: "কুর্তি ইন্ডাস্ট্রির অভিজ্ঞ এক্সপার্টের থেকে ফ্রি বিজনেস অ্যাডভাইস। প্রাইসিং, কাস্টমার, ট্রেন্ড — যা খুশি জিজ্ঞেস করো!",
   },
 
   // Seasonal Campaign

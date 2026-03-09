@@ -33,7 +33,7 @@ export default function Footer() {
               <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("nav.home")}</Link>
               <Link to="/catalogues" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("nav.catalogues")}</Link>
               <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("nav.about")}</Link>
-              <Link to="/advisor" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("nav.advisor")}</Link>
+              <Link to="/advisor" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">🧔 {t("nav.advisor")} <span className="text-[10px] font-bold text-green-600">FREE</span></Link>
               <Link to="/delivery" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Delivery Info</Link>
             </nav>
           </div>
