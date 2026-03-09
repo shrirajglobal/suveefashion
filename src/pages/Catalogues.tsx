@@ -109,17 +109,31 @@ export default function Catalogues() {
       toast({ title: "Please fill required fields", variant: "destructive" });
       return;
     }
+
+    // Save to DB
     const { error } = await supabase.from("inquiries").insert({
       ...inquiryForm,
       products_interested: inquiryProduct,
     });
     if (error) {
       toast({ title: "Failed to submit", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Inquiry submitted!", description: "Team Suvee will contact you soon." });
-      setInquiryOpen(false);
-      setInquiryForm({ business_name: "", contact_person: "", phone: "", email: "", expected_quantity: "", message: "" });
+      return;
     }
+
+    // Build WhatsApp message and redirect user
+    const msg = `Hi Suvee Fashion! I'm interested in: *${inquiryProduct}*%0A%0A` +
+      `Business: ${inquiryForm.business_name}%0A` +
+      `Contact: ${inquiryForm.contact_person}%0A` +
+      `Phone: ${inquiryForm.phone}%0A` +
+      (inquiryForm.email ? `Email: ${inquiryForm.email}%0A` : "") +
+      (inquiryForm.expected_quantity ? `Expected Qty: ${inquiryForm.expected_quantity}%0A` : "") +
+      (inquiryForm.message ? `Message: ${inquiryForm.message}` : "");
+
+    window.open(`https://wa.me/919831640808?text=${msg}`, "_blank");
+
+    toast({ title: "Inquiry submitted!", description: "You're being redirected to WhatsApp." });
+    setInquiryOpen(false);
+    setInquiryForm({ business_name: "", contact_person: "", phone: "", email: "", expected_quantity: "", message: "" });
   };
 
   const addToCart = async (product: Product) => {
