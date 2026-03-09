@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, LogIn, Tag, ShoppingBag } from "lucide-react";
 
 export default function Login() {
   const { t } = useLanguage();
@@ -30,8 +30,8 @@ export default function Login() {
     if (error) {
       toast({ title: "Login failed", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Welcome back!" });
-      navigate("/");
+      toast({ title: "Welcome back! 🎉" });
+      navigate("/catalogues");
     }
   };
 
@@ -50,7 +50,7 @@ export default function Login() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
                 <label className="mb-1 block text-sm font-medium text-foreground">{t("contact.email")}</label>
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={255} />
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={255} placeholder="you@business.com" />
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium text-foreground">Password</label>
@@ -71,13 +71,23 @@ export default function Login() {
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Signing in..." : "Sign In"}
+                {loading ? "Signing in..." : "Sign In →"}
               </Button>
             </form>
-            <div className="mt-6 text-center text-sm text-muted-foreground">
+
+            {/* Value reminder */}
+            <div className="mt-6 rounded-xl bg-accent p-4">
+              <p className="mb-2 text-xs font-semibold text-foreground">What you get as a Suvee buyer:</p>
+              <div className="flex flex-col gap-1.5">
+                <span className="flex items-center gap-2 text-xs text-muted-foreground"><Tag className="h-3 w-3 text-secondary" /> Wholesale prices up to 60% below MRP</span>
+                <span className="flex items-center gap-2 text-xs text-muted-foreground"><ShoppingBag className="h-3 w-3 text-secondary" /> Access to 2000+ exclusive designs</span>
+              </div>
+            </div>
+
+            <div className="mt-4 text-center text-sm text-muted-foreground">
               Don't have an account?{" "}
               <Link to="/register" className="font-medium text-primary hover:underline">
-                Register as Buyer
+                Register as Buyer — Free
               </Link>
             </div>
           </CardContent>
