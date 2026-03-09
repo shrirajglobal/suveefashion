@@ -1,12 +1,22 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Globe, Menu, LogOut, User } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { Language } from "@/i18n/translations";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+
+const languages: { code: Language; label: string; flag: string }[] = [
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "hi", label: "हिंदी", flag: "🇮🇳" },
+  { code: "bn", label: "বাংলা", flag: "🇮🇳" },
+];
 
 export default function Header() {
   const { t, language, setLanguage } = useLanguage();
   const { user, buyerStatus, isAdmin, signOut } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const [langOpen, setLangOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -20,11 +30,6 @@ export default function Header() {
   ];
 
   const isActive = (path: string) => location.pathname === path;
-  const languages = [
-    { code: "en" as const, label: "English", flag: "🇬🇧" },
-    { code: "hi" as const, label: "हिंदी", flag: "🇮🇳" },
-    { code: "bn" as const, label: "বাংলা", flag: "🇮🇳" },
-  ];
 
   const handleSignOut = async () => {
     await signOut();
@@ -53,6 +58,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {/* Language Switcher */}
           <div className="relative">
             <Button variant="ghost" size="sm" onClick={() => setLangOpen(!langOpen)} className="flex items-center gap-1 text-sm">
               <Globe className="h-4 w-4" />
@@ -69,21 +75,16 @@ export default function Header() {
             )}
           </div>
 
+          {/* Auth buttons */}
           {user ? (
             <div className="hidden items-center gap-2 md:flex">
               {buyerStatus === "approved" && (
-                <span className="text-xs text-muted-foreground">
-                  <User className="mr-1 inline h-3 w-3" /> Buyer
-                </span>
+                <span className="text-xs text-muted-foreground"><User className="mr-1 inline h-3 w-3" /> Buyer</span>
               )}
               {isAdmin && (
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/admin">Admin</Link>
-                </Button>
+                <Button variant="outline" size="sm" asChild><Link to="/admin">Admin</Link></Button>
               )}
-              <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4" />
-              </Button>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}><LogOut className="h-4 w-4" /></Button>
             </div>
           ) : (
             <Button variant="default" size="sm" className="hidden md:inline-flex" asChild>
@@ -91,6 +92,7 @@ export default function Header() {
             </Button>
           )}
 
+          {/* Mobile Menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild className="lg:hidden">
               <Button variant="ghost" size="icon"><Menu className="h-5 w-5" /></Button>
@@ -106,13 +108,9 @@ export default function Header() {
                 {user ? (
                   <>
                     {isAdmin && (
-                      <Link to="/admin" onClick={() => setMobileOpen(false)} className="rounded-md px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-muted">
-                        Admin Panel
-                      </Link>
+                      <Link to="/admin" onClick={() => setMobileOpen(false)} className="rounded-md px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-muted">Admin Panel</Link>
                     )}
-                    <Button variant="outline" className="mt-4" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
-                      Sign Out
-                    </Button>
+                    <Button variant="outline" className="mt-4" onClick={() => { handleSignOut(); setMobileOpen(false); }}>Sign Out</Button>
                   </>
                 ) : (
                   <Button variant="default" className="mt-4" asChild>
@@ -127,9 +125,3 @@ export default function Header() {
     </header>
   );
 }
-
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Globe, Menu } from "lucide-react";
-import { Language } from "@/i18n/translations";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
