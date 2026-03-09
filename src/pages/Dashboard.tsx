@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { Package, FlaskConical, User, Clock, CheckCircle, Truck, XCircle, Edit } from "lucide-react";
+import { Package, FlaskConical, User, Clock, CheckCircle, Truck, XCircle, Edit, FileText } from "lucide-react";
 
 const statusColors: Record<string, string> = {
   placed: "bg-secondary text-secondary-foreground",
