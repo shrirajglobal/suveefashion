@@ -57,18 +57,15 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container flex h-16 items-center justify-between md:h-20">
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Suvee Fashion Logo" className="h-10 w-10 rounded-full object-cover" />
-          <div className="flex flex-col">
-            <span className="font-display text-lg font-bold leading-tight text-foreground md:text-xl">Suvee Fashion</span>
-            <motion.span
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-[10px] font-medium uppercase tracking-widest text-secondary"
-            >
-              Kurtis & more...
-            </motion.span>
-          </div>
+          <img src={logo} alt="Suvee Fashion" className="h-12 w-auto object-contain md:h-14" />
+          <motion.span
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="text-[10px] font-medium uppercase tracking-widest text-secondary"
+          >
+            Kurtis & more...
+          </motion.span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">

@@ -12,10 +12,7 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-4">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2">
-              <img src={logo} alt="Suvee Fashion Logo" className="h-9 w-9 rounded-full object-cover" />
-              <span className="font-display text-lg font-bold text-foreground">Suvee Fashion</span>
-            </div>
+            <img src={logo} alt="Suvee Fashion" className="h-12 w-auto object-contain" />
             <p className="mt-3 text-sm text-muted-foreground">{t("footer.tagline")}</p>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
