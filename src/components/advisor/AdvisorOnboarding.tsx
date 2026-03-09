@@ -43,10 +43,10 @@ export default function AdvisorOnboarding({ onComplete }: Props) {
         </div>
         <div>
           <h2 className="font-display text-lg font-bold text-foreground">
-            {language === "hi" ? "पहले अपने बारे में बताओ!" : "Pehle apne baare mein batao!"}
+            {language === "hi" ? "पहले अपने बारे में बताइए!" : "Pehle apne baare mein bataiye!"}
           </h2>
           <p className="text-xs text-muted-foreground">
-            {language === "hi" ? "ताकि Dada सही सलाह दे सके" : "Taaki Dada sahi advice de sake"}
+            {language === "hi" ? "ताकि Dada आपको सही सलाह दे सकें" : "Taaki Dada aapko sahi advice de sakein"}
           </p>
         </div>
       </div>
