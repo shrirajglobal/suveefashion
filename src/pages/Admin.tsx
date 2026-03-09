@@ -5,12 +5,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { LayoutDashboard, Users, Package, ShoppingCart, MessageSquare, BarChart3, Image } from "lucide-react";
+import { LayoutDashboard, Users, Package, ShoppingCart, MessageSquare, BarChart3, Image, Brain } from "lucide-react";
 import AdminBuyers from "@/components/admin/AdminBuyers";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminOrders from "@/components/admin/AdminOrders";
 import AdminInquiries from "@/components/admin/AdminInquiries";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import AdminInsights from "@/components/admin/AdminInsights";
 import AdminBanners from "@/components/admin/AdminBanners";
 
 export default function Admin() {
