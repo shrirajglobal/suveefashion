@@ -34,6 +34,7 @@ export default function Footer() {
               <Link to="/catalogues" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("nav.catalogues")}</Link>
               <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("nav.about")}</Link>
               <Link to="/advisor" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("nav.advisor")}</Link>
+              <Link to="/delivery" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Delivery Info</Link>
             </nav>
           </div>
 

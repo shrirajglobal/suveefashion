@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote } from "lucide-react";
+import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote, Sparkles } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import heroImage from "@/assets/hero-kurtis.jpg";
@@ -45,9 +47,30 @@ const stats = [
 
 export default function Index() {
   const { t, language } = useLanguage();
+  const [newArrivals, setNewArrivals] = useState<any[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("products")
+      .select("id, name, image_url, fabric, is_new_arrival")
+      .eq("is_new_arrival", true)
+      .limit(4)
+      .then(({ data }) => setNewArrivals(data ?? []));
+  }, []);
 
   return (
     <div>
+      {/* Seasonal Campaign Banner */}
+      <section className="gradient-gold py-3">
+        <div className="container flex items-center justify-center gap-3 text-center">
+          <Sparkles className="h-5 w-5 text-foreground" />
+          <p className="text-sm font-semibold text-foreground">{t("seasonal.subtitle")}</p>
+          <Button size="sm" variant="outline" className="border-foreground/30 text-foreground hover:bg-foreground/10" asChild>
+            <Link to="/catalogues">{t("seasonal.cta")}</Link>
+          </Button>
+        </div>
+      </section>
+
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
@@ -100,32 +123,53 @@ export default function Index() {
         </div>
       </section>
 
+      {/* New Arrivals */}
+      {newArrivals.length > 0 && (
+        <section className="py-16 md:py-24">
+          <div className="container">
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center">
+              <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">{t("new_arrivals.title")}</h2>
+              <p className="mt-2 text-muted-foreground">{t("new_arrivals.subtitle")}</p>
+            </motion.div>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {newArrivals.map((p, i) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Link to="/catalogues" className="group block">
+                    <Card className="overflow-hidden border-0 shadow-md transition-shadow hover:shadow-xl">
+                      <div className="relative aspect-square overflow-hidden">
+                        <img src={p.image_url || casualImg} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                        <span className="absolute left-2 top-2 rounded-full bg-secondary px-3 py-1 text-xs font-bold text-secondary-foreground">NEW</span>
+                      </div>
+                      <CardContent className="p-4">
+                        <h3 className="font-display text-sm font-semibold text-foreground">{p.name}</h3>
+                        {p.fabric && <p className="text-xs text-muted-foreground">{p.fabric}</p>}
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* About Preview */}
-      <section className="py-16 md:py-24">
+      <section className={`py-16 md:py-24 ${newArrivals.length > 0 ? "bg-card" : ""}`}>
         <div className="container grid items-center gap-10 md:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">
-              {t("about.title")}
-            </h2>
-            <p className="mt-4 text-muted-foreground leading-relaxed">
-              {t("about.description")}
-            </p>
+          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+            <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">{t("about.title")}</h2>
+            <p className="mt-4 text-muted-foreground leading-relaxed">{t("about.description")}</p>
             <Button variant="outline" className="mt-6" asChild>
-              <Link to="/about">
-                {t("nav.about")} <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
+              <Link to="/about">{t("nav.about")} <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="overflow-hidden rounded-2xl"
-          >
+          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="overflow-hidden rounded-2xl">
             <img src={factoryImage} alt="Suvee Fashion Factory" className="w-full rounded-2xl object-cover shadow-lg" />
           </motion.div>
         </div>
@@ -134,36 +178,19 @@ export default function Index() {
       {/* Collections */}
       <section className="bg-card py-16 md:py-24">
         <div className="container">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center font-display text-3xl font-bold text-foreground md:text-4xl"
-          >
+          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center font-display text-3xl font-bold text-foreground md:text-4xl">
             {t("categories.title")}
           </motion.h2>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {categories.map(({ key, img }, i) => (
-              <motion.div
-                key={key}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
+              <motion.div key={key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
                 <Link to="/catalogues" className="group block">
                   <Card className="overflow-hidden border-0 shadow-md transition-shadow hover:shadow-xl">
                     <div className="aspect-square overflow-hidden">
-                      <img
-                        src={img}
-                        alt={t(`categories.${key}` as any)}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
+                      <img src={img} alt={t(`categories.${key}` as any)} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     </div>
                     <CardContent className="p-4 text-center">
-                      <h3 className="font-display text-lg font-semibold text-foreground">
-                        {t(`categories.${key}` as any)}
-                      </h3>
+                      <h3 className="font-display text-lg font-semibold text-foreground">{t(`categories.${key}` as any)}</h3>
                     </CardContent>
                   </Card>
                 </Link>
@@ -176,33 +203,18 @@ export default function Index() {
       {/* Testimonials */}
       <section className="py-16 md:py-24">
         <div className="container">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center font-display text-3xl font-bold text-foreground md:text-4xl"
-          >
+          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center font-display text-3xl font-bold text-foreground md:text-4xl">
             {t("testimonials.title")}
           </motion.h2>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {testimonials.map((item, i) => (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-              >
+              <motion.div key={item.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}>
                 <Card className="h-full border-0 bg-card shadow-md">
                   <CardContent className="flex h-full flex-col p-6">
                     <Quote className="mb-3 h-6 w-6 text-secondary" />
-                    <p className="flex-1 text-sm text-muted-foreground leading-relaxed italic">
-                      "{item.text[language]}"
-                    </p>
+                    <p className="flex-1 text-sm text-muted-foreground leading-relaxed italic">"{item.text[language]}"</p>
                     <div className="mt-4 flex items-center gap-1">
-                      {[...Array(5)].map((_, j) => (
-                        <Star key={j} className="h-4 w-4 fill-secondary text-secondary" />
-                      ))}
+                      {[...Array(5)].map((_, j) => <Star key={j} className="h-4 w-4 fill-secondary text-secondary" />)}
                     </div>
                     <p className="mt-2 text-sm font-semibold text-foreground">{item.name}</p>
                     <p className="text-xs text-muted-foreground">{item.city}</p>
@@ -217,17 +229,9 @@ export default function Index() {
       {/* CTA */}
       <section className="gradient-maroon py-16 md:py-24">
         <div className="container text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="font-display text-3xl font-bold text-white md:text-4xl">
-              {t("cta.register_title")}
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-white/80">
-              {t("cta.register_subtitle")}
-            </p>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <h2 className="font-display text-3xl font-bold text-white md:text-4xl">{t("cta.register_title")}</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-white/80">{t("cta.register_subtitle")}</p>
             <Button size="lg" className="mt-8 gradient-gold text-foreground font-semibold hover:opacity-90" asChild>
               <Link to="/register">{t("cta.register_button")}</Link>
             </Button>

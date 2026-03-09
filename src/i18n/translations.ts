@@ -280,6 +280,47 @@ export const translations = {
     hi: "गर्मियों के लिए बेस्ट कुर्ती?",
     bn: "গ্রীষ্মের জন্য সেরা কুর্তি?",
   },
+
+  // Seasonal Campaign
+  "seasonal.title": {
+    en: "🎉 Festive Season Collection",
+    hi: "🎉 फेस्टिव सीज़न कलेक्शन",
+    bn: "🎉 উৎসব মরসুম কালেকশন",
+  },
+  "seasonal.subtitle": {
+    en: "Get ready for Durga Puja, Diwali & Eid — New designs dropping weekly!",
+    hi: "दुर्गा पूजा, दिवाली और ईद की तैयारी — हर हफ्ते नए डिज़ाइन!",
+    bn: "দুর্গা পূজা, দীপাবলি ও ঈদের প্রস্তুতি — প্রতি সপ্তাহে নতুন ডিজাইন!",
+  },
+  "seasonal.cta": {
+    en: "Shop Festive Collection",
+    hi: "फेस्टिव कलेक्शन देखें",
+    bn: "উৎসব কালেকশন দেখুন",
+  },
+
+  // New Arrivals
+  "new_arrivals.title": {
+    en: "✨ New Arrivals",
+    hi: "✨ नई आमद",
+    bn: "✨ নতুন আগমন",
+  },
+  "new_arrivals.subtitle": {
+    en: "Fresh designs added this week",
+    hi: "इस हफ्ते के ताज़ा डिज़ाइन",
+    bn: "এই সপ্তাহে যোগ করা নতুন ডিজাইন",
+  },
+
+  // Delivery
+  "delivery.title": {
+    en: "Delivery Information",
+    hi: "डिलीवरी जानकारी",
+    bn: "ডেলিভারি তথ্য",
+  },
+  "delivery.subtitle": {
+    en: "We deliver pan-India with special focus on Eastern India",
+    hi: "हम पूरे भारत में डिलीवरी करते हैं, पूर्वी भारत पर विशेष ध्यान",
+    bn: "আমরা সমস্ত ভারতে ডেলিভারি করি, পূর্ব ভারতে বিশেষ ফোকাস",
+  },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

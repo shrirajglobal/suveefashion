@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { Package, FlaskConical, User, Clock, CheckCircle, Truck, XCircle, Edit } from "lucide-react";
+import { Package, FlaskConical, User, Clock, CheckCircle, Truck, XCircle, Edit, FileText } from "lucide-react";
 
 const statusColors: Record<string, string> = {
   placed: "bg-secondary text-secondary-foreground",
@@ -149,6 +149,55 @@ export default function Dashboard() {
                           ))}
                         </div>
                       )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-3"
+                        onClick={async () => {
+                          try {
+                            const { data, error } = await supabase.functions.invoke("generate-invoice", { body: { order_id: order.id } });
+                            if (error) throw error;
+                            // Open invoice as printable page
+                            const w = window.open("", "_blank");
+                            if (!w) return;
+                            w.document.write(`<html><head><title>Invoice ${data.invoice_number}</title><style>
+                              body{font-family:Arial,sans-serif;max-width:800px;margin:20px auto;padding:20px;font-size:13px}
+                              table{width:100%;border-collapse:collapse;margin:15px 0}
+                              th,td{border:1px solid #ddd;padding:8px;text-align:left}
+                              th{background:#f5f5f5}
+                              .header{display:flex;justify-content:space-between;border-bottom:2px solid #333;padding-bottom:10px}
+                              .section{margin:15px 0}
+                              .right{text-align:right}
+                              .bold{font-weight:bold}
+                              @media print{button{display:none}}
+                            </style></head><body>
+                              <button onclick="window.print()" style="float:right;padding:8px 16px;cursor:pointer">🖨️ Print</button>
+                              <div class="header">
+                                <div><h2 style="margin:0;color:#5a1a2a">Suvee Fashion</h2><p>${data.seller.address}</p><p>GSTIN: ${data.seller.gstin}</p></div>
+                                <div style="text-align:right"><h3 style="margin:0">TAX INVOICE</h3><p>${data.invoice_number}</p><p>Date: ${data.invoice_date}</p></div>
+                              </div>
+                              <div class="section" style="display:flex;gap:40px">
+                                <div><h4>Bill To:</h4><p class="bold">${data.buyer.name}</p><p>${data.buyer.contact}</p><p>${data.buyer.address}</p><p>GSTIN: ${data.buyer.gstin}</p><p>Phone: ${data.buyer.phone}</p></div>
+                              </div>
+                              <table><thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Unit Price (₹)</th><th>Total (₹)</th></tr></thead>
+                              <tbody>${data.items.map((it: any) => `<tr><td>${it.sno}</td><td>${it.name}</td><td>${it.quantity}</td><td class="right">${it.unit_price.toLocaleString()}</td><td class="right">${it.total.toLocaleString()}</td></tr>`).join("")}</tbody></table>
+                              <div style="text-align:right">
+                                <p>Subtotal: ₹${data.subtotal.toLocaleString()}</p>
+                                <p>CGST @${data.cgst_rate}%: ₹${data.cgst_amount.toLocaleString()}</p>
+                                <p>SGST @${data.sgst_rate}%: ₹${data.sgst_amount.toLocaleString()}</p>
+                                <p class="bold" style="font-size:16px">Grand Total: ₹${data.grand_total.toLocaleString()}</p>
+                              </div>
+                              <p style="margin-top:10px;font-style:italic">${data.amount_in_words}</p>
+                              <div style="margin-top:40px;text-align:right"><p>For Suvee Fashion</p><br/><p>Authorized Signatory</p></div>
+                            </body></html>`);
+                            w.document.close();
+                          } catch (err) {
+                            toast({ title: "Invoice generation failed", variant: "destructive" });
+                          }
+                        }}
+                      >
+                        <FileText className="mr-1 h-3 w-3" /> Download Invoice
+                      </Button>
                     </CardContent>
                   </Card>
                 );
