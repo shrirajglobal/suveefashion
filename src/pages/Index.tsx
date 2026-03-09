@@ -20,7 +20,7 @@ import heroProduct4 from "@/assets/hero-product-4.jpg";
 import heroProduct5 from "@/assets/hero-product-5.jpg";
 import heroProduct6 from "@/assets/hero-product-6.jpg";
 
-const heroSlides = [heroProduct1, heroProduct2, heroProduct3, heroProduct4, heroProduct5, heroProduct6];
+const fallbackSlides = [heroProduct1, heroProduct2, heroProduct3, heroProduct4, heroProduct5, heroProduct6];
 
 const testimonials = [
   {
@@ -96,9 +96,24 @@ export default function Index() {
   const { t, language } = useLanguage();
   const [newArrivals, setNewArrivals] = useState<any[]>([]);
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
+  const [heroSlides, setHeroSlides] = useState<string[]>(fallbackSlides);
   const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
   const [heroEmblaRef, heroApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: false })]);
   const [activeSlide, setActiveSlide] = useState(0);
+
+  // Fetch hero banners from database
+  useEffect(() => {
+    supabase
+      .from("hero_banners")
+      .select("image_url")
+      .eq("is_active", true)
+      .order("display_order", { ascending: true })
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setHeroSlides(data.map(b => b.image_url));
+        }
+      });
+  }, []);
 
   useEffect(() => {
     if (!heroApi) return;
