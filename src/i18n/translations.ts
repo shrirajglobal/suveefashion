@@ -23,9 +23,9 @@ export const translations = {
     bn: "যোগাযোগ",
   },
   "nav.advisor": {
-    en: "Business Advisor",
-    hi: "बिजनेस सलाहकार",
-    bn: "ব্যবসায়িক পরামর্শদাতা",
+    en: "Dada Se Pucho",
+    hi: "दादा से पूछो",
+    bn: "দাদা সে পুছো",
   },
   "nav.login": {
     en: "Buyer Login",
