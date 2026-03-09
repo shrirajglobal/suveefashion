@@ -22,7 +22,7 @@ export default function AdminBuyers({ onUpdate }: { onUpdate: () => void }) {
 
   const fetchBuyers = async () => {
     let q = supabase.from("buyer_profiles").select("*").order("created_at", { ascending: false });
-    if (filter !== "all") q = q.eq("status", filter);
+    if (filter !== "all") q = q.eq("status", filter as any);
     const { data } = await q;
     setBuyers(data ?? []);
     setLoading(false);

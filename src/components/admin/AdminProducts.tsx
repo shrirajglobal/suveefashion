@@ -109,7 +109,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
   const numField = (label: string, key: keyof ProductForm) => (
     <div>
       <label className="mb-1 block text-xs font-medium">{label}</label>
-      <Input type="number" value={form[key] ?? ""} onChange={(e) => setForm({ ...form, [key]: e.target.value ? Number(e.target.value) : null })} />
+      <Input type="number" value={String(form[key] ?? "")} onChange={(e) => setForm({ ...form, [key]: e.target.value ? Number(e.target.value) : null })} />
     </div>
   );
 
