@@ -1,14 +1,239 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import heroImage from "@/assets/hero-kurtis.jpg";
+import factoryImage from "@/assets/factory.jpg";
+import casualImg from "@/assets/category-casual.jpg";
+import festiveImg from "@/assets/category-festive.jpg";
+import cottonImg from "@/assets/category-cotton.jpg";
+import designerImg from "@/assets/category-designer.jpg";
 
-const Index = () => {
+const testimonials = [
+  {
+    name: "Rajesh Kumar",
+    city: "Delhi",
+    text: { en: "Suvee Fashion has been our trusted supplier for 5 years. Their quality and consistency is unmatched.", hi: "सुवी फैशन 5 साल से हमारा भरोसेमंद सप्लायर है। उनकी क्वालिटी और कंसिस्टेंसी बेजोड़ है।", bn: "সুভি ফ্যাশন ৫ বছর ধরে আমাদের বিশ্বস্ত সরবরাহকারী। তাদের গুণমান এবং ধারাবাহিকতা অতুলনীয়।" },
+  },
+  {
+    name: "Priya Sharma",
+    city: "Mumbai",
+    text: { en: "The festive collections always sell out quickly. My customers love the embroidery work.", hi: "फेस्टिव कलेक्शन हमेशा जल्दी बिक जाते हैं। मेरे कस्टमर्स एम्ब्रॉयडरी वर्क पसंद करते हैं।", bn: "উৎসবের কালেকশন সবসময় দ্রুত বিক্রি হয়। আমার গ্রাহকরা এমব্রয়ডারি কাজ পছন্দ করেন।" },
+  },
+  {
+    name: "Amit Ghosh",
+    city: "Kolkata",
+    text: { en: "Best wholesale rates in the market with genuine quality. Delivery is always on time.", hi: "बाजार में बेस्ट होलसेल रेट्स और असली क्वालिटी। डिलीवरी हमेशा समय पर होती है।", bn: "বাজারে সেরা পাইকারি দাম এবং আসল গুণমান। ডেলিভারি সবসময় সময়মতো হয়।" },
+  },
+];
+
+const categories = [
+  { key: "casual" as const, img: casualImg },
+  { key: "festive" as const, img: festiveImg },
+  { key: "cotton" as const, img: cottonImg },
+  { key: "designer" as const, img: designerImg },
+];
+
+const stats = [
+  { icon: Users, key: "about.stat_retailers" as const },
+  { icon: Palette, key: "about.stat_designs" as const },
+  { icon: Clock, key: "about.stat_years" as const },
+  { icon: Truck, key: "about.stat_cities" as const },
+];
+
+export default function Index() {
+  const { t, language } = useLanguage();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div>
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={heroImage} alt="Suvee Fashion Kurti Collection" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/60 to-transparent" />
+        </div>
+        <div className="container relative z-10 flex min-h-[70vh] items-center py-20 md:min-h-[80vh]">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-xl"
+          >
+            <h1 className="font-display text-3xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
+              {t("hero.tagline")}
+            </h1>
+            <p className="mt-4 text-base text-white/80 md:text-lg">
+              {t("hero.subtitle")}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button size="lg" className="gradient-gold text-foreground font-semibold hover:opacity-90" asChild>
+                <Link to="/catalogues">
+                  {t("hero.cta_catalogue")} <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white" asChild>
+                <Link to="/advisor">{t("hero.cta_advisor")}</Link>
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="border-b border-border bg-card">
+        <div className="container grid grid-cols-2 gap-4 py-8 md:grid-cols-4 md:py-12">
+          {stats.map(({ icon: Icon, key }, i) => (
+            <motion.div
+              key={key}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="flex flex-col items-center gap-2 text-center"
+            >
+              <Icon className="h-7 w-7 text-secondary" />
+              <span className="font-display text-lg font-bold text-foreground">{t(key)}</span>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* About Preview */}
+      <section className="py-16 md:py-24">
+        <div className="container grid items-center gap-10 md:grid-cols-2">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">
+              {t("about.title")}
+            </h2>
+            <p className="mt-4 text-muted-foreground leading-relaxed">
+              {t("about.description")}
+            </p>
+            <Button variant="outline" className="mt-6" asChild>
+              <Link to="/about">
+                {t("nav.about")} <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="overflow-hidden rounded-2xl"
+          >
+            <img src={factoryImage} alt="Suvee Fashion Factory" className="w-full rounded-2xl object-cover shadow-lg" />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Collections */}
+      <section className="bg-card py-16 md:py-24">
+        <div className="container">
+          <motion.h2
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center font-display text-3xl font-bold text-foreground md:text-4xl"
+          >
+            {t("categories.title")}
+          </motion.h2>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {categories.map(({ key, img }, i) => (
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Link to="/catalogues" className="group block">
+                  <Card className="overflow-hidden border-0 shadow-md transition-shadow hover:shadow-xl">
+                    <div className="aspect-square overflow-hidden">
+                      <img
+                        src={img}
+                        alt={t(`categories.${key}` as any)}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                    </div>
+                    <CardContent className="p-4 text-center">
+                      <h3 className="font-display text-lg font-semibold text-foreground">
+                        {t(`categories.${key}` as any)}
+                      </h3>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-16 md:py-24">
+        <div className="container">
+          <motion.h2
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center font-display text-3xl font-bold text-foreground md:text-4xl"
+          >
+            {t("testimonials.title")}
+          </motion.h2>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {testimonials.map((item, i) => (
+              <motion.div
+                key={item.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+              >
+                <Card className="h-full border-0 bg-card shadow-md">
+                  <CardContent className="flex h-full flex-col p-6">
+                    <Quote className="mb-3 h-6 w-6 text-secondary" />
+                    <p className="flex-1 text-sm text-muted-foreground leading-relaxed italic">
+                      "{item.text[language]}"
+                    </p>
+                    <div className="mt-4 flex items-center gap-1">
+                      {[...Array(5)].map((_, j) => (
+                        <Star key={j} className="h-4 w-4 fill-secondary text-secondary" />
+                      ))}
+                    </div>
+                    <p className="mt-2 text-sm font-semibold text-foreground">{item.name}</p>
+                    <p className="text-xs text-muted-foreground">{item.city}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="gradient-maroon py-16 md:py-24">
+        <div className="container text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="font-display text-3xl font-bold text-white md:text-4xl">
+              {t("cta.register_title")}
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-white/80">
+              {t("cta.register_subtitle")}
+            </p>
+            <Button size="lg" className="mt-8 gradient-gold text-foreground font-semibold hover:opacity-90" asChild>
+              <Link to="/register">{t("cta.register_button")}</Link>
+            </Button>
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
-};
-
-export default Index;
+}
