@@ -5,12 +5,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { LayoutDashboard, Users, Package, ShoppingCart, MessageSquare, BarChart3, Image } from "lucide-react";
+import { LayoutDashboard, Users, Package, ShoppingCart, MessageSquare, BarChart3, Image, Brain } from "lucide-react";
 import AdminBuyers from "@/components/admin/AdminBuyers";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminOrders from "@/components/admin/AdminOrders";
 import AdminInquiries from "@/components/admin/AdminInquiries";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import AdminInsights from "@/components/admin/AdminInsights";
 import AdminBanners from "@/components/admin/AdminBanners";
 
 export default function Admin() {
@@ -71,12 +72,13 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="buyers" className="mt-8">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="buyers"><Users className="mr-1 h-4 w-4" /> Buyers</TabsTrigger>
             <TabsTrigger value="products"><Package className="mr-1 h-4 w-4" /> Products</TabsTrigger>
             <TabsTrigger value="banners"><Image className="mr-1 h-4 w-4" /> Banners</TabsTrigger>
             <TabsTrigger value="orders"><ShoppingCart className="mr-1 h-4 w-4" /> Orders</TabsTrigger>
             <TabsTrigger value="inquiries"><MessageSquare className="mr-1 h-4 w-4" /> Inquiries</TabsTrigger>
+            <TabsTrigger value="insights"><Brain className="mr-1 h-4 w-4" /> Insights</TabsTrigger>
             <TabsTrigger value="analytics"><BarChart3 className="mr-1 h-4 w-4" /> Analytics</TabsTrigger>
           </TabsList>
 
@@ -85,6 +87,7 @@ export default function Admin() {
           <TabsContent value="banners"><AdminBanners /></TabsContent>
           <TabsContent value="orders"><AdminOrders /></TabsContent>
           <TabsContent value="inquiries"><AdminInquiries /></TabsContent>
+          <TabsContent value="insights"><AdminInsights /></TabsContent>
           <TabsContent value="analytics"><AdminAnalytics /></TabsContent>
         </Tabs>
       </div>

@@ -127,6 +127,60 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_feedback: {
+        Row: {
+          created_at: string
+          id: string
+          message_content: string
+          rating: string
+          user_state: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_content: string
+          rating: string
+          user_state?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_content?: string
+          rating?: string
+          user_state?: string | null
+        }
+        Relationships: []
+      }
+      chat_insights: {
+        Row: {
+          business_type: string | null
+          created_at: string
+          id: string
+          key_insight: string | null
+          question_summary: string | null
+          question_topic: string | null
+          user_state: string | null
+        }
+        Insert: {
+          business_type?: string | null
+          created_at?: string
+          id?: string
+          key_insight?: string | null
+          question_summary?: string | null
+          question_topic?: string | null
+          user_state?: string | null
+        }
+        Update: {
+          business_type?: string | null
+          created_at?: string
+          id?: string
+          key_insight?: string | null
+          question_summary?: string | null
+          question_topic?: string | null
+          user_state?: string | null
+        }
+        Relationships: []
+      }
       hero_banners: {
         Row: {
           created_at: string
