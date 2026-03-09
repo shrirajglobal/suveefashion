@@ -6,13 +6,21 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import heroImage from "@/assets/hero-kurtis.jpg";
 import factoryImage from "@/assets/factory.jpg";
 import casualImg from "@/assets/category-casual.jpg";
 import festiveImg from "@/assets/category-festive.jpg";
 import cottonImg from "@/assets/category-cotton.jpg";
 import designerImg from "@/assets/category-designer.jpg";
 import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+import heroProduct1 from "@/assets/hero-product-1.jpg";
+import heroProduct2 from "@/assets/hero-product-2.jpg";
+import heroProduct3 from "@/assets/hero-product-3.jpg";
+import heroProduct4 from "@/assets/hero-product-4.jpg";
+import heroProduct5 from "@/assets/hero-product-5.jpg";
+import heroProduct6 from "@/assets/hero-product-6.jpg";
+
+const heroSlides = [heroProduct1, heroProduct2, heroProduct3, heroProduct4, heroProduct5, heroProduct6];
 
 const testimonials = [
   {
@@ -88,7 +96,17 @@ export default function Index() {
   const { t, language } = useLanguage();
   const [newArrivals, setNewArrivals] = useState<any[]>([]);
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
-  const [emblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
+  const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
+  const [heroEmblaRef, heroApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: false })]);
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    if (!heroApi) return;
+    const onSelect = () => setActiveSlide(heroApi.selectedScrollSnap());
+    heroApi.on("select", onSelect);
+    onSelect();
+    return () => { heroApi.off("select", onSelect); };
+  }, [heroApi]);
 
   useEffect(() => {
     supabase
@@ -127,43 +145,67 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Hero */}
+      {/* Hero Carousel */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img src={heroImage} alt="Suvee Fashion Kurti Collection" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/60 to-transparent" />
+        <div className="overflow-hidden" ref={heroEmblaRef}>
+          <div className="flex">
+            {heroSlides.map((slide, i) => (
+              <div key={i} className="relative min-w-0 flex-[0_0_100%]">
+                <img
+                  src={slide}
+                  alt={`Suvee Fashion Collection ${i + 1}`}
+                  className="h-[70vh] w-full object-cover md:h-[80vh]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/60 to-transparent" />
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="container relative z-10 flex min-h-[70vh] items-center py-20 md:min-h-[80vh]">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-xl"
-          >
-            <h1 className="font-display text-3xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
-              {t("hero.tagline")}
-            </h1>
-            <p className="mt-4 text-base text-white/80 md:text-lg">
-              {t("hero.subtitle")}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button size="lg" className="gradient-gold text-foreground font-semibold hover:opacity-90" asChild>
-                <Link to="/catalogues">
-                  {t("hero.cta_catalogue")} <ArrowRight className="ml-1 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white" asChild>
-                <Link to="/register">Register Free →</Link>
-              </Button>
-            </div>
-            {/* Hero micro-trust */}
-            <div className="mt-6 flex flex-wrap gap-4 text-xs text-white/70">
-              <span className="flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" /> MOQ 50 pcs</span>
-              <span className="flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5" /> GST Invoices</span>
-              <span className="flex items-center gap-1"><Truck className="h-3.5 w-3.5" /> Pan-India Shipping</span>
-              <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> +91 98316 40808</span>
-            </div>
-          </motion.div>
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center">
+          <div className="container pointer-events-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="max-w-xl"
+            >
+              <h1 className="font-display text-3xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
+                {t("hero.tagline")}
+              </h1>
+              <p className="mt-4 text-base text-white/80 md:text-lg">
+                {t("hero.subtitle")}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Button size="lg" className="gradient-gold text-foreground font-semibold hover:opacity-90" asChild>
+                  <Link to="/catalogues">
+                    {t("hero.cta_catalogue")} <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white" asChild>
+                  <Link to="/register">Register Free →</Link>
+                </Button>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-4 text-xs text-white/70">
+                <span className="flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" /> MOQ 50 pcs</span>
+                <span className="flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5" /> GST Invoices</span>
+                <span className="flex items-center gap-1"><Truck className="h-3.5 w-3.5" /> Pan-India Shipping</span>
+                <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> +91 98316 40808</span>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+        {/* Dot indicators */}
+        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+          {heroSlides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => heroApi?.scrollTo(i)}
+              className={`h-2.5 rounded-full transition-all duration-300 ${
+                i === activeSlide ? "w-8 bg-white" : "w-2.5 bg-white/50 hover:bg-white/70"
+              }`}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
         </div>
       </section>
 
@@ -303,7 +345,7 @@ export default function Index() {
           </motion.div>
 
           {youtubeVideos.length > 0 ? (
-            <div className="mt-10 overflow-hidden" ref={emblaRef}>
+            <div className="mt-10 overflow-hidden" ref={ytEmblaRef}>
               <div className="flex gap-4">
                 {youtubeVideos.map((video, i) => (
                   <motion.div
