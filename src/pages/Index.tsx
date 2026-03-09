@@ -100,7 +100,6 @@ export default function Index() {
   const [heroEmblaRef, heroApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: false })]);
   const [activeSlide, setActiveSlide] = useState(0);
 
-  // Fetch hero banners from database
   useEffect(() => {
     supabase
       .from("hero_banners")
@@ -122,7 +121,6 @@ export default function Index() {
     return () => { heroApi.off("select", onSelect); };
   }, [heroApi]);
 
-  // Fetch YouTube videos
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -130,24 +128,13 @@ export default function Index() {
         if (!error && data?.videos?.length) {
           setYoutubeVideos(data.videos);
         }
-      } catch {
-        // silently fail — fallback UI will show
-      }
+      } catch {}
     };
     fetchVideos();
   }, []);
 
   return (
-    <div>
-      {/* Seasonal Campaign Banner */}
-      <section className="gradient-gold py-3">
-        <div className="container flex items-center justify-center gap-3 text-center">
-          <Sparkles className="h-5 w-5 text-foreground" />
-          <p className="text-sm font-semibold text-foreground">{t("seasonal.subtitle")}</p>
-          <span className="rounded-full bg-foreground/10 px-3 py-1 text-xs font-medium text-foreground">Coming Soon</span>
-        </div>
-      </section>
-
+    <div className="pb-16 md:pb-0">
       {/* Hero Carousel */}
       <section className="relative overflow-hidden">
         <div className="overflow-hidden" ref={heroEmblaRef}>
@@ -157,59 +144,57 @@ export default function Index() {
                 <img
                   src={slide}
                   alt={`Suvee Fashion Collection ${i + 1}`}
-                  className="h-[60vh] w-full object-cover object-top md:h-[80vh]"
+                  className="h-[55vh] w-full object-cover object-top sm:h-[60vh] md:h-[80vh]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/50 to-transparent" />
               </div>
             ))}
           </div>
         </div>
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center">
-          <div className="container pointer-events-auto">
+          <div className="container pointer-events-auto px-5 sm:px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               className="max-w-xl"
             >
-              <h1 className="font-display text-3xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
+              <h1 className="font-display text-2xl font-bold leading-tight text-white sm:text-3xl md:text-5xl lg:text-6xl">
                 {t("hero.tagline")}
               </h1>
-              <p className="mt-4 text-base text-white/80 md:text-lg">
+              <p className="mt-2 text-sm text-white/80 sm:mt-4 sm:text-base md:text-lg">
                 {t("hero.subtitle")}
               </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold hover:opacity-90 w-full sm:w-auto" asChild>
+
+              {/* CTA Buttons — clean 2-button layout on mobile */}
+              <div className="mt-5 flex gap-2.5 sm:mt-8 sm:gap-3">
+                <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold hover:opacity-90 flex-1 sm:flex-none text-sm sm:text-base h-11 sm:h-12" asChild>
                   <Link to="/advisor">
                     🧔 {t("hero.cta_advisor")}
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white w-full sm:w-auto" asChild>
+                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white flex-1 sm:flex-none text-sm sm:text-base h-11 sm:h-12" asChild>
                   <Link to="/register">Register Free →</Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white w-full sm:w-auto" asChild>
-                  <Link to="/catalogues">
-                    {t("hero.cta_catalogue")} <span className="ml-1 text-xs opacity-70">(Coming Soon)</span>
-                  </Link>
-                </Button>
               </div>
-              <div className="mt-6 flex flex-wrap gap-4 text-xs text-white/70">
-                <span className="flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" /> MOQ 50 pcs</span>
-                <span className="flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5" /> GST Invoices</span>
-                <span className="flex items-center gap-1"><Truck className="h-3.5 w-3.5" /> Pan-India Shipping</span>
-                <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> +91 98316 40808</span>
+
+              {/* Trust badges — compact on mobile */}
+              <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-white/60 sm:mt-6 sm:gap-4 sm:text-xs sm:text-white/70">
+                <span className="flex items-center gap-1"><CheckCircle className="h-3 w-3" /> MOQ 50 pcs</span>
+                <span className="flex items-center gap-1"><ShieldCheck className="h-3 w-3" /> GST Invoices</span>
+                <span className="flex items-center gap-1"><Truck className="h-3 w-3" /> Pan-India</span>
               </div>
             </motion.div>
           </div>
         </div>
         {/* Dot indicators */}
-        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5 sm:bottom-6 sm:gap-2">
           {heroSlides.map((_, i) => (
             <button
               key={i}
               onClick={() => heroApi?.scrollTo(i)}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
-                i === activeSlide ? "w-8 bg-white" : "w-2.5 bg-white/50 hover:bg-white/70"
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === activeSlide ? "w-6 bg-white sm:w-8" : "w-2 bg-white/50 hover:bg-white/70 sm:w-2.5"
               }`}
               aria-label={`Go to slide ${i + 1}`}
             />
@@ -217,22 +202,24 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Trust Bar */}
+      {/* Trust Bar — single row, no wrapping issues */}
       <section className="border-b border-border bg-accent/50">
-        <div className="container flex flex-wrap items-center justify-center gap-4 py-3 text-xs font-medium text-foreground md:gap-8 md:text-sm">
-          <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-green-600" /> GST Verified</span>
-          <span className="h-4 w-px bg-border hidden md:block" />
-          <span className="flex items-center gap-1.5"><Clock className="h-4 w-4 text-secondary" /> 7+ Years</span>
-          <span className="h-4 w-px bg-border hidden md:block" />
-          <span className="flex items-center gap-1.5"><Users className="h-4 w-4 text-secondary" /> 3700+ Retailers</span>
-          <span className="h-4 w-px bg-border hidden md:block" />
-          <span className="flex items-center gap-1.5"><Truck className="h-4 w-4 text-secondary" /> Pan-India Delivery</span>
+        <div className="container overflow-x-auto scrollbar-hide">
+          <div className="flex items-center justify-start gap-4 py-2.5 text-[11px] font-medium text-foreground sm:justify-center sm:gap-6 md:gap-8 md:py-3 md:text-sm whitespace-nowrap">
+            <span className="flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5 text-green-600 shrink-0" /> GST Verified</span>
+            <span className="h-3 w-px bg-border shrink-0" />
+            <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-secondary shrink-0" /> 7+ Years</span>
+            <span className="h-3 w-px bg-border shrink-0" />
+            <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5 text-secondary shrink-0" /> 3700+ Retailers</span>
+            <span className="h-3 w-px bg-border shrink-0" />
+            <span className="flex items-center gap-1"><Truck className="h-3.5 w-3.5 text-secondary shrink-0" /> Pan-India</span>
+          </div>
         </div>
       </section>
 
-      {/* Stats */}
+      {/* Stats — compact on mobile */}
       <section className="border-b border-border bg-card">
-        <div className="container grid grid-cols-2 gap-4 py-8 md:grid-cols-4 md:py-12">
+        <div className="container grid grid-cols-4 gap-2 py-5 sm:gap-4 md:py-12">
           {stats.map(({ icon: Icon, key }, i) => (
             <motion.div
               key={key}
@@ -240,62 +227,60 @@ export default function Index() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="flex flex-col items-center gap-2 text-center"
+              className="flex flex-col items-center gap-1 text-center sm:gap-2"
             >
-              <Icon className="h-7 w-7 text-secondary" />
-              <span className="font-display text-xl font-extrabold text-foreground">{t(key)}</span>
+              <Icon className="h-5 w-5 text-secondary sm:h-7 sm:w-7" />
+              <span className="font-display text-sm font-extrabold text-foreground sm:text-xl">{t(key)}</span>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Collections — Coming Soon */}
-      <section className="bg-card py-16 md:py-24">
+      {/* Collections — 2-col on mobile */}
+      <section className="bg-card py-10 sm:py-16 md:py-24">
         <div className="container">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center">
-            <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">{t("categories.title")}</h2>
-            <p className="mt-2 text-muted-foreground">Our full digital catalogue is coming soon!</p>
+            <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">{t("categories.title")}</h2>
+            <p className="mt-1.5 text-sm text-muted-foreground sm:mt-2">Our full digital catalogue is coming soon!</p>
           </motion.div>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-6 lg:grid-cols-4">
             {categories.map(({ key, img }, i) => (
               <motion.div key={key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <div className="group block">
-                  <Card className="overflow-hidden border-0 shadow-md">
-                    <div className="relative aspect-square overflow-hidden">
-                      <img src={img} alt={t(`categories.${key}` as any)} className="h-full w-full object-cover opacity-70" />
-                      <div className="absolute inset-0 flex items-center justify-center bg-foreground/20">
-                        <span className="rounded-full bg-background/90 px-4 py-2 text-sm font-bold text-foreground shadow">Coming Soon</span>
-                      </div>
+                <Card className="overflow-hidden border-0 shadow-md">
+                  <div className="relative aspect-[3/4] sm:aspect-square overflow-hidden">
+                    <img src={img} alt={t(`categories.${key}` as any)} className="h-full w-full object-cover opacity-70" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-foreground/20">
+                      <span className="rounded-full bg-background/90 px-3 py-1.5 text-[10px] font-bold text-foreground shadow sm:px-4 sm:py-2 sm:text-sm">Coming Soon</span>
                     </div>
-                    <CardContent className="p-4 text-center">
-                      <h3 className="font-display text-lg font-semibold text-foreground">{t(`categories.${key}` as any)}</h3>
-                    </CardContent>
-                  </Card>
-                </div>
+                  </div>
+                  <CardContent className="p-2.5 text-center sm:p-4">
+                    <h3 className="font-display text-sm font-semibold text-foreground sm:text-lg">{t(`categories.${key}` as any)}</h3>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-16 md:py-24">
+      {/* Testimonials — horizontal scroll on mobile */}
+      <section className="py-10 sm:py-16 md:py-24">
         <div className="container">
-          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center font-display text-3xl font-bold text-foreground md:text-4xl">
+          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center font-display text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">
             {t("testimonials.title")}
           </motion.h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
+          <div className="mt-6 flex gap-4 overflow-x-auto pb-2 scrollbar-hide sm:mt-10 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0">
             {testimonials.map((item, i) => (
-              <motion.div key={item.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}>
+              <motion.div key={item.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }} className="min-w-[75vw] sm:min-w-0">
                 <Card className="h-full border-0 bg-card shadow-md">
-                  <CardContent className="flex h-full flex-col p-6">
-                    <Quote className="mb-3 h-6 w-6 text-secondary" />
-                    <p className="flex-1 text-sm text-muted-foreground leading-relaxed italic">"{item.text[language]}"</p>
-                    <div className="mt-4 flex items-center gap-1">
-                      {[...Array(5)].map((_, j) => <Star key={j} className="h-4 w-4 fill-secondary text-secondary" />)}
+                  <CardContent className="flex h-full flex-col p-4 sm:p-6">
+                    <Quote className="mb-2 h-5 w-5 text-secondary sm:mb-3 sm:h-6 sm:w-6" />
+                    <p className="flex-1 text-xs text-muted-foreground leading-relaxed italic sm:text-sm">"{item.text[language]}"</p>
+                    <div className="mt-3 flex items-center gap-0.5 sm:mt-4 sm:gap-1">
+                      {[...Array(5)].map((_, j) => <Star key={j} className="h-3 w-3 fill-secondary text-secondary sm:h-4 sm:w-4" />)}
                     </div>
-                    <p className="mt-2 text-sm font-semibold text-foreground">{item.name}</p>
-                    <p className="text-xs text-muted-foreground">{item.city}</p>
+                    <p className="mt-1.5 text-xs font-semibold text-foreground sm:mt-2 sm:text-sm">{item.name}</p>
+                    <p className="text-[10px] text-muted-foreground sm:text-xs">{item.city}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -305,7 +290,7 @@ export default function Index() {
       </section>
 
       {/* Dada Se Pucho Highlight */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 py-16 md:py-24 dark:from-amber-950/20 dark:to-orange-950/20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 py-10 sm:py-16 md:py-24 dark:from-amber-950/20 dark:to-orange-950/20">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -313,25 +298,25 @@ export default function Index() {
             viewport={{ once: true }}
             className="mx-auto max-w-2xl text-center"
           >
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-4xl shadow-xl">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-3xl shadow-xl sm:mb-6 sm:h-20 sm:w-20 sm:text-4xl">
               🧔
             </div>
-            <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">
+            <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">
               {t("advisor.homepage_title" as any)}
             </h2>
-            <p className="mx-auto mt-4 max-w-lg text-muted-foreground">
+            <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground sm:mt-4 sm:text-base">
               {t("advisor.homepage_subtitle" as any)}
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold hover:opacity-90 shadow-lg" asChild>
+            <div className="mt-6 sm:mt-8">
+              <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold hover:opacity-90 shadow-lg w-full sm:w-auto" asChild>
                 <Link to="/advisor">
                   🧔 {t("nav.advisor")} — It's FREE! <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
             </div>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
+            <div className="mt-4 flex items-center justify-center gap-3 text-[11px] text-muted-foreground sm:gap-4 sm:text-xs">
               <span>✓ 100% Free</span>
-              <span>✓ Hindi / English / Bengali</span>
+              <span>✓ Hindi / English</span>
               <span>✓ Instant Advice</span>
             </div>
           </motion.div>
@@ -339,16 +324,16 @@ export default function Index() {
       </section>
 
       {/* YouTube Section */}
-      <section className="bg-card py-16 md:py-24">
+      <section className="bg-card py-10 sm:py-16 md:py-24">
         <div className="container">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center">
-            <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">▶ Latest from Our YouTube</h2>
-            <p className="mt-2 text-muted-foreground">New catalogues, styling tips & behind-the-scenes from our factory</p>
+            <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">▶ Latest from Our YouTube</h2>
+            <p className="mt-1.5 text-sm text-muted-foreground sm:mt-2">New catalogues, styling tips & behind-the-scenes</p>
           </motion.div>
 
           {youtubeVideos.length > 0 ? (
-            <div className="mt-10 overflow-hidden" ref={ytEmblaRef}>
-              <div className="flex gap-4">
+            <div className="mt-6 overflow-hidden sm:mt-10" ref={ytEmblaRef}>
+              <div className="flex gap-3 sm:gap-4">
                 {youtubeVideos.map((video, i) => (
                   <motion.div
                     key={video.videoId}
@@ -356,7 +341,7 @@ export default function Index() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="min-w-0 flex-[0_0_85%] sm:flex-[0_0_45%] lg:flex-[0_0_30%]"
+                    className="min-w-0 flex-[0_0_80%] sm:flex-[0_0_45%] lg:flex-[0_0_30%]"
                   >
                     <YouTubeCard video={video} />
                   </motion.div>
@@ -364,15 +349,15 @@ export default function Index() {
               </div>
             </div>
           ) : (
-            <div className="mt-10 text-center">
+            <div className="mt-6 text-center sm:mt-10">
               <p className="text-sm text-muted-foreground">Check out our latest videos for new catalogues and styling tips!</p>
             </div>
           )}
 
-          <div className="mt-8 text-center">
-            <Button variant="outline" asChild>
+          <div className="mt-6 text-center sm:mt-8">
+            <Button variant="outline" size="sm" asChild className="sm:size-default">
               <a href="https://youtube.com/@suveefashion" target="_blank" rel="noopener noreferrer">
-                Visit Our YouTube Channel <ArrowRight className="ml-1 h-4 w-4" />
+                Visit Our YouTube <ArrowRight className="ml-1 h-4 w-4" />
               </a>
             </Button>
           </div>
@@ -380,27 +365,27 @@ export default function Index() {
       </section>
 
       {/* CTA */}
-      <section className="gradient-maroon py-16 md:py-24">
-        <div className="container text-center">
+      <section className="gradient-maroon py-10 sm:py-16 md:py-24">
+        <div className="container text-center px-5">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="font-display text-3xl font-bold text-white md:text-4xl">{t("cta.register_title")}</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-white/80">{t("cta.register_subtitle")}</p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <Button size="lg" className="gradient-gold text-foreground font-semibold hover:opacity-90" asChild>
+            <h2 className="font-display text-2xl font-bold text-white sm:text-3xl md:text-4xl">{t("cta.register_title")}</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-white/80 sm:mt-4 sm:text-base">{t("cta.register_subtitle")}</p>
+            <div className="mt-6 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
+              <Button size="lg" className="gradient-gold text-foreground font-semibold hover:opacity-90 w-full sm:w-auto" asChild>
                 <Link to="/register">Register Free — Takes 2 Min →</Link>
               </Button>
-              <a href="https://wa.me/919831640808?text=Hi%20Suvee%20Fashion!%20I%20want%20to%20know%20about%20wholesale%20pricing." target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white">
+              <a href="https://wa.me/919831640808?text=Hi%20Suvee%20Fashion!%20I%20want%20to%20know%20about%20wholesale%20pricing." target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white w-full">
                   💬 WhatsApp Us
                 </Button>
               </a>
-              <a href="https://chat.whatsapp.com/EPcMwkcqbhXBSGL2ZhZInL" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white">
+              <a href="https://chat.whatsapp.com/EPcMwkcqbhXBSGL2ZhZInL" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white w-full">
                   📢 Join WhatsApp Community
                 </Button>
               </a>
             </div>
-            <p className="mt-4 text-xs text-white/60">Free registration • No hidden charges • 3700+ retailers already onboard</p>
+            <p className="mt-3 text-[10px] text-white/60 sm:mt-4 sm:text-xs">Free registration • No hidden charges • 3700+ retailers</p>
           </motion.div>
         </div>
       </section>
