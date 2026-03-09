@@ -50,9 +50,9 @@ export const translations = {
     bn: "ক্যাটালগ দেখুন",
   },
   "hero.cta_advisor": {
-    en: "Free Business Advice",
-    hi: "मुफ्त बिजनेस सलाह",
-    bn: "বিনামূল্যে ব্যবসায়িক পরামর্শ",
+    en: "Dada Se Pucho — FREE!",
+    hi: "दादा से पूछो — FREE!",
+    bn: "দাদা সে পুছো — FREE!",
   },
 
   // About Section
