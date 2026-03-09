@@ -122,6 +122,38 @@ export default function Catalogues() {
     }
   };
 
+  const addToCart = async (product: Product) => {
+    if (!user) return;
+    const { error } = await supabase.from("cart_items").upsert({
+      user_id: user.id,
+      product_id: product.id,
+      quantity: product.moq,
+    }, { onConflict: "user_id,product_id" });
+    if (error) {
+      toast({ title: "Failed to add to cart", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Added to cart! 🛒", description: `${product.name} (${product.moq} pcs)` });
+    }
+  };
+
+  const requestSample = async (product: Product) => {
+    if (!user) return;
+    const { error } = await supabase.from("sample_requests").insert({
+      user_id: user.id,
+      product_id: product.id,
+      product_name: product.name,
+    });
+    if (error) {
+      if (error.message.includes("duplicate")) {
+        toast({ title: "Sample already requested for this product" });
+      } else {
+        toast({ title: "Failed to request sample", description: error.message, variant: "destructive" });
+      }
+    } else {
+      toast({ title: "Sample requested! 🧪", description: `We'll process your request for ${product.name} shortly.` });
+    }
+  };
+
   return (
     <div>
       {/* Header */}
