@@ -78,7 +78,7 @@ export default function AdvisorOnboarding({ onComplete }: Props) {
           </div>
           <div className="mb-3 flex items-center gap-2 text-sm font-medium text-foreground">
             <Store className="h-4 w-4 text-primary" />
-            {language === "hi" ? "बिज़नेस कैसा है?" : "Business kaisa hai?"}
+            {language === "hi" ? "आपका बिज़नेस कैसा है?" : "Aapka business kaisa hai?"}
           </div>
           <div className="flex flex-col gap-2">
             {BUSINESS_TYPES.map((bt) => (
