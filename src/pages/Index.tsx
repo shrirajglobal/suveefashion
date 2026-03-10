@@ -58,6 +58,20 @@ interface YouTubeVideo {
   thumbnail: string;
 }
 
+interface BlogPostPreview {
+  id: string;
+  title: string;
+  title_hi: string | null;
+  title_bn: string | null;
+  slug: string;
+  excerpt: string | null;
+  excerpt_hi: string | null;
+  excerpt_bn: string | null;
+  category: string | null;
+  published_at: string | null;
+  cover_image_url: string | null;
+}
+
 function YouTubeCard({ video }: { video: YouTubeVideo }) {
   const [playing, setPlaying] = useState(false);
 
