@@ -1,25 +1,22 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { UserPlus, Eye, EyeOff, CheckCircle, Shield, Truck, Tag } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { UserPlus, Eye, EyeOff, CheckCircle, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 
-const benefits = [
-  { icon: Tag, text: "Unlock wholesale prices & bulk discounts" },
-  { icon: Shield, text: "GST-compliant invoices for your business" },
-  { icon: Truck, text: "Priority dispatch & free shipping on large orders" },
-  { icon: CheckCircle, text: "Access 850+ exclusive kurti designs" },
-];
+const REFERRAL_OPTIONS = ["YouTube", "Facebook", "WhatsApp", "Friends", "Others"];
 
 export default function Register() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -38,23 +35,29 @@ export default function Register() {
 
   const update = (key: string, value: string) => setForm((p) => ({ ...p, [key]: value }));
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { email, password, businessName, city, contactPerson, phone, referralSource } = form;
-    if (!email || !password || !businessName || !city || !contactPerson || !phone || !referralSource) {
-      toast({ title: "Please fill all required fields", variant: "destructive" });
+  const isStep1Valid = form.email.includes("@") && form.password.length >= 6;
+  const isStep2Valid = !!form.businessName && !!form.contactPerson && !!form.phone && !!form.city && !!form.referralSource;
+
+  const handleNext = () => {
+    if (!isStep1Valid) {
+      toast({ title: "Please fill email and password correctly", variant: "destructive" });
       return;
     }
-    if (password.length < 6) {
-      toast({ title: "Password must be at least 6 characters", variant: "destructive" });
+    setStep(2);
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isStep2Valid) {
+      toast({ title: "Please fill all required fields", variant: "destructive" });
       return;
     }
 
     setLoading(true);
 
     const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
+      email: form.email.trim(),
+      password: form.password,
       options: { emailRedirectTo: window.location.origin },
     });
 
@@ -71,185 +74,188 @@ export default function Register() {
     }
 
     const referral = form.referralSource === "Others" ? (form.referralOther.trim() || "Others") : form.referralSource;
-    const { error: profileError } = await supabase.from("buyer_profiles").insert({
-      user_id: authData.user.id,
-      business_name: form.businessName.trim(),
-      gst_number: form.gstNumber.trim() || null,
-      city: form.city.trim(),
-      state: form.state.trim(),
-      contact_person: form.contactPerson.trim(),
-      phone: form.phone.trim(),
-      email: email.trim(),
-      business_type: form.businessType,
-      referral_source: referral,
+
+    // Call edge function to insert profile (bypasses RLS)
+    const { error: fnError } = await supabase.functions.invoke("register-buyer", {
+      body: {
+        user_id: authData.user.id,
+        business_name: form.businessName.trim(),
+        gst_number: form.gstNumber.trim() || null,
+        city: form.city.trim(),
+        state: form.state.trim(),
+        contact_person: form.contactPerson.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        business_type: form.businessType,
+        referral_source: referral,
+      },
     });
 
     setLoading(false);
 
-    if (profileError) {
-      toast({ title: "Profile creation failed", description: profileError.message, variant: "destructive" });
+    if (fnError) {
+      toast({ title: "Profile creation failed", description: fnError.message, variant: "destructive" });
       return;
     }
 
     toast({
       title: "Registration successful! 🎉",
-      description: "Please check your email to verify your account. Our team will review and approve your buyer access within 24-48 hours.",
+      description: "Please check your email to verify your account. Our team will approve your buyer access within 24-48 hours.",
     });
     navigate("/login");
   };
 
   return (
-    <div className="py-12">
-      <div className="container grid items-start gap-10 lg:grid-cols-5">
-        {/* Benefits sidebar */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="hidden lg:col-span-2 lg:block"
-        >
-          <h2 className="font-display text-2xl font-bold text-foreground">Why register with Suvee?</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Join 3700+ retailers across India who trust Suvee Fashion for their kurti sourcing.</p>
-          <div className="mt-8 space-y-5">
-            {benefits.map(({ icon: Icon, text }, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 + i * 0.1 }}
-                className="flex items-start gap-3"
-              >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent">
-                  <Icon className="h-4 w-4 text-primary" />
-                </div>
-                <p className="text-sm font-medium text-foreground">{text}</p>
-              </motion.div>
-            ))}
-          </div>
-          <div className="mt-10 rounded-xl bg-accent p-5">
-            <p className="text-sm font-semibold text-foreground">⏱ Takes only 2 minutes</p>
-            <p className="mt-1 text-xs text-muted-foreground">Fill the form, verify your email, and our team will approve you within 24 hours. No hidden charges.</p>
-          </div>
-        </motion.div>
-
-        {/* Form */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-3">
-          <Card className="border-0 shadow-xl">
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full gradient-maroon">
+    <div className="flex min-h-[80vh] items-center justify-center px-4 py-8">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
+        <Card className="border-0 shadow-xl">
+          <CardContent className="p-6 sm:p-8">
+            {/* Header */}
+            <div className="mb-6 text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full gradient-maroon">
                 <UserPlus className="h-6 w-6 text-white" />
               </div>
-              <CardTitle className="font-display text-2xl">{t("cta.register_button")}</CardTitle>
-              <CardDescription>
-                Free registration • No hidden charges • Approved within 24 hours
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleRegister} className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">Business Name *</label>
-                    <Input value={form.businessName} onChange={(e) => update("businessName", e.target.value)} maxLength={100} />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">Business Type *</label>
-                    <Select value={form.businessType} onValueChange={(v) => update("businessType", v)}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="retailer">Retailer</SelectItem>
-                        <SelectItem value="wholesaler">Wholesaler</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+              <h1 className="font-display text-xl font-bold text-foreground">Create Buyer Account</h1>
+              <p className="mt-1 text-xs text-muted-foreground">Free • No hidden charges • Approved in 24 hours</p>
+            </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">Contact Person *</label>
-                    <Input value={form.contactPerson} onChange={(e) => update("contactPerson", e.target.value)} maxLength={100} />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">Phone *</label>
-                    <Input value={form.phone} onChange={(e) => update("phone", e.target.value)} maxLength={15} placeholder="+91 XXXXX XXXXX" />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium">GST Number (optional)</label>
-                  <Input value={form.gstNumber} onChange={(e) => update("gstNumber", e.target.value)} maxLength={15} placeholder="e.g., 22AAAAA0000A1Z5" />
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">City *</label>
-                    <Input value={form.city} onChange={(e) => update("city", e.target.value)} maxLength={50} />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">State</label>
-                    <Input value={form.state} onChange={(e) => update("state", e.target.value)} maxLength={50} />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium">How did you hear about Suvee? *</label>
-                  <Select value={form.referralSource} onValueChange={(v) => { update("referralSource", v); if (v !== "Others") update("referralOther", ""); }}>
-                    <SelectTrigger><SelectValue placeholder="Select an option" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="YouTube">YouTube</SelectItem>
-                      <SelectItem value="Facebook">Facebook</SelectItem>
-                      <SelectItem value="WhatsApp">WhatsApp</SelectItem>
-                      <SelectItem value="Friends">Friends</SelectItem>
-                      <SelectItem value="Others">Others</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {form.referralSource === "Others" && (
-                    <Input className="mt-2" placeholder="Please specify" value={form.referralOther} onChange={(e) => update("referralOther", e.target.value)} maxLength={100} />
-                  )}
-                </div>
-
-                <hr className="my-2 border-border" />
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium">Email *</label>
-                  <Input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} maxLength={255} />
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium">Password *</label>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      value={form.password}
-                      onChange={(e) => update("password", e.target.value)}
-                      maxLength={128}
-                      placeholder="Min 6 characters"
-                    />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Creating account..." : "Create Free Buyer Account →"}
-                </Button>
-              </form>
-
-              {/* Mobile benefits */}
-              <div className="mt-6 flex flex-wrap justify-center gap-3 lg:hidden">
-                {benefits.map(({ text }, i) => (
-                  <span key={i} className="rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">✓ {text.split(" ").slice(0, 4).join(" ")}</span>
-                ))}
+            {/* Progress */}
+            <div className="mb-6">
+              <div className="mb-2 flex justify-between text-xs font-medium text-muted-foreground">
+                <span className={step >= 1 ? "text-primary" : ""}>① Account</span>
+                <span className={step >= 2 ? "text-primary" : ""}>② Business Details</span>
               </div>
+              <Progress value={step === 1 ? 50 : 100} className="h-1.5" />
+            </div>
 
-              <div className="mt-4 text-center text-sm text-muted-foreground">
-                Already have an account?{" "}
-                <Link to="/login" className="font-medium text-primary hover:underline">
-                  Sign In
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
+            <form onSubmit={handleRegister}>
+              <AnimatePresence mode="wait">
+                {step === 1 && (
+                  <motion.div key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
+                    <div>
+                      <label className="mb-1 block text-sm font-medium">Email *</label>
+                      <Input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@business.com" maxLength={255} />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-sm font-medium">Password *</label>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          value={form.password}
+                          onChange={(e) => update("password", e.target.value)}
+                          placeholder="Min 6 characters"
+                          maxLength={128}
+                        />
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      {form.password.length > 0 && form.password.length < 6 && (
+                        <p className="mt-1 text-xs text-destructive">At least 6 characters needed</p>
+                      )}
+                      {form.password.length >= 6 && (
+                        <p className="mt-1 flex items-center gap-1 text-xs text-green-600"><CheckCircle className="h-3 w-3" /> Looks good!</p>
+                      )}
+                    </div>
+                    <Button type="button" className="w-full" onClick={handleNext} disabled={!isStep1Valid}>
+                      Continue <ArrowRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </motion.div>
+                )}
+
+                {step === 2 && (
+                  <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-1 block text-sm font-medium">Business Name *</label>
+                        <Input value={form.businessName} onChange={(e) => update("businessName", e.target.value)} placeholder="Your store name" maxLength={100} />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm font-medium">Type *</label>
+                        <Select value={form.businessType} onValueChange={(v) => update("businessType", v)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="retailer">Retailer</SelectItem>
+                            <SelectItem value="wholesaler">Wholesaler</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-1 block text-sm font-medium">Contact Person *</label>
+                        <Input value={form.contactPerson} onChange={(e) => update("contactPerson", e.target.value)} placeholder="Your name" maxLength={100} />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm font-medium">Phone *</label>
+                        <Input value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+91 XXXXX XXXXX" maxLength={15} />
+                      </div>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-1 block text-sm font-medium">City *</label>
+                        <Input value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="e.g., Mumbai" maxLength={50} />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm font-medium">State</label>
+                        <Input value={form.state} onChange={(e) => update("state", e.target.value)} maxLength={50} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="mb-1 block text-sm font-medium">GST Number <span className="text-muted-foreground font-normal">(optional)</span></label>
+                      <Input value={form.gstNumber} onChange={(e) => update("gstNumber", e.target.value)} placeholder="22AAAAA0000A1Z5" maxLength={15} />
+                    </div>
+
+                    <div>
+                      <label className="mb-1 block text-sm font-medium">How did you hear about us? *</label>
+                      <Select value={form.referralSource} onValueChange={(v) => { update("referralSource", v); if (v !== "Others") update("referralOther", ""); }}>
+                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          {REFERRAL_OPTIONS.map((opt) => (
+                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {form.referralSource === "Others" && (
+                        <Input className="mt-2" placeholder="Please specify" value={form.referralOther} onChange={(e) => update("referralOther", e.target.value)} maxLength={100} />
+                      )}
+                    </div>
+
+                    <div className="flex gap-3 pt-1">
+                      <Button type="button" variant="outline" onClick={() => setStep(1)} className="flex-1">
+                        <ArrowLeft className="mr-1 h-4 w-4" /> Back
+                      </Button>
+                      <Button type="submit" className="flex-[2]" disabled={loading || !isStep2Valid}>
+                        {loading ? (
+                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Setting up...</>
+                        ) : (
+                          "Create Account →"
+                        )}
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </form>
+
+            <p className="mt-5 text-center text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link to="/login" className="font-medium text-primary hover:underline">Sign In</Link>
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Trust badges */}
+        <div className="mt-4 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
+          <span className="rounded-full bg-accent px-3 py-1">✓ 850+ designs</span>
+          <span className="rounded-full bg-accent px-3 py-1">✓ GST invoices</span>
+          <span className="rounded-full bg-accent px-3 py-1">✓ Free shipping</span>
+          <span className="rounded-full bg-accent px-3 py-1">✓ 3700+ retailers</span>
+        </div>
+      </motion.div>
     </div>
   );
 }
