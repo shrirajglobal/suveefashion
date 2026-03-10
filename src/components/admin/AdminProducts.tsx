@@ -279,10 +279,19 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
         </Select>
         <p className="mt-1 rounded bg-accent px-2 py-1 text-[10px] text-muted-foreground">
           {form.bundle_type === "combo" && "Combo: 3-4 pcs of SAME colour but DIFFERENT sizes in one set. Select which sizes are included below."}
-          {form.bundle_type === "colour_chart" && "Colour Chart: Each set has 3-4 DIFFERENT colours of the SAME size. Customer picks one or more sizes. Select available sizes below."}
+          {form.bundle_type === "colour_chart" && "Colour Chart: Each set has DIFFERENT colours of the SAME size. First select colours, then pick available sizes."}
           {form.bundle_type === "assorted" && "Assorted: Mixed prints, colours and sizes in one set. Flexible combinations. Describe the assortment below."}
         </p>
       </div>
+
+      {/* Colour picker for colour_chart — shown FIRST before sizes */}
+      {form.bundle_type === "colour_chart" && (
+        <ColourPicker
+          selected={form.available_colours}
+          onChange={(colours) => setForm({ ...form, available_colours: colours })}
+          max={form.pcs_per_set}
+        />
+      )}
 
       {/* Size picker for combo & colour_chart */}
       {(form.bundle_type === "combo" || form.bundle_type === "colour_chart") && (
