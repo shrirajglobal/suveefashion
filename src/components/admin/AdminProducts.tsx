@@ -221,7 +221,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
   if (loading) return <p className="py-8 text-center text-muted-foreground">Loading products...</p>;
 
   // Shared form fields component
-  const ProductFormFields = () => (
+  const formFieldsJSX = (
     <div className="space-y-3">
       <div>
         <label className="mb-1 block text-xs font-medium">Product Name *</label>
