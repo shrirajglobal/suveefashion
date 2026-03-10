@@ -170,8 +170,18 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
   };
 
   const handleBulkAdd = async () => {
+    const resolvedFabric = getResolvedFabric();
     if (bulkImages.length === 0) { toast({ title: "Please select images", variant: "destructive" }); return; }
     if (!form.name.trim()) { toast({ title: "Product name is required", variant: "destructive" }); return; }
+    if (!resolvedFabric) { toast({ title: "Fabric is required", variant: "destructive" }); return; }
+    if (!form.category_id) { toast({ title: "Category is required", variant: "destructive" }); return; }
+    if (!form.pcs_per_set || form.pcs_per_set < 1) { toast({ title: "Pcs per set is required", variant: "destructive" }); return; }
+    if (!form.wsp) { toast({ title: "WSP is required", variant: "destructive" }); return; }
+    if (!form.bundle_type) { toast({ title: "Bundle type is required", variant: "destructive" }); return; }
+    if (!form.sizes.trim()) { toast({ title: "Sizes display text is required", variant: "destructive" }); return; }
+    if (form.bundle_type === "colour_chart" && form.available_colours.length !== form.pcs_per_set) {
+      toast({ title: `Please select exactly ${form.pcs_per_set} colours for the colour chart`, variant: "destructive" }); return;
+    }
     setBulkUploading(true);
 
     const resolvedFabric = getResolvedFabric();
