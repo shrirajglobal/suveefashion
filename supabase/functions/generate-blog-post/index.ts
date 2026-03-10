@@ -364,7 +364,7 @@ Clean editorial blog cover composition, 1200x720 dimensions.`;
       throw new Error(`Failed to save blog post: ${insertError.message}`);
     }
 
-    // Step 6: Auto-post to Buffer (if configured)
+    // Step 7: Auto-post to Buffer (if configured)
     let bufferPosted = false;
     const BUFFER_ACCESS_TOKEN = Deno.env.get("BUFFER_ACCESS_TOKEN");
     if (BUFFER_ACCESS_TOKEN) {
