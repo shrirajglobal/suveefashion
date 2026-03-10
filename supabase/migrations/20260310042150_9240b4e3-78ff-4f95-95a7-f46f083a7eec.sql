@@ -1,0 +1,1 @@
+ALTER TABLE public.buyer_profiles ADD COLUMN referral_source text;

@@ -25,6 +25,7 @@ export type Database = {
           gst_number: string | null
           id: string
           phone: string
+          referral_source: string | null
           state: string
           status: Database["public"]["Enums"]["buyer_status"]
           updated_at: string
@@ -40,6 +41,7 @@ export type Database = {
           gst_number?: string | null
           id?: string
           phone: string
+          referral_source?: string | null
           state?: string
           status?: Database["public"]["Enums"]["buyer_status"]
           updated_at?: string
@@ -55,6 +57,7 @@ export type Database = {
           gst_number?: string | null
           id?: string
           phone?: string
+          referral_source?: string | null
           state?: string
           status?: Database["public"]["Enums"]["buyer_status"]
           updated_at?: string
