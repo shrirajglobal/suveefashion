@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          category: string | null
+          content: string
+          content_bn: string | null
+          content_hi: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          excerpt: string | null
+          excerpt_bn: string | null
+          excerpt_hi: string | null
+          id: string
+          keywords: string[] | null
+          meta_description: string | null
+          published_at: string | null
+          slug: string
+          social_caption: string | null
+          social_caption_hi: string | null
+          status: string | null
+          title: string
+          title_bn: string | null
+          title_hi: string | null
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          content_bn?: string | null
+          content_hi?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          excerpt_bn?: string | null
+          excerpt_hi?: string | null
+          id?: string
+          keywords?: string[] | null
+          meta_description?: string | null
+          published_at?: string | null
+          slug: string
+          social_caption?: string | null
+          social_caption_hi?: string | null
+          status?: string | null
+          title: string
+          title_bn?: string | null
+          title_hi?: string | null
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          content_bn?: string | null
+          content_hi?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          excerpt_bn?: string | null
+          excerpt_hi?: string | null
+          id?: string
+          keywords?: string[] | null
+          meta_description?: string | null
+          published_at?: string | null
+          slug?: string
+          social_caption?: string | null
+          social_caption_hi?: string | null
+          status?: string | null
+          title?: string
+          title_bn?: string | null
+          title_hi?: string | null
+        }
+        Relationships: []
+      }
       buyer_profiles: {
         Row: {
           business_name: string
