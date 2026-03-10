@@ -466,7 +466,9 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
                 <p className="text-xs text-muted-foreground">
                   {p.categories?.name || "Uncategorized"} · {p.fabric || "N/A"} · {p.pcs_per_set} pcs/set · WSP: ₹{p.wsp ?? "N/A"}
                 </p>
-                <p className="text-[10px] text-muted-foreground capitalize">{(p.bundle_type || "combo").replace("_", " ")}</p>
+                <p className="text-[10px] text-muted-foreground capitalize">{(p.bundle_type || "combo").replace("_", " ")}
+                  {p.bundle_type === "colour_chart" && p.available_colours?.length > 0 && ` · ${p.available_colours.join(", ")}`}
+                </p>
               </div>
               <div className="flex gap-1 shrink-0">
                 <Button variant="ghost" size="icon" onClick={() => openEdit(p)}><Edit className="h-4 w-4" /></Button>
