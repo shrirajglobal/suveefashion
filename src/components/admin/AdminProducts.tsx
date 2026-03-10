@@ -88,6 +88,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       bundle_type: p.bundle_type || "combo",
       available_sizes: p.available_sizes || [],
       combo_description: p.combo_description || "",
+      available_colours: p.available_colours || [],
       category_id: p.category_id || "", image_url: p.image_url || "",
       is_featured: p.is_featured, is_new_arrival: p.is_new_arrival,
     });
