@@ -31,7 +31,7 @@ const zones = [
 ];
 
 const policies = [
-  { icon: Package, title: { en: "Minimum Order", hi: "न्यूनतम ऑर्डर", bn: "সর্বনিম্ন অর্ডার" }, desc: { en: "MOQ varies per product (typically 50 pcs). Check product details.", hi: "MOQ प्रोडक्ट के अनुसार अलग है (आमतौर पर 50 पीस)। प्रोडक्ट डिटेल्स देखें।", bn: "MOQ পণ্য অনুযায়ী পৃথক (সাধারণত ৫০ পিস)। পণ্যের বিবরণ দেখুন।" } },
+  { icon: Package, title: { en: "Minimum Order", hi: "न्यूनतम ऑर्डर", bn: "সর্বনিম্ন অর্ডার" }, desc: { en: "No minimum order limit. Buy even 1 bundle. We don't sell single pieces.", hi: "कोई न्यूनतम ऑर्डर सीमा नहीं। 1 बंडल भी खरीद सकते हैं। हम सिंगल पीस नहीं बेचते।", bn: "কোনো ন্যূনতম অর্ডার সীমা নেই। ১টি বান্ডেলও কিনতে পারেন। আমরা একক পিস বিক্রি করি না।" } },
   { icon: Truck, title: { en: "Shipping Partners", hi: "शिपिंग पार्टनर", bn: "শিপিং পার্টনার" }, desc: { en: "We ship via DTDC, Delhivery, and professional transport services for bulk orders.", hi: "हम DTDC, Delhivery और बल्क ऑर्डर्स के लिए प्रोफेशनल ट्रांसपोर्ट से शिप करते हैं।", bn: "আমরা DTDC, Delhivery এবং বাল্ক অর্ডারের জন্য পেশাদার পরিবহন সেবা ব্যবহার করি।" } },
   { icon: Clock, title: { en: "Order Processing", hi: "ऑर्डर प्रोसेसिंग", bn: "অর্ডার প্রসেসিং" }, desc: { en: "Orders are processed within 24-48 hours. Custom/bulk orders may take 5-7 days.", hi: "ऑर्डर 24-48 घंटों में प्रोसेस होते हैं। कस्टम/बल्क ऑर्डर में 5-7 दिन लग सकते हैं।", bn: "অর্ডার ২৪-৪৮ ঘণ্টার মধ্যে প্রসেস করা হয়। কাস্টম/বাল্ক অর্ডারে ৫-৭ দিন লাগতে পারে।" } },
 ];
