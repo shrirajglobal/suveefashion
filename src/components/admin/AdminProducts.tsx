@@ -184,7 +184,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
     }
     setBulkUploading(true);
 
-    const resolvedFabric = getResolvedFabric();
+    
     const products: any[] = [];
 
     for (let i = 0; i < bulkImages.length; i++) {
