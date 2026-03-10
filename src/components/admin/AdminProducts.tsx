@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Upload, X, Image as ImageIcon, Layers } from "lucide-react";
+import ColourPicker from "@/components/admin/ColourPicker";
 import casualImg from "@/assets/category-casual.jpg";
 
 const FABRICS = [
