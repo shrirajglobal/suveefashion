@@ -260,29 +260,66 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Collections — 2-col on mobile */}
+      {/* Collections — dynamic from DB with carousel */}
       <section className="bg-card py-10 sm:py-16 md:py-24">
         <div className="container">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center">
             <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">{t("categories.title")}</h2>
             <p className="mt-1.5 text-sm text-muted-foreground sm:mt-2">Browse our full digital catalogue with 850+ designs</p>
           </motion.div>
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-6 lg:grid-cols-4">
-            {categories.map(({ key, img }, i) => (
-              <motion.div key={key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <Link to="/catalogues">
-                  <Card className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-shadow">
-                    <div className="relative aspect-[3/4] sm:aspect-square overflow-hidden">
-                      <img src={img} alt={t(`categories.${key}` as any)} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
-                    </div>
-                    <CardContent className="p-2.5 text-center sm:p-4">
-                      <h3 className="font-display text-sm font-semibold text-foreground sm:text-lg">{t(`categories.${key}` as any)}</h3>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+
+          {dbCategories.length > 0 ? (
+            <div className="relative mt-6 sm:mt-10">
+              <div className="overflow-hidden" ref={catEmblaRef}>
+                <div className="flex gap-3 sm:gap-4">
+                  {dbCategories.map((cat, i) => (
+                    <motion.div
+                      key={cat.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.05 }}
+                      className="min-w-0 flex-[0_0_45%] sm:flex-[0_0_30%] lg:flex-[0_0_23%]"
+                    >
+                      <Link to={`/catalogues?category=${cat.slug}`}>
+                        <Card className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-shadow">
+                          <div className="relative aspect-[3/4] sm:aspect-square overflow-hidden bg-muted">
+                            {cat.image_url ? (
+                              <img src={cat.image_url} alt={cat.name} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center text-muted-foreground text-xs">No Image</div>
+                            )}
+                          </div>
+                          <CardContent className="p-2.5 text-center sm:p-4">
+                            <h3 className="font-display text-sm font-semibold text-foreground sm:text-lg">{cat.name}</h3>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+              {/* Slider nav buttons */}
+              <button
+                onClick={() => catApi?.scrollPrev()}
+                className="absolute -left-2 top-1/2 z-10 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-card shadow-lg border border-border text-foreground hover:bg-accent transition-colors disabled:opacity-30 sm:-left-4 sm:h-10 sm:w-10"
+                disabled={!canScrollCatPrev}
+                aria-label="Previous categories"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => catApi?.scrollNext()}
+                className="absolute -right-2 top-1/2 z-10 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-card shadow-lg border border-border text-foreground hover:bg-accent transition-colors disabled:opacity-30 sm:-right-4 sm:h-10 sm:w-10"
+                disabled={!canScrollCatNext}
+                aria-label="Next categories"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+          ) : (
+            <div className="mt-6 text-center text-sm text-muted-foreground">Loading categories...</div>
+          )}
         </div>
       </section>
 
