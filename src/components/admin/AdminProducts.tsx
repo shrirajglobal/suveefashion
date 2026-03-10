@@ -466,6 +466,59 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
               </div>
 
+              {/* Additional images for colour chart */}
+              {form.bundle_type === "colour_chart" && (
+                <div>
+                  <label className="mb-1 block text-xs font-medium">
+                    Colour Variant Photos ({1 + form.additional_images.length} / 8 total)
+                  </label>
+                  <p className="mb-2 text-[10px] text-muted-foreground">Upload up to 7 additional colour variant images. The main image above counts as 1.</p>
+                  <div className="flex flex-wrap gap-2">
+                    {form.additional_images.map((url, i) => (
+                      <div key={i} className="relative">
+                        <img src={url} alt={`Variant ${i + 1}`} className="h-20 w-16 rounded-md object-cover border border-border" />
+                        <button
+                          className="absolute -right-1 -top-1 rounded-full bg-destructive p-0.5 text-destructive-foreground"
+                          onClick={() => setForm(f => ({ ...f, additional_images: f.additional_images.filter((_, j) => j !== i) }))}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                    {form.additional_images.length < 7 && (
+                      <div
+                        className="flex h-20 w-16 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-input transition-colors hover:border-primary/50"
+                        onClick={() => additionalFileInputRef.current?.click()}
+                      >
+                        {uploadingAdditional ? (
+                          <p className="text-[9px] text-muted-foreground">Uploading...</p>
+                        ) : (
+                          <>
+                            <Plus className="h-4 w-4 text-muted-foreground" />
+                            <p className="text-[9px] text-muted-foreground">Add</p>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    ref={additionalFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setUploadingAdditional(true);
+                      const url = await uploadImage(file);
+                      if (url) setForm(f => ({ ...f, additional_images: [...f.additional_images, url] }));
+                      setUploadingAdditional(false);
+                      if (additionalFileInputRef.current) additionalFileInputRef.current.value = "";
+                    }}
+                  />
+                </div>
+              )}
+
               {formFieldsJSX}
 
               <Button onClick={saveProduct} className="w-full">{editingId ? "Update Product" : "Create Product"}</Button>

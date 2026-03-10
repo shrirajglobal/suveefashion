@@ -195,10 +195,8 @@ function ProductDetailDialog({
   return (
     <Dialog open={!!product} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg p-0">
-        {/* Full-width image */}
-        {product.image_url && (
-          <img src={product.image_url} alt={product.name} className="w-full object-cover aspect-square sm:rounded-t-lg" />
-        )}
+        {/* Image gallery */}
+        <ProductImageGallery product={product} />
 
         <div className="p-5 space-y-4">
           {/* Header row with share */}
