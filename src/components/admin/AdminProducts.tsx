@@ -17,11 +17,11 @@ interface ProductForm {
   description: string;
   fabric: string;
   sizes: string;
-  moq: number;
+  pcs_per_set: number;
   wsp: number | null;
-  bulk_price_50: number | null;
-  bulk_price_100: number | null;
-  bulk_price_500: number | null;
+  bundle_type: string;
+  available_sizes: string[];
+  combo_description: string;
   category_id: string;
   image_url: string;
   is_featured: boolean;
@@ -29,8 +29,8 @@ interface ProductForm {
 }
 
 const emptyForm: ProductForm = {
-  name: "", description: "", fabric: "", sizes: "S-XXL", moq: 50,
-  wsp: null, bulk_price_50: null, bulk_price_100: null, bulk_price_500: null,
+  name: "", description: "", fabric: "", sizes: "S-XXL", pcs_per_set: 4,
+  wsp: null, bundle_type: "combo", available_sizes: [], combo_description: "",
   category_id: "", image_url: "", is_featured: false, is_new_arrival: false,
 };
 
@@ -59,8 +59,10 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
     setEditingId(p.id);
     setForm({
       name: p.name, description: p.description || "", fabric: p.fabric || "",
-      sizes: p.sizes, moq: p.moq, wsp: p.wsp, bulk_price_50: p.bulk_price_50,
-      bulk_price_100: p.bulk_price_100, bulk_price_500: p.bulk_price_500,
+      sizes: p.sizes, pcs_per_set: p.pcs_per_set, wsp: p.wsp,
+      bundle_type: p.bundle_type || "combo",
+      available_sizes: p.available_sizes || [],
+      combo_description: p.combo_description || "",
       category_id: p.category_id || "", image_url: p.image_url || "",
       is_featured: p.is_featured, is_new_arrival: p.is_new_arrival,
     });
@@ -71,11 +73,9 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
     const payload = {
       ...form,
       wsp: form.wsp || null,
-      bulk_price_50: form.bulk_price_50 || null,
-      bulk_price_100: form.bulk_price_100 || null,
-      bulk_price_500: form.bulk_price_500 || null,
       category_id: form.category_id || null,
       image_url: form.image_url || null,
+      combo_description: form.combo_description || null,
     };
 
     const { error } = editingId
@@ -156,11 +156,24 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
                 <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {numField("MOQ", "moq")}
+                {numField("Pcs per Set/Bundle", "pcs_per_set")}
                 {numField("WSP (₹)", "wsp")}
-                {numField("Price 50+ pcs (₹)", "bulk_price_50")}
-                {numField("Price 100+ pcs (₹)", "bulk_price_100")}
-                {numField("Price 500+ pcs (₹)", "bulk_price_500")}
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium">Bundle Type</label>
+                <Select value={form.bundle_type} onValueChange={(v) => setForm({ ...form, bundle_type: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="combo">Combo</SelectItem>
+                    <SelectItem value="colour_chart">Colour Chart</SelectItem>
+                    <SelectItem value="assorted">Assorted</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="mt-1 text-[10px] text-muted-foreground">
+                  {form.bundle_type === "combo" && "Same colour, different sizes in one set"}
+                  {form.bundle_type === "colour_chart" && "Different colours, same size per set"}
+                  {form.bundle_type === "assorted" && "Mixed prints/colours/sizes"}
+                </p>
               </div>
               <div className="flex items-center gap-6">
                 <label className="flex items-center gap-2 text-sm">
@@ -190,7 +203,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
                   {p.is_new_arrival && <Badge variant="outline">New</Badge>}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {p.categories?.name || "Uncategorized"} · {p.fabric || "N/A"} · MOQ: {p.moq} · WSP: ₹{p.wsp ?? "N/A"}
+                  {p.categories?.name || "Uncategorized"} · {p.fabric || "N/A"} · {p.pcs_per_set} pcs/set · WSP: ₹{p.wsp ?? "N/A"}
                 </p>
               </div>
               <div className="flex gap-1">
