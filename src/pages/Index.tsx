@@ -114,6 +114,30 @@ export default function Index() {
   }, []);
 
   useEffect(() => {
+    supabase
+      .from("categories")
+      .select("*")
+      .order("display_order", { ascending: true })
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setDbCategories(data as Category[]);
+        }
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!catApi) return;
+    const onSelect = () => {
+      setCanScrollCatPrev(catApi.canScrollPrev());
+      setCanScrollCatNext(catApi.canScrollNext());
+    };
+    catApi.on("select", onSelect);
+    catApi.on("reInit", onSelect);
+    onSelect();
+    return () => { catApi.off("select", onSelect); catApi.off("reInit", onSelect); };
+  }, [catApi]);
+
+  useEffect(() => {
     if (!heroApi) return;
     const onSelect = () => setActiveSlide(heroApi.selectedScrollSnap());
     heroApi.on("select", onSelect);
