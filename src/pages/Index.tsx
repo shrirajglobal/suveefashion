@@ -180,7 +180,7 @@ export default function Index() {
 
               {/* Trust badges — compact on mobile */}
               <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-white/60 sm:mt-6 sm:gap-4 sm:text-xs sm:text-white/70">
-                <span className="flex items-center gap-1"><CheckCircle className="h-3 w-3" /> MOQ 50 pcs</span>
+                <span className="flex items-center gap-1"><CheckCircle className="h-3 w-3" /> No minimum limit</span>
                 <span className="flex items-center gap-1"><ShieldCheck className="h-3 w-3" /> GST Invoices</span>
                 <span className="flex items-center gap-1"><Truck className="h-3 w-3" /> Pan-India</span>
               </div>
