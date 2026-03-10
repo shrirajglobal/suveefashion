@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -12,7 +12,10 @@ import { Eye, EyeOff, LogIn, Tag, ShoppingBag } from "lucide-react";
 export default function Login() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+  const prefillEmail = (location.state as any)?.email || "";
+
+  const [email, setEmail] = useState(prefillEmail);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -24,15 +27,51 @@ export default function Login() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setLoading(false);
 
     if (error) {
-      toast({ title: "Login failed", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Welcome back! 🎉" });
-      navigate("/catalogues");
+      // Better error messages
+      if (error.message.includes("Email not confirmed")) {
+        toast({
+          title: "Email not verified",
+          description: "Please check your inbox and click the verification link before signing in.",
+          variant: "destructive",
+        });
+      } else if (error.message.includes("Invalid login credentials")) {
+        toast({
+          title: "Invalid credentials",
+          description: "Email or password is incorrect. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({ title: "Login failed", description: error.message, variant: "destructive" });
+      }
+      return;
     }
+
+    // Check if buyer profile exists
+    const userId = data.user?.id;
+    if (userId) {
+      const { data: profile } = await supabase
+        .from("buyer_profiles")
+        .select("id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (!profile) {
+        // User exists but no profile — send to complete profile
+        toast({
+          title: "Almost there!",
+          description: "Please complete your business profile to get started.",
+        });
+        navigate("/register");
+        return;
+      }
+    }
+
+    toast({ title: "Welcome back! 🎉" });
+    navigate("/catalogues");
   };
 
   return (

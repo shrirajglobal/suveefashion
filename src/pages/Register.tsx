@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +17,13 @@ const REFERRAL_OPTIONS = ["YouTube", "Facebook", "WhatsApp", "Friends", "Others"
 export default function Register() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
+  const { user, buyerStatus, loading: authLoading } = useAuth();
+
+  // If user is logged in AND already has a profile, redirect away
+  const isProfileComplete = user && buyerStatus !== null;
+  const isCompleteProfileMode = user && buyerStatus === null;
+
+  const [step, setStep] = useState(isCompleteProfileMode ? 2 : 1);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -32,6 +39,20 @@ export default function Register() {
     referralSource: "",
     referralOther: "",
   });
+
+  // Redirect if already fully onboarded
+  useEffect(() => {
+    if (!authLoading && isProfileComplete) {
+      navigate("/catalogues", { replace: true });
+    }
+  }, [authLoading, isProfileComplete, navigate]);
+
+  // If logged in but no profile, jump to step 2
+  useEffect(() => {
+    if (!authLoading && isCompleteProfileMode) {
+      setStep(2);
+    }
+  }, [authLoading, isCompleteProfileMode]);
 
   const update = (key: string, value: string) => setForm((p) => ({ ...p, [key]: value }));
 
@@ -55,22 +76,47 @@ export default function Register() {
 
     setLoading(true);
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: form.email.trim(),
-      password: form.password,
-      options: { emailRedirectTo: window.location.origin },
-    });
+    let userId: string;
 
-    if (authError) {
-      setLoading(false);
-      toast({ title: "Registration failed", description: authError.message, variant: "destructive" });
-      return;
-    }
+    if (isCompleteProfileMode && user) {
+      // Already logged in, just need to create profile
+      userId = user.id;
+    } else {
+      // New signup flow
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: form.email.trim(),
+        password: form.password,
+        options: { emailRedirectTo: window.location.origin },
+      });
 
-    if (!authData.user) {
-      setLoading(false);
-      toast({ title: "Registration failed", description: "Could not create account", variant: "destructive" });
-      return;
+      if (authError) {
+        setLoading(false);
+        toast({ title: "Registration failed", description: authError.message, variant: "destructive" });
+        return;
+      }
+
+      if (!authData.user) {
+        setLoading(false);
+        toast({ title: "Registration failed", description: "Could not create account", variant: "destructive" });
+        return;
+      }
+
+      // Detect repeated signup: user exists but identities array is empty
+      const isRepeatedSignup =
+        authData.user.identities && authData.user.identities.length === 0;
+
+      if (isRepeatedSignup) {
+        setLoading(false);
+        toast({
+          title: "Account already exists",
+          description: "An account with this email already exists. Please sign in instead.",
+          variant: "destructive",
+        });
+        navigate("/login", { state: { email: form.email.trim() } });
+        return;
+      }
+
+      userId = authData.user.id;
     }
 
     const referral = form.referralSource === "Others" ? (form.referralOther.trim() || "Others") : form.referralSource;
@@ -78,14 +124,14 @@ export default function Register() {
     // Call edge function to insert profile (bypasses RLS)
     const { error: fnError } = await supabase.functions.invoke("register-buyer", {
       body: {
-        user_id: authData.user.id,
+        user_id: userId,
         business_name: form.businessName.trim(),
         gst_number: form.gstNumber.trim() || null,
         city: form.city.trim(),
         state: form.state.trim(),
         contact_person: form.contactPerson.trim(),
         phone: form.phone.trim(),
-        email: form.email.trim(),
+        email: isCompleteProfileMode ? user!.email : form.email.trim(),
         business_type: form.businessType,
         referral_source: referral,
       },
@@ -98,12 +144,22 @@ export default function Register() {
       return;
     }
 
-    toast({
-      title: "Registration successful! 🎉",
-      description: "Please check your email to verify your account. Our team will approve your buyer access within 24-48 hours.",
-    });
-    navigate("/login");
+    if (isCompleteProfileMode) {
+      toast({
+        title: "Profile completed! 🎉",
+        description: "Your buyer access will be approved within 24-48 hours.",
+      });
+      navigate("/catalogues");
+    } else {
+      toast({
+        title: "Registration successful! 🎉",
+        description: "Please check your email to verify your account. Our team will approve your buyer access within 24-48 hours.",
+      });
+      navigate("/login");
+    }
   };
+
+  if (authLoading) return null;
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-8">
@@ -115,22 +171,30 @@ export default function Register() {
               <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full gradient-maroon">
                 <UserPlus className="h-6 w-6 text-white" />
               </div>
-              <h1 className="font-display text-xl font-bold text-foreground">Create Buyer Account</h1>
-              <p className="mt-1 text-xs text-muted-foreground">Free • No hidden charges • Approved in 24 hours</p>
+              <h1 className="font-display text-xl font-bold text-foreground">
+                {isCompleteProfileMode ? "Complete Your Profile" : "Create Buyer Account"}
+              </h1>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {isCompleteProfileMode
+                  ? "Just a few details to get started"
+                  : "Free • No hidden charges • Approved in 24 hours"}
+              </p>
             </div>
 
-            {/* Progress */}
-            <div className="mb-6">
-              <div className="mb-2 flex justify-between text-xs font-medium text-muted-foreground">
-                <span className={step >= 1 ? "text-primary" : ""}>① Account</span>
-                <span className={step >= 2 ? "text-primary" : ""}>② Business Details</span>
+            {/* Progress - only show both steps for new signups */}
+            {!isCompleteProfileMode && (
+              <div className="mb-6">
+                <div className="mb-2 flex justify-between text-xs font-medium text-muted-foreground">
+                  <span className={step >= 1 ? "text-primary" : ""}>① Account</span>
+                  <span className={step >= 2 ? "text-primary" : ""}>② Business Details</span>
+                </div>
+                <Progress value={step === 1 ? 50 : 100} className="h-1.5" />
               </div>
-              <Progress value={step === 1 ? 50 : 100} className="h-1.5" />
-            </div>
+            )}
 
             <form onSubmit={handleRegister}>
               <AnimatePresence mode="wait">
-                {step === 1 && (
+                {step === 1 && !isCompleteProfileMode && (
                   <motion.div key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                     <div>
                       <label className="mb-1 block text-sm font-medium">Email *</label>
@@ -225,12 +289,16 @@ export default function Register() {
                     </div>
 
                     <div className="flex gap-3 pt-1">
-                      <Button type="button" variant="outline" onClick={() => setStep(1)} className="flex-1">
-                        <ArrowLeft className="mr-1 h-4 w-4" /> Back
-                      </Button>
-                      <Button type="submit" className="flex-[2]" disabled={loading || !isStep2Valid}>
+                      {!isCompleteProfileMode && (
+                        <Button type="button" variant="outline" onClick={() => setStep(1)} className="flex-1">
+                          <ArrowLeft className="mr-1 h-4 w-4" /> Back
+                        </Button>
+                      )}
+                      <Button type="submit" className={isCompleteProfileMode ? "w-full" : "flex-[2]"} disabled={loading || !isStep2Valid}>
                         {loading ? (
                           <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Setting up...</>
+                        ) : isCompleteProfileMode ? (
+                          "Complete Profile →"
                         ) : (
                           "Create Account →"
                         )}
@@ -241,10 +309,12 @@ export default function Register() {
               </AnimatePresence>
             </form>
 
-            <p className="mt-5 text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link to="/login" className="font-medium text-primary hover:underline">Sign In</Link>
-            </p>
+            {!isCompleteProfileMode && (
+              <p className="mt-5 text-center text-sm text-muted-foreground">
+                Already have an account?{" "}
+                <Link to="/login" className="font-medium text-primary hover:underline">Sign In</Link>
+              </p>
+            )}
           </CardContent>
         </Card>
 
