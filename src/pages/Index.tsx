@@ -107,6 +107,7 @@ function YouTubeCard({ video }: { video: YouTubeVideo }) {
 export default function Index() {
   const { t, language } = useLanguage();
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPostPreview[]>([]);
   const [heroSlides, setHeroSlides] = useState<string[]>(fallbackSlides);
   const [dbCategories, setDbCategories] = useState<Category[]>([]);
   const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
