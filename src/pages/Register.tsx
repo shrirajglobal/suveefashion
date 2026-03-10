@@ -187,6 +187,23 @@ export default function Register() {
                   </div>
                 </div>
 
+                <div>
+                  <label className="mb-1 block text-sm font-medium">How did you hear about Suvee? *</label>
+                  <Select value={form.referralSource} onValueChange={(v) => { update("referralSource", v); if (v !== "Others") update("referralOther", ""); }}>
+                    <SelectTrigger><SelectValue placeholder="Select an option" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="YouTube">YouTube</SelectItem>
+                      <SelectItem value="Facebook">Facebook</SelectItem>
+                      <SelectItem value="WhatsApp">WhatsApp</SelectItem>
+                      <SelectItem value="Friends">Friends</SelectItem>
+                      <SelectItem value="Others">Others</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {form.referralSource === "Others" && (
+                    <Input className="mt-2" placeholder="Please specify" value={form.referralOther} onChange={(e) => update("referralOther", e.target.value)} maxLength={100} />
+                  )}
+                </div>
+
                 <hr className="my-2 border-border" />
 
                 <div>
