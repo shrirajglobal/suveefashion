@@ -127,6 +127,9 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
 
   const saveProduct = async () => {
     if (!form.name.trim()) { toast({ title: "Product name is required", variant: "destructive" }); return; }
+    if (form.bundle_type === "colour_chart" && form.available_colours.length !== form.pcs_per_set) {
+      toast({ title: `Please select exactly ${form.pcs_per_set} colours for the colour chart`, variant: "destructive" }); return;
+    }
     const resolvedFabric = getResolvedFabric();
     const payload: any = {
       name: form.name,
