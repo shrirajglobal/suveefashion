@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote, Sparkles, ShieldCheck, Phone, CheckCircle, Play, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote, Sparkles, ShieldCheck, Phone, CheckCircle, Play, MessageCircle, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import factoryImage from "@/assets/factory.jpg";
+import SEOHead from "@/components/SEOHead";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import heroProduct1 from "@/assets/hero-product-1.jpg";
