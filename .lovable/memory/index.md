@@ -16,8 +16,10 @@
 - blog_posts: multilingual (title/content/excerpt in en/hi/bn), public SELECT, admin INSERT/UPDATE/DELETE
 - Enums: buyer_status, business_type, app_role, order_status, sample_status
 
-## Blog System (Phase 1 ✅)
-- Edge function: `supabase/functions/generate-blog-post/index.ts` — AI content gen + auto-translation
+## Blog System (Phase 1 ✅ + Phase 2 ✅)
+- Edge function: `supabase/functions/generate-blog-post/index.ts` — AI content gen + auto-translation + Buffer auto-posting
+- pg_cron: Tue/Thu/Sat at 00:30 UTC (6:00 AM IST) — `generate-blog-tue-thu-sat`
+- Buffer: Auto-queues posts to all connected Buffer profiles
 - Pages: `/blog` (listing), `/blog/:slug` (detail with JSON-LD)
 - Homepage: "Latest from Blog" section with 3 cards
 - Phase 2 TODO: pg_cron scheduling (Tue/Thu/Sat), Buffer API auto-posting
