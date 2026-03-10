@@ -339,10 +339,10 @@ export type Database = {
       }
       products: {
         Row: {
-          bulk_price_100: number | null
-          bulk_price_50: number | null
-          bulk_price_500: number | null
+          available_sizes: string[] | null
+          bundle_type: string | null
           category_id: string | null
+          combo_description: string | null
           created_at: string
           description: string | null
           fabric: string | null
@@ -350,17 +350,17 @@ export type Database = {
           image_url: string | null
           is_featured: boolean
           is_new_arrival: boolean
-          moq: number
           name: string
+          pcs_per_set: number
           sizes: string
           updated_at: string
           wsp: number | null
         }
         Insert: {
-          bulk_price_100?: number | null
-          bulk_price_50?: number | null
-          bulk_price_500?: number | null
+          available_sizes?: string[] | null
+          bundle_type?: string | null
           category_id?: string | null
+          combo_description?: string | null
           created_at?: string
           description?: string | null
           fabric?: string | null
@@ -368,17 +368,17 @@ export type Database = {
           image_url?: string | null
           is_featured?: boolean
           is_new_arrival?: boolean
-          moq?: number
           name: string
+          pcs_per_set?: number
           sizes?: string
           updated_at?: string
           wsp?: number | null
         }
         Update: {
-          bulk_price_100?: number | null
-          bulk_price_50?: number | null
-          bulk_price_500?: number | null
+          available_sizes?: string[] | null
+          bundle_type?: string | null
           category_id?: string | null
+          combo_description?: string | null
           created_at?: string
           description?: string | null
           fabric?: string | null
@@ -386,8 +386,8 @@ export type Database = {
           image_url?: string | null
           is_featured?: boolean
           is_new_arrival?: boolean
-          moq?: number
           name?: string
+          pcs_per_set?: number
           sizes?: string
           updated_at?: string
           wsp?: number | null
