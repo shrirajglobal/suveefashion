@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Search, Package, ShoppingCart, Eye, Layers, X, Share2, MessageCircle, ChevronUp } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -35,6 +35,7 @@ interface Product {
   combo_description: string | null;
   category_id: string | null;
   image_url: string | null;
+  additional_images: string[] | null;
   is_featured: boolean;
   is_new_arrival: boolean;
 }
@@ -66,6 +67,33 @@ async function shareProduct(product: Product) {
     await navigator.clipboard.writeText(url);
     toast({ title: "Link copied!", description: "Product link copied to clipboard." });
   }
+}
+
+// ─── Product Image Gallery ───
+function ProductImageGallery({ product }: { product: Product }) {
+  const allImages = [product.image_url, ...(product.additional_images || [])].filter(Boolean) as string[];
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  if (allImages.length === 0) return null;
+
+  return (
+    <div>
+      <img src={allImages[activeIdx]} alt={product.name} className="w-full object-cover aspect-square sm:rounded-t-lg" />
+      {allImages.length > 1 && (
+        <div className="flex gap-1.5 p-2 overflow-x-auto scrollbar-hide">
+          {allImages.map((url, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIdx(i)}
+              className={`shrink-0 h-14 w-12 rounded-md overflow-hidden border-2 transition-all ${i === activeIdx ? "border-primary ring-1 ring-primary" : "border-border opacity-70 hover:opacity-100"}`}
+            >
+              <img src={url} alt="" className="h-full w-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ─── Colour dots ───
@@ -194,10 +222,8 @@ function ProductDetailDialog({
   return (
     <Dialog open={!!product} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg p-0">
-        {/* Full-width image */}
-        {product.image_url && (
-          <img src={product.image_url} alt={product.name} className="w-full object-cover aspect-square sm:rounded-t-lg" />
-        )}
+        {/* Image gallery */}
+        <ProductImageGallery product={product} />
 
         <div className="p-5 space-y-4">
           {/* Header row with share */}

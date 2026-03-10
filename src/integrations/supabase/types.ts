@@ -339,6 +339,7 @@ export type Database = {
       }
       products: {
         Row: {
+          additional_images: string[] | null
           available_colours: string[] | null
           available_sizes: string[] | null
           bundle_type: string | null
@@ -358,6 +359,7 @@ export type Database = {
           wsp: number | null
         }
         Insert: {
+          additional_images?: string[] | null
           available_colours?: string[] | null
           available_sizes?: string[] | null
           bundle_type?: string | null
@@ -377,6 +379,7 @@ export type Database = {
           wsp?: number | null
         }
         Update: {
+          additional_images?: string[] | null
           available_colours?: string[] | null
           available_sizes?: string[] | null
           bundle_type?: string | null

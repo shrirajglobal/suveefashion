@@ -42,12 +42,14 @@ interface ProductForm {
   image_url: string;
   is_featured: boolean;
   is_new_arrival: boolean;
+  additional_images: string[];
 }
 
 const emptyForm: ProductForm = {
   name: "", description: "", fabric: "", sizes: "S-XXL", pcs_per_set: 4,
   wsp: null, bundle_type: "combo", available_sizes: [], combo_description: "",
   available_colours: [], category_id: "", image_url: "", is_featured: false, is_new_arrival: false,
+  additional_images: [],
 };
 
 export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
@@ -60,9 +62,11 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [fabricOther, setFabricOther] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [uploadingAdditional, setUploadingAdditional] = useState(false);
   const [bulkUploading, setBulkUploading] = useState(false);
   const [bulkImages, setBulkImages] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const additionalFileInputRef = useRef<HTMLInputElement>(null);
   const bulkFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { fetchAll(); }, []);
@@ -91,6 +95,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       available_colours: p.available_colours || [],
       category_id: p.category_id || "", image_url: p.image_url || "",
       is_featured: p.is_featured, is_new_arrival: p.is_new_arrival,
+      additional_images: p.additional_images || [],
     });
     setDialogOpen(true);
   };
@@ -153,6 +158,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       image_url: form.image_url || null,
       is_featured: form.is_featured,
       is_new_arrival: form.is_new_arrival,
+      additional_images: form.bundle_type === "colour_chart" ? form.additional_images : [],
     };
 
     const { error } = editingId
@@ -205,6 +211,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
         image_url: url,
         is_featured: form.is_featured,
         is_new_arrival: form.is_new_arrival,
+        additional_images: form.bundle_type === "colour_chart" ? form.additional_images : [],
       });
     }
 
@@ -458,6 +465,59 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
                 )}
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
               </div>
+
+              {/* Additional images for colour chart */}
+              {form.bundle_type === "colour_chart" && (
+                <div>
+                  <label className="mb-1 block text-xs font-medium">
+                    Colour Variant Photos ({1 + form.additional_images.length} / 8 total)
+                  </label>
+                  <p className="mb-2 text-[10px] text-muted-foreground">Upload up to 7 additional colour variant images. The main image above counts as 1.</p>
+                  <div className="flex flex-wrap gap-2">
+                    {form.additional_images.map((url, i) => (
+                      <div key={i} className="relative">
+                        <img src={url} alt={`Variant ${i + 1}`} className="h-20 w-16 rounded-md object-cover border border-border" />
+                        <button
+                          className="absolute -right-1 -top-1 rounded-full bg-destructive p-0.5 text-destructive-foreground"
+                          onClick={() => setForm(f => ({ ...f, additional_images: f.additional_images.filter((_, j) => j !== i) }))}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                    {form.additional_images.length < 7 && (
+                      <div
+                        className="flex h-20 w-16 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-input transition-colors hover:border-primary/50"
+                        onClick={() => additionalFileInputRef.current?.click()}
+                      >
+                        {uploadingAdditional ? (
+                          <p className="text-[9px] text-muted-foreground">Uploading...</p>
+                        ) : (
+                          <>
+                            <Plus className="h-4 w-4 text-muted-foreground" />
+                            <p className="text-[9px] text-muted-foreground">Add</p>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    ref={additionalFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setUploadingAdditional(true);
+                      const url = await uploadImage(file);
+                      if (url) setForm(f => ({ ...f, additional_images: [...f.additional_images, url] }));
+                      setUploadingAdditional(false);
+                      if (additionalFileInputRef.current) additionalFileInputRef.current.value = "";
+                    }}
+                  />
+                </div>
+              )}
 
               {formFieldsJSX}
 
