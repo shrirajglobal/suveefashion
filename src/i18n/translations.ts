@@ -27,6 +27,11 @@ export const translations = {
     hi: "दादा से पूछो",
     bn: "দাদা সে পুছো",
   },
+  "nav.blog": {
+    en: "Blog",
+    hi: "ब्लॉग",
+    bn: "ব্লগ",
+  },
   "nav.login": {
     en: "Buyer Login",
     hi: "बायर लॉगिन",

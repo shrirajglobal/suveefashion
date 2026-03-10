@@ -44,7 +44,8 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/delivery" element={<Delivery />} />
-                <Route path="*" element={<NotFound />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
