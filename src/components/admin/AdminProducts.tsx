@@ -62,9 +62,11 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [fabricOther, setFabricOther] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [uploadingAdditional, setUploadingAdditional] = useState(false);
   const [bulkUploading, setBulkUploading] = useState(false);
   const [bulkImages, setBulkImages] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const additionalFileInputRef = useRef<HTMLInputElement>(null);
   const bulkFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { fetchAll(); }, []);
