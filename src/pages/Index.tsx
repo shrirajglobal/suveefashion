@@ -174,6 +174,18 @@ export default function Index() {
     fetchVideos();
   }, []);
 
+  useEffect(() => {
+    supabase
+      .from("blog_posts")
+      .select("id, title, title_hi, title_bn, slug, excerpt, excerpt_hi, excerpt_bn, category, published_at, cover_image_url")
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .limit(3)
+      .then(({ data }) => {
+        if (data) setBlogPosts(data as BlogPostPreview[]);
+      });
+  }, []);
+
   return (
     <div className="pb-16 md:pb-0">
       {/* Hero Carousel */}
