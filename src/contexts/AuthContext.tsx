@@ -5,6 +5,7 @@ import type { User } from "@supabase/supabase-js";
 interface AuthContextType {
   user: User | null;
   buyerStatus: "pending" | "approved" | "rejected" | null;
+  discountPercent: number;
   isAdmin: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
