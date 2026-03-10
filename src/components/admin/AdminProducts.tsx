@@ -436,7 +436,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
                     <img src={form.image_url} alt="Product" className="h-32 w-28 rounded-lg object-cover" />
                     <button
                       className="absolute -right-1 -top-1 rounded-full bg-destructive p-0.5 text-destructive-foreground"
-                      onClick={() => setForm({ ...form, image_url: "" })}
+                      onClick={() => setForm(f => ({ ...f, image_url: "" }))}
                     >
                       <X className="h-3 w-3" />
                     </button>
