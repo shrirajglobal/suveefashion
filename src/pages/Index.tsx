@@ -92,8 +92,12 @@ export default function Index() {
   const { t, language } = useLanguage();
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
   const [heroSlides, setHeroSlides] = useState<string[]>(fallbackSlides);
+  const [dbCategories, setDbCategories] = useState<Category[]>([]);
   const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
   const [heroEmblaRef, heroApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: false })]);
+  const [catEmblaRef, catApi] = useEmblaCarousel({ loop: true, align: "start", slidesToScroll: 2 });
+  const [canScrollCatPrev, setCanScrollCatPrev] = useState(false);
+  const [canScrollCatNext, setCanScrollCatNext] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
