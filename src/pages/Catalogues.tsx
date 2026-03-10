@@ -35,6 +35,7 @@ interface Product {
   combo_description: string | null;
   category_id: string | null;
   image_url: string | null;
+  additional_images: string[] | null;
   is_featured: boolean;
   is_new_arrival: boolean;
 }
