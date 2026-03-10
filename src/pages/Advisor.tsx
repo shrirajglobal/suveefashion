@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, User } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -29,11 +29,49 @@ export default function Advisor() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [exchangeCount, setExchangeCount] = useState(0);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isNearBottomRef = useRef(true);
+
+  // Smart auto-scroll: only scroll if user is near bottom
+  const scrollToBottom = useCallback(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    if (isNearBottomRef.current) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const threshold = 120;
+    isNearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+  }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
+  // Mobile keyboard: adjust layout using visualViewport
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const onResize = () => {
+      const offsetFromBottom = window.innerHeight - vv.height - vv.offsetTop;
+      document.documentElement.style.setProperty("--kb-offset", `${Math.max(0, offsetFromBottom)}px`);
+    };
+
+    vv.addEventListener("resize", onResize);
+    vv.addEventListener("scroll", onResize);
+    onResize();
+
+    return () => {
+      vv.removeEventListener("resize", onResize);
+      vv.removeEventListener("scroll", onResize);
+      document.documentElement.style.setProperty("--kb-offset", "0px");
+    };
+  }, []);
 
   const handleOnboardingComplete = (ctx: UserContext) => {
     setUserContext(ctx);
@@ -42,7 +80,6 @@ export default function Advisor() {
 
   const chips = [t("advisor.chip1"), t("advisor.chip2"), t("advisor.chip3"), t("advisor.chip4")];
 
-  // Extract insights asynchronously after 4+ exchanges
   const maybeExtractInsights = async (allMessages: Message[]) => {
     const userMsgCount = allMessages.filter((m) => m.role === "user").length;
     if (userMsgCount < 2) return;
@@ -64,6 +101,9 @@ export default function Advisor() {
   const handleSend = async (text?: string) => {
     const messageText = (text || input).trim();
     if (!messageText || isLoading) return;
+
+    // Force scroll to bottom on new user message
+    isNearBottomRef.current = true;
 
     const userMsg: Message = { role: "user", content: messageText, timestamp: new Date() };
     const updatedMessages = [...messages, userMsg];
@@ -151,7 +191,6 @@ export default function Advisor() {
         }
       }
 
-      // Track exchanges and extract insights async
       const newCount = exchangeCount + 1;
       setExchangeCount(newCount);
       if (newCount >= 2) {
@@ -160,7 +199,7 @@ export default function Advisor() {
           return prev;
         });
       }
-    } catch (err: any) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: `Arre yaar, kuch technical problem aa rahi hai. Thodi der mein phir try kar ya Team Suvee ko WhatsApp kar de. 🙏`, timestamp: new Date() },
@@ -172,53 +211,65 @@ export default function Advisor() {
 
   const formatTime = (date: Date) => date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-  // Show onboarding if no context yet
   if (!userContext) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4" style={{ minHeight: "calc(100vh - 5rem)" }}>
+      <div
+        className="flex items-center justify-center px-4 overflow-y-auto"
+        style={{ height: "calc(100dvh - 4rem)" }}
+      >
         <AdvisorOnboarding onComplete={handleOnboardingComplete} />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col" style={{ height: "calc(100vh - 5rem)" }}>
+    <div
+      className="flex flex-col overflow-hidden"
+      style={{
+        height: "calc(100dvh - 4rem)",
+        paddingBottom: "var(--kb-offset, 0px)",
+      }}
+    >
       {/* Header */}
-      <div className="border-b border-border bg-card px-4 py-3">
+      <div className="shrink-0 border-b border-border bg-card px-4 py-2.5">
         <div className="container flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-2xl shadow-lg">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-xl shadow-lg">
             🧔
           </div>
-          <div>
-            <h1 className="font-display text-lg font-bold text-foreground">{t("advisor.title")}</h1>
-            <p className="text-xs text-muted-foreground">
+          <div className="min-w-0 flex-1">
+            <h1 className="font-display text-base font-bold text-foreground leading-tight">{t("advisor.title")}</h1>
+            <p className="truncate text-[11px] text-muted-foreground">
               📍 {userContext.state} · {userContext.businessType === "new" ? "🌱 New" : userContext.businessType === "wholesaler" ? "📦 Wholesaler" : "🏪 Retailer"}
-              {" · "}
-              {language === "hi" ? "FREE" : "FREE"}
+              {" · FREE"}
             </p>
           </div>
-          <span className="ml-auto rounded-full bg-green-500/10 px-3 py-1 text-xs font-bold text-green-600">
+          <span className="shrink-0 rounded-full bg-green-500/10 px-2.5 py-1 text-[11px] font-bold text-green-600">
             ● ONLINE
           </span>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto bg-background px-4 py-6">
-        <div className="container max-w-3xl space-y-4">
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto overscroll-none px-4 py-4"
+      >
+        <div className="mx-auto max-w-3xl space-y-3">
           <AnimatePresence>
             {messages.map((msg, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.15 }}
                 className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
               >
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${msg.role === "assistant" ? "bg-gradient-to-br from-amber-500 to-orange-600 text-sm" : "bg-secondary"}`}>
-                  {msg.role === "assistant" ? "🧔" : <User className="h-4 w-4 text-secondary-foreground" />}
+                <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm ${msg.role === "assistant" ? "bg-gradient-to-br from-amber-500 to-orange-600" : "bg-secondary"}`}>
+                  {msg.role === "assistant" ? "🧔" : <User className="h-3.5 w-3.5 text-secondary-foreground" />}
                 </div>
-                <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${msg.role === "user" ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-card text-card-foreground shadow-sm rounded-tl-sm"}`}>
-                  <div className="prose prose-sm max-w-none text-sm [&_p]:m-0">
+                <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm ${msg.role === "user" ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-card text-card-foreground shadow-sm rounded-tl-sm"}`}>
+                  <div className="prose prose-sm max-w-none [&_p]:m-0 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0">
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
                   </div>
                   <div className="mt-1 flex items-center gap-2">
@@ -235,50 +286,60 @@ export default function Advisor() {
           </AnimatePresence>
 
           {isLoading && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-sm">
+            <div className="flex gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-sm">
                 🧔
               </div>
-              <div className="rounded-2xl rounded-tl-sm bg-card px-4 py-3 shadow-sm">
+              <div className="rounded-2xl rounded-tl-sm bg-card px-3.5 py-2.5 shadow-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">Dada soch raha hai...</span>
                   <div className="flex gap-1">
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "0ms" }} />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "150ms" }} />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "300ms" }} />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "0ms" }} />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "150ms" }} />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "300ms" }} />
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
 
-      {/* Quick Chips */}
-      {messages.length <= 1 && (
-        <div className="border-t border-border bg-card px-4 py-3">
-          <div className="container max-w-3xl">
-            <div className="flex flex-wrap gap-2">
+          {/* Quick chips inside messages area */}
+          {messages.length <= 1 && !isLoading && (
+            <div className="flex flex-wrap gap-2 pt-2">
               {chips.map((chip) => (
-                <button key={chip} onClick={() => handleSend(chip)} className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:border-accent">
+                <button
+                  key={chip}
+                  onClick={() => handleSend(chip)}
+                  className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:border-accent"
+                >
                   {chip}
                 </button>
               ))}
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Input */}
-      <div className="border-t border-border bg-card px-4 py-3">
-        <div className="container max-w-3xl">
+      <div className="shrink-0 border-t border-border bg-card px-4 py-2.5">
+        <div className="mx-auto max-w-3xl">
           <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex gap-2">
-            <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder={t("advisor.placeholder")} className="flex-1" maxLength={500} disabled={isLoading} />
-            <Button type="submit" size="icon" disabled={!input.trim() || isLoading} className="bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:opacity-90">
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={t("advisor.placeholder")}
+              className="flex-1 text-sm"
+              maxLength={500}
+              disabled={isLoading}
+              autoComplete="off"
+            />
+            <Button type="submit" size="icon" disabled={!input.trim() || isLoading} className="shrink-0 bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:opacity-90">
               <Send className="h-4 w-4" />
             </Button>
           </form>
+          <p className="mt-1 hidden text-center text-[10px] text-muted-foreground/50 md:block">
+            Powered by Suvee Fashion · AI advice for your kurti business
+          </p>
         </div>
       </div>
     </div>
