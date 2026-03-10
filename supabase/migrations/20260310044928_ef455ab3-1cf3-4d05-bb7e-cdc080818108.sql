@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN available_colours text[] DEFAULT '{}'::text[];
