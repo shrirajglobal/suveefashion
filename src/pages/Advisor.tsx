@@ -359,7 +359,7 @@ export default function Advisor() {
             </Button>
           </form>
           <p className="mt-1 hidden text-center text-[10px] text-muted-foreground/50 md:block">
-            Powered by Suvee Fashion · AI advice for your kurti business
+            {t("advisor.powered_by")}
           </p>
         </div>
       </div>
