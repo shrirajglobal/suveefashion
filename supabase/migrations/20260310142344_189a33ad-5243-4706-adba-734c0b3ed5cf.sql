@@ -1,0 +1,1 @@
+ALTER TABLE public.buyer_profiles ADD CONSTRAINT buyer_profiles_user_id_unique UNIQUE (user_id);
