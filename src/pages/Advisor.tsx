@@ -277,6 +277,7 @@ export default function Advisor() {
             {messages.map((msg, i) => (
               <motion.div
                 key={i}
+                ref={msg.role === "assistant" && i === messages.length - 1 ? lastAssistantRef : undefined}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.15 }}
