@@ -154,7 +154,7 @@ export default function Register() {
                         <p className="mt-1 text-xs text-destructive">At least 6 characters needed</p>
                       )}
                       {form.password.length >= 6 && (
-                        <p className="mt-1 flex items-center gap-1 text-xs text-green-600"><CheckCircle className="h-3 w-3" /> Looks good!</p>
+                        <p className="mt-1 flex items-center gap-1 text-xs text-primary"><CheckCircle className="h-3 w-3" /> Looks good!</p>
                       )}
                     </div>
                     <Button type="button" className="w-full" onClick={handleNext} disabled={!isStep1Valid}>
