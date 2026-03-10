@@ -222,6 +222,7 @@ export default function Advisor() {
       ]);
     }
 
+    isStreamingRef.current = false;
     setIsLoading(false);
   };
 
