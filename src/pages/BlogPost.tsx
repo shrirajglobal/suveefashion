@@ -190,7 +190,7 @@ export default function BlogPost() {
 
         {/* Content */}
         <div className="container max-w-3xl">
-          <div className="prose prose-lg mx-auto mt-8 max-w-none text-foreground prose-headings:font-display prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-li:text-muted-foreground prose-strong:text-foreground prose-a:text-primary">
+          <div className="mt-8 max-w-none [&_h1]:font-display [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-foreground [&_h1]:mt-10 [&_h1]:mb-4 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mt-8 [&_h2]:mb-3 [&_h2]:border-l-4 [&_h2]:border-secondary [&_h2]:pl-3 [&_h3]:font-display [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:mt-6 [&_h3]:mb-2 [&_p]:text-muted-foreground [&_p]:leading-[1.8] [&_p]:mb-4 [&_p]:text-[15px] [&_strong]:text-foreground [&_strong]:font-semibold [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2 [&_ul]:my-4 [&_ul]:space-y-2 [&_ol]:my-4 [&_ol]:space-y-2 [&_li]:text-muted-foreground [&_li]:text-[15px] [&_li]:leading-[1.7] [&_li]:pl-1 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:border-l-4 [&_blockquote]:border-secondary/50 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground [&_blockquote]:my-6 [&_hr]:my-8 [&_hr]:border-border [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:text-foreground">
             <ReactMarkdown>{content}</ReactMarkdown>
           </div>
 
@@ -215,20 +215,25 @@ export default function BlogPost() {
           </div>
 
           {/* CTA */}
-          <div className="mt-10 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 p-6 text-center dark:from-amber-950/20 dark:to-orange-950/20 sm:p-8">
-            <h3 className="font-display text-xl font-bold text-foreground">
-              {language === "hi" ? "कुर्ती बिजनेस शुरू करना चाहते हैं?" : language === "bn" ? "কুর্তি ব্যবসা শুরু করতে চান?" : "Want to Start Your Kurti Business?"}
-            </h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {language === "hi" ? "Suvee Fashion से होलसेल कुर्ती खरीदें — 850+ डिज़ाइन, पूरे भारत में डिलीवरी" : language === "bn" ? "Suvee Fashion থেকে পাইকারি কুর্তি কিনুন — ৮৫০+ ডিজাইন, সারা ভারতে ডেলিভারি" : "Buy wholesale kurtis from Suvee Fashion — 850+ designs, pan-India delivery"}
-            </p>
-            <div className="mt-4 flex flex-wrap justify-center gap-2">
-              <Button asChild className="gradient-gold text-foreground font-semibold">
-                <Link to="/register">Register as Buyer →</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/catalogues">Browse Catalogue</Link>
-              </Button>
+          <div className="mt-10 overflow-hidden rounded-xl border border-border shadow-lg">
+            <div className="gradient-maroon p-6 text-center sm:p-10">
+              <h3 className="font-display text-2xl font-bold text-white sm:text-3xl">
+                {language === "hi" ? "कुर्ती बिजनेस बढ़ाना चाहते हैं?" : language === "bn" ? "কুর্তি ব্যবসা বাড়াতে চান?" : "Ready to Grow Your Kurti Business?"}
+              </h3>
+              <p className="mx-auto mt-3 max-w-md text-sm text-white/80 sm:text-base">
+                {language === "hi" ? "Suvee Fashion से होलसेल कुर्ती खरीदें — 850+ डिज़ाइन, फैक्ट्री रेट, पूरे भारत में डिलीवरी" : language === "bn" ? "Suvee Fashion থেকে পাইকারি কুর্তি কিনুন — ৮৫০+ ডিজাইন, ফ্যাক্টরি রেট, সারা ভারতে ডেলিভারি" : "Buy wholesale kurtis from Suvee Fashion — 850+ designs, factory rates, pan-India delivery"}
+              </p>
+              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Button size="lg" className="gradient-gold text-foreground font-bold hover:opacity-90 w-full sm:w-auto" asChild>
+                  <Link to="/register">✨ Register as Buyer →</Link>
+                </Button>
+                <Button size="lg" className="bg-green-600 text-white font-bold hover:bg-green-700 w-full sm:w-auto" asChild>
+                  <a href="https://wa.me/919831640808?text=Hi%20Suvee%20Fashion!%20I%20want%20to%20see%20your%20wholesale%20catalogue." target="_blank" rel="noopener noreferrer">
+                    💬 WhatsApp Us for Catalogue
+                  </a>
+                </Button>
+              </div>
+              <p className="mt-4 text-[10px] text-white/50 sm:text-xs">Free registration • No minimum order • 3700+ retailers trust us</p>
             </div>
           </div>
         </div>
