@@ -336,7 +336,7 @@ export default function Catalogues() {
                   </Button>
                 )}
                 <Button variant="outline" className="flex-1" asChild>
-                  <a href="https://wa.me/919831640808?text=Hi%20Suvee!%20Interested%20in%20" + encodeURIComponent(selectedProduct.name) target="_blank" rel="noopener noreferrer">
+                  <a href={`https://wa.me/919831640808?text=Hi%20Suvee!%20Interested%20in%20${encodeURIComponent(selectedProduct.name)}`} target="_blank" rel="noopener noreferrer">
                     💬 WhatsApp Inquiry
                   </a>
                 </Button>
