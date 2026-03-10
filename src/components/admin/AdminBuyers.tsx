@@ -67,6 +67,7 @@ export default function AdminBuyers({ onUpdate }: { onUpdate: () => void }) {
                   <h3 className="font-display text-base font-semibold text-foreground">{b.business_name}</h3>
                   <p className="text-xs text-muted-foreground">{b.contact_person} · {b.phone} · {b.email}</p>
                   <p className="text-xs text-muted-foreground">{b.city}, {b.state} · {b.business_type} · GST: {b.gst_number || "N/A"}</p>
+                  {b.referral_source && <p className="text-xs text-muted-foreground">Heard via: {b.referral_source}</p>}
                   <p className="text-xs text-muted-foreground">Registered: {new Date(b.created_at).toLocaleDateString()}</p>
                 </div>
                 <div className="flex items-center gap-2">

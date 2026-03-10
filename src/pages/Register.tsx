@@ -32,6 +32,8 @@ export default function Register() {
     contactPerson: "",
     phone: "",
     businessType: "retailer" as "retailer" | "wholesaler",
+    referralSource: "",
+    referralOther: "",
   });
 
   const update = (key: string, value: string) => setForm((p) => ({ ...p, [key]: value }));
