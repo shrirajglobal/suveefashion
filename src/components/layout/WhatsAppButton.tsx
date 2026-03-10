@@ -1,6 +1,12 @@
 import { MessageCircle } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 export default function WhatsAppButton() {
+  const location = useLocation();
+
+  // Hide on catalogues page where a contextual sticky bar replaces this
+  if (location.pathname.startsWith("/catalogues")) return null;
+
   return (
     <a
       href="https://wa.me/919831640808?text=Hi%20Suvee%20Fashion!%20I%27m%20interested%20in%20your%20wholesale%20kurtis."
