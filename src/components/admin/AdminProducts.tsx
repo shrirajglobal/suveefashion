@@ -47,7 +47,7 @@ interface ProductForm {
 const emptyForm: ProductForm = {
   name: "", description: "", fabric: "", sizes: "S-XXL", pcs_per_set: 4,
   wsp: null, bundle_type: "combo", available_sizes: [], combo_description: "",
-  category_id: "", image_url: "", is_featured: false, is_new_arrival: false,
+  available_colours: [], category_id: "", image_url: "", is_featured: false, is_new_arrival: false,
 };
 
 export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
