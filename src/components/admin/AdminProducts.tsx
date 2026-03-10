@@ -156,6 +156,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       image_url: form.image_url || null,
       is_featured: form.is_featured,
       is_new_arrival: form.is_new_arrival,
+      additional_images: form.bundle_type === "colour_chart" ? form.additional_images : [],
     };
 
     const { error } = editingId
