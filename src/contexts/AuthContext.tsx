@@ -31,11 +31,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check buyer profile status
     const { data: profile } = await supabase
       .from("buyer_profiles")
-      .select("status")
+      .select("status, discount_percent")
       .eq("user_id", u.id)
       .maybeSingle();
     
     setBuyerStatus(profile?.status ?? null);
+    setDiscountPercent(Number(profile?.discount_percent) || 0);
 
     // Check admin role
     const { data: roles } = await supabase
