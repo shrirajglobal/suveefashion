@@ -37,6 +37,7 @@ interface ProductForm {
   bundle_type: string;
   available_sizes: string[];
   combo_description: string;
+  available_colours: string[];
   category_id: string;
   image_url: string;
   is_featured: boolean;
