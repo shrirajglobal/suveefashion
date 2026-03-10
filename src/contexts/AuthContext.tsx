@@ -56,6 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setTimeout(() => fetchUserMeta(u), 0);
       } else {
         setBuyerStatus(null);
+        setDiscountPercent(0);
         setIsAdmin(false);
       }
       setLoading(false);
