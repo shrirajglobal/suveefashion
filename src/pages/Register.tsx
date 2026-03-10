@@ -70,6 +70,7 @@ export default function Register() {
       return;
     }
 
+    const referral = form.referralSource === "Others" ? (form.referralOther.trim() || "Others") : form.referralSource;
     const { error: profileError } = await supabase.from("buyer_profiles").insert({
       user_id: authData.user.id,
       business_name: form.businessName.trim(),
@@ -80,6 +81,7 @@ export default function Register() {
       phone: form.phone.trim(),
       email: email.trim(),
       business_type: form.businessType,
+      referral_source: referral,
     });
 
     setLoading(false);
