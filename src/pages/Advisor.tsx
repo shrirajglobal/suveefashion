@@ -115,8 +115,10 @@ export default function Advisor() {
     const messageText = (text || input).trim();
     if (!messageText || isLoading) return;
 
-    // Force scroll to bottom on new user message
+    // Force scroll to bottom on new user message, reset streaming flags
     isNearBottomRef.current = true;
+    isStreamingRef.current = false;
+    hasScrolledToStartRef.current = false;
 
     const userMsg: Message = { role: "user", content: messageText, timestamp: new Date() };
     const updatedMessages = [...messages, userMsg];
