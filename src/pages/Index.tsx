@@ -186,8 +186,37 @@ export default function Index() {
       });
   }, []);
 
+  const getBlogTitle = (p: BlogPostPreview) =>
+    language === "hi" ? (p.title_hi || p.title) : language === "bn" ? (p.title_bn || p.title) : p.title;
+  const getBlogExcerpt = (p: BlogPostPreview) =>
+    language === "hi" ? (p.excerpt_hi || p.excerpt) : language === "bn" ? (p.excerpt_bn || p.excerpt) : p.excerpt;
+
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Suvee Fashion",
+    url: "https://suveefashion.lovable.app",
+    logo: "https://suveefashion.lovable.app/favicon.ico",
+    description: "Premium wholesale kurti manufacturer from Howrah, Kolkata. 850+ designs, pan-India delivery.",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "20/21 Bhawan Ganguly Lane, 5th Floor",
+      addressLocality: "Howrah",
+      addressRegion: "West Bengal",
+      postalCode: "711101",
+      addressCountry: "IN",
+    },
+    contactPoint: { "@type": "ContactPoint", telephone: "+91-9831640808", contactType: "sales" },
+  };
+
   return (
     <div className="pb-16 md:pb-0">
+      <SEOHead
+        title="Suvee Fashion — Premium Wholesale Kurtis from Kolkata"
+        description="Buy wholesale kurtis from Suvee Fashion, Howrah. 850+ designs, pan-India delivery, trusted by 3700+ retailers. Register as buyer for wholesale prices."
+        canonical="https://suveefashion.lovable.app"
+        jsonLd={orgJsonLd}
+      />
       {/* Hero Carousel */}
       <section className="relative overflow-hidden">
         <div className="overflow-hidden" ref={heroEmblaRef}>
