@@ -8,12 +8,13 @@ interface UserContext {
   businessType: string;
 }
 
-const STATES = [
-  "Delhi", "UP", "Rajasthan", "Punjab", "Haryana", "MP", "Uttarakhand",
-  "West Bengal", "Bihar", "Jharkhand", "Odisha", "Assam",
-  "Tamil Nadu", "Karnataka", "Kerala", "AP", "Telangana",
-  "Gujarat", "Maharashtra", "Goa",
-  "Northeast", "Other",
+const STATE_GROUPS = [
+  { label: "North", labelHi: "उत्तर", states: ["Delhi", "UP", "Rajasthan", "Punjab", "Haryana", "Uttarakhand", "MP"] },
+  { label: "East", labelHi: "पूर्व", states: ["West Bengal", "Bihar", "Jharkhand", "Odisha"] },
+  { label: "South", labelHi: "दक्षिण", states: ["Tamil Nadu", "Karnataka", "Kerala", "AP", "Telangana"] },
+  { label: "West", labelHi: "पश्चिम", states: ["Gujarat", "Maharashtra", "Goa"] },
+  { label: "Northeast", labelHi: "पूर्वोत्तर", states: ["Assam", "Northeast"] },
+  { label: "Other", labelHi: "अन्य", states: ["Other"] },
 ];
 
 const BUSINESS_TYPES = [
@@ -35,17 +36,17 @@ export default function AdvisorOnboarding({ onComplete }: Props) {
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="mx-auto max-w-md rounded-2xl border border-border bg-card p-6 shadow-lg"
+      className="mx-auto w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-lg"
     >
       <div className="mb-4 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-2xl shadow-lg">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-2xl shadow-lg">
           🧔
         </div>
         <div>
-          <h2 className="font-display text-lg font-bold text-foreground">
+          <h2 className="font-display text-base font-bold text-foreground leading-tight">
             {language === "hi" ? "पहले अपने बारे में बताइए!" : "Pehle apne baare mein bataiye!"}
           </h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[11px] text-muted-foreground">
             {language === "hi" ? "ताकि Dada आपको सही सलाह दे सकें" : "Taaki Dada aapko sahi advice de sakein"}
           </p>
         </div>
@@ -57,15 +58,24 @@ export default function AdvisorOnboarding({ onComplete }: Props) {
             <MapPin className="h-4 w-4 text-primary" />
             {language === "hi" ? "आप कहाँ से हैं?" : "Aap kahaan se hain?"}
           </div>
-          <div className="flex flex-wrap gap-2">
-            {STATES.map((s) => (
-              <button
-                key={s}
-                onClick={() => { setState(s); setStep(2); }}
-                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:border-primary hover:bg-primary/10"
-              >
-                {s}
-              </button>
+          <div className="space-y-3 max-h-[50vh] overflow-y-auto overscroll-none pr-1">
+            {STATE_GROUPS.map((group) => (
+              <div key={group.label}>
+                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {language === "hi" ? group.labelHi : group.label}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {group.states.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => { setState(s); setStep(2); }}
+                      className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium text-foreground transition-all hover:border-primary hover:bg-primary/10 active:scale-95"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -73,8 +83,9 @@ export default function AdvisorOnboarding({ onComplete }: Props) {
 
       {step === 2 && (
         <div>
-          <div className="mb-1 text-xs text-muted-foreground">
+          <div className="mb-1 text-[11px] text-muted-foreground">
             📍 {state}
+            <button onClick={() => setStep(1)} className="ml-2 text-primary underline text-[11px]">Change</button>
           </div>
           <div className="mb-3 flex items-center gap-2 text-sm font-medium text-foreground">
             <Store className="h-4 w-4 text-primary" />
@@ -85,7 +96,7 @@ export default function AdvisorOnboarding({ onComplete }: Props) {
               <button
                 key={bt.value}
                 onClick={() => onComplete({ state, businessType: bt.value })}
-                className="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 text-left text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/10"
+                className="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3.5 text-left text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/10 active:scale-[0.98]"
               >
                 <span className="text-xl">{bt.emoji}</span>
                 <span>{language === "hi" ? bt.labelHi : bt.label}</span>
