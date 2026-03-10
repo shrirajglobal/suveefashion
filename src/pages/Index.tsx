@@ -241,7 +241,7 @@ export default function Index() {
         <div className="container">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center">
             <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">{t("categories.title")}</h2>
-            <p className="mt-1.5 text-sm text-muted-foreground sm:mt-2">Our full digital catalogue is coming soon!</p>
+            <p className="mt-1.5 text-sm text-muted-foreground sm:mt-2">Browse our full digital catalogue with 850+ designs</p>
           </motion.div>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-6 lg:grid-cols-4">
             {categories.map(({ key, img }, i) => (
