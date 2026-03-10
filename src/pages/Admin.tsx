@@ -5,9 +5,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { LayoutDashboard, Users, Package, ShoppingCart, MessageSquare, BarChart3, Image, Brain } from "lucide-react";
+import { LayoutDashboard, Users, Package, ShoppingCart, MessageSquare, BarChart3, Image, Brain, FolderOpen } from "lucide-react";
 import AdminBuyers from "@/components/admin/AdminBuyers";
 import AdminProducts from "@/components/admin/AdminProducts";
+import AdminCategories from "@/components/admin/AdminCategories";
 import AdminOrders from "@/components/admin/AdminOrders";
 import AdminInquiries from "@/components/admin/AdminInquiries";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
@@ -72,8 +73,9 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="buyers" className="mt-8">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-4 md:grid-cols-8">
             <TabsTrigger value="buyers"><Users className="mr-1 h-4 w-4" /> Buyers</TabsTrigger>
+            <TabsTrigger value="categories"><FolderOpen className="mr-1 h-4 w-4" /> Categories</TabsTrigger>
             <TabsTrigger value="products"><Package className="mr-1 h-4 w-4" /> Products</TabsTrigger>
             <TabsTrigger value="banners"><Image className="mr-1 h-4 w-4" /> Banners</TabsTrigger>
             <TabsTrigger value="orders"><ShoppingCart className="mr-1 h-4 w-4" /> Orders</TabsTrigger>
@@ -83,6 +85,7 @@ export default function Admin() {
           </TabsList>
 
           <TabsContent value="buyers"><AdminBuyers onUpdate={fetchStats} /></TabsContent>
+          <TabsContent value="categories"><AdminCategories /></TabsContent>
           <TabsContent value="products"><AdminProducts onUpdate={fetchStats} /></TabsContent>
           <TabsContent value="banners"><AdminBanners /></TabsContent>
           <TabsContent value="orders"><AdminOrders /></TabsContent>
