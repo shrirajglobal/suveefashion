@@ -313,7 +313,7 @@ export default function Advisor() {
               </div>
               <div className="rounded-2xl rounded-tl-sm bg-card px-3.5 py-2.5 shadow-sm">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Dada soch raha hai...</span>
+                  <span className="text-xs text-muted-foreground">{t("advisor.loading")}</span>
                   <div className="flex gap-1">
                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "0ms" }} />
                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "150ms" }} />
