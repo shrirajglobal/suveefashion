@@ -30,6 +30,7 @@ export default function Header() {
     { path: "/catalogues", label: t("nav.catalogues") },
     { path: "/about", label: t("nav.about") },
     { path: "/contact", label: t("nav.contact") },
+    { path: "/blog", label: t("nav.blog") },
     { path: "/advisor", label: t("nav.advisor") },
   ];
 
