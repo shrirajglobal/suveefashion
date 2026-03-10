@@ -269,7 +269,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       {/* Bundle Type */}
       <div>
         <label className="mb-1 block text-xs font-medium">Bundle Type *</label>
-        <Select value={form.bundle_type} onValueChange={(v) => setForm({ ...form, bundle_type: v })}>
+        <Select value={form.bundle_type} onValueChange={(v) => setForm({ ...form, bundle_type: v, available_colours: v === "colour_chart" ? form.available_colours : [] })}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="combo">Combo</SelectItem>
