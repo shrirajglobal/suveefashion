@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Upload, X, Image as ImageIcon, Layers } from "lucide-react";
+import ColourPicker from "@/components/admin/ColourPicker";
 import casualImg from "@/assets/category-casual.jpg";
 
 const FABRICS = [
@@ -36,6 +37,7 @@ interface ProductForm {
   bundle_type: string;
   available_sizes: string[];
   combo_description: string;
+  available_colours: string[];
   category_id: string;
   image_url: string;
   is_featured: boolean;
@@ -45,7 +47,7 @@ interface ProductForm {
 const emptyForm: ProductForm = {
   name: "", description: "", fabric: "", sizes: "S-XXL", pcs_per_set: 4,
   wsp: null, bundle_type: "combo", available_sizes: [], combo_description: "",
-  category_id: "", image_url: "", is_featured: false, is_new_arrival: false,
+  available_colours: [], category_id: "", image_url: "", is_featured: false, is_new_arrival: false,
 };
 
 export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
@@ -86,6 +88,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       bundle_type: p.bundle_type || "combo",
       available_sizes: p.available_sizes || [],
       combo_description: p.combo_description || "",
+      available_colours: p.available_colours || [],
       category_id: p.category_id || "", image_url: p.image_url || "",
       is_featured: p.is_featured, is_new_arrival: p.is_new_arrival,
     });
@@ -124,6 +127,9 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
 
   const saveProduct = async () => {
     if (!form.name.trim()) { toast({ title: "Product name is required", variant: "destructive" }); return; }
+    if (form.bundle_type === "colour_chart" && form.available_colours.length !== form.pcs_per_set) {
+      toast({ title: `Please select exactly ${form.pcs_per_set} colours for the colour chart`, variant: "destructive" }); return;
+    }
     const resolvedFabric = getResolvedFabric();
     const payload: any = {
       name: form.name,
@@ -134,6 +140,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       wsp: form.wsp || null,
       bundle_type: form.bundle_type,
       available_sizes: form.available_sizes,
+      available_colours: form.bundle_type === "colour_chart" ? form.available_colours : [],
       combo_description: form.combo_description || null,
       category_id: form.category_id || null,
       image_url: form.image_url || null,
@@ -175,6 +182,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
         wsp: form.wsp || null,
         bundle_type: form.bundle_type,
         available_sizes: form.available_sizes,
+        available_colours: form.bundle_type === "colour_chart" ? form.available_colours : [],
         combo_description: form.combo_description || null,
         category_id: form.category_id || null,
         image_url: url,
@@ -261,7 +269,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       {/* Bundle Type */}
       <div>
         <label className="mb-1 block text-xs font-medium">Bundle Type *</label>
-        <Select value={form.bundle_type} onValueChange={(v) => setForm({ ...form, bundle_type: v })}>
+        <Select value={form.bundle_type} onValueChange={(v) => setForm({ ...form, bundle_type: v, available_colours: v === "colour_chart" ? form.available_colours : [] })}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="combo">Combo</SelectItem>
@@ -271,10 +279,19 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
         </Select>
         <p className="mt-1 rounded bg-accent px-2 py-1 text-[10px] text-muted-foreground">
           {form.bundle_type === "combo" && "Combo: 3-4 pcs of SAME colour but DIFFERENT sizes in one set. Select which sizes are included below."}
-          {form.bundle_type === "colour_chart" && "Colour Chart: Each set has 3-4 DIFFERENT colours of the SAME size. Customer picks one or more sizes. Select available sizes below."}
+          {form.bundle_type === "colour_chart" && "Colour Chart: Each set has DIFFERENT colours of the SAME size. First select colours, then pick available sizes."}
           {form.bundle_type === "assorted" && "Assorted: Mixed prints, colours and sizes in one set. Flexible combinations. Describe the assortment below."}
         </p>
       </div>
+
+      {/* Colour picker for colour_chart — shown FIRST before sizes */}
+      {form.bundle_type === "colour_chart" && (
+        <ColourPicker
+          selected={form.available_colours}
+          onChange={(colours) => setForm({ ...form, available_colours: colours })}
+          max={form.pcs_per_set}
+        />
+      )}
 
       {/* Size picker for combo & colour_chart */}
       {(form.bundle_type === "combo" || form.bundle_type === "colour_chart") && (
@@ -449,7 +466,9 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
                 <p className="text-xs text-muted-foreground">
                   {p.categories?.name || "Uncategorized"} · {p.fabric || "N/A"} · {p.pcs_per_set} pcs/set · WSP: ₹{p.wsp ?? "N/A"}
                 </p>
-                <p className="text-[10px] text-muted-foreground capitalize">{(p.bundle_type || "combo").replace("_", " ")}</p>
+                <p className="text-[10px] text-muted-foreground capitalize">{(p.bundle_type || "combo").replace("_", " ")}
+                  {p.bundle_type === "colour_chart" && p.available_colours?.length > 0 && ` · ${p.available_colours.join(", ")}`}
+                </p>
               </div>
               <div className="flex gap-1 shrink-0">
                 <Button variant="ghost" size="icon" onClick={() => openEdit(p)}><Edit className="h-4 w-4" /></Button>
