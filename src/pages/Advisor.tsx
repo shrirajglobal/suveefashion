@@ -125,6 +125,7 @@ export default function Advisor() {
     setMessages(updatedMessages);
     setInput("");
     setIsLoading(true);
+    isStreamingRef.current = true;
 
     let assistantSoFar = "";
 
