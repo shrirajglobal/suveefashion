@@ -32,14 +32,16 @@ export default function Register() {
     contactPerson: "",
     phone: "",
     businessType: "retailer" as "retailer" | "wholesaler",
+    referralSource: "",
+    referralOther: "",
   });
 
   const update = (key: string, value: string) => setForm((p) => ({ ...p, [key]: value }));
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { email, password, businessName, city, contactPerson, phone } = form;
-    if (!email || !password || !businessName || !city || !contactPerson || !phone) {
+    const { email, password, businessName, city, contactPerson, phone, referralSource } = form;
+    if (!email || !password || !businessName || !city || !contactPerson || !phone || !referralSource) {
       toast({ title: "Please fill all required fields", variant: "destructive" });
       return;
     }
@@ -68,6 +70,7 @@ export default function Register() {
       return;
     }
 
+    const referral = form.referralSource === "Others" ? (form.referralOther.trim() || "Others") : form.referralSource;
     const { error: profileError } = await supabase.from("buyer_profiles").insert({
       user_id: authData.user.id,
       business_name: form.businessName.trim(),
@@ -78,6 +81,7 @@ export default function Register() {
       phone: form.phone.trim(),
       email: email.trim(),
       business_type: form.businessType,
+      referral_source: referral,
     });
 
     setLoading(false);
@@ -183,6 +187,23 @@ export default function Register() {
                     <label className="mb-1 block text-sm font-medium">State</label>
                     <Input value={form.state} onChange={(e) => update("state", e.target.value)} maxLength={50} />
                   </div>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium">How did you hear about Suvee? *</label>
+                  <Select value={form.referralSource} onValueChange={(v) => { update("referralSource", v); if (v !== "Others") update("referralOther", ""); }}>
+                    <SelectTrigger><SelectValue placeholder="Select an option" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="YouTube">YouTube</SelectItem>
+                      <SelectItem value="Facebook">Facebook</SelectItem>
+                      <SelectItem value="WhatsApp">WhatsApp</SelectItem>
+                      <SelectItem value="Friends">Friends</SelectItem>
+                      <SelectItem value="Others">Others</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {form.referralSource === "Others" && (
+                    <Input className="mt-2" placeholder="Please specify" value={form.referralOther} onChange={(e) => update("referralOther", e.target.value)} maxLength={100} />
+                  )}
                 </div>
 
                 <hr className="my-2 border-border" />
