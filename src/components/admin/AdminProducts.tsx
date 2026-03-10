@@ -42,12 +42,14 @@ interface ProductForm {
   image_url: string;
   is_featured: boolean;
   is_new_arrival: boolean;
+  additional_images: string[];
 }
 
 const emptyForm: ProductForm = {
   name: "", description: "", fabric: "", sizes: "S-XXL", pcs_per_set: 4,
   wsp: null, bundle_type: "combo", available_sizes: [], combo_description: "",
   available_colours: [], category_id: "", image_url: "", is_featured: false, is_new_arrival: false,
+  additional_images: [],
 };
 
 export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
