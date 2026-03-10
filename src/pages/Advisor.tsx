@@ -30,15 +30,28 @@ export default function Advisor() {
   const [isLoading, setIsLoading] = useState(false);
   const [exchangeCount, setExchangeCount] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const lastAssistantRef = useRef<HTMLDivElement>(null);
   const isNearBottomRef = useRef(true);
+  const isStreamingRef = useRef(false);
+  const hasScrolledToStartRef = useRef(false);
 
-  // Smart auto-scroll: only scroll if user is near bottom
-  const scrollToBottom = useCallback(() => {
+  // Scroll to the start of the latest assistant message, not the bottom
+  const scrollToAssistantStart = useCallback(() => {
     const el = scrollContainerRef.current;
-    if (!el) return;
-    if (isNearBottomRef.current) {
+    const msgEl = lastAssistantRef.current;
+    if (!el || !msgEl) return;
+    if (!isNearBottomRef.current) return;
+
+    if (isStreamingRef.current && !hasScrolledToStartRef.current) {
+      // First chunk: scroll so the new message starts at top of visible area with some padding
+      const msgTop = msgEl.offsetTop - el.offsetTop;
+      el.scrollTop = msgTop - 12;
+      hasScrolledToStartRef.current = true;
+    } else if (!isStreamingRef.current) {
+      // Not streaming (user message etc): scroll to bottom
       el.scrollTop = el.scrollHeight;
     }
+    // During streaming after first scroll: don't auto-scroll, let user read from top of message
   }, []);
 
   const handleScroll = useCallback(() => {
@@ -49,8 +62,8 @@ export default function Advisor() {
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, scrollToBottom]);
+    scrollToAssistantStart();
+  }, [messages, scrollToAssistantStart]);
 
   // Mobile keyboard: adjust layout using visualViewport
   useEffect(() => {
@@ -102,14 +115,17 @@ export default function Advisor() {
     const messageText = (text || input).trim();
     if (!messageText || isLoading) return;
 
-    // Force scroll to bottom on new user message
+    // Force scroll to bottom on new user message, reset streaming flags
     isNearBottomRef.current = true;
+    isStreamingRef.current = false;
+    hasScrolledToStartRef.current = false;
 
     const userMsg: Message = { role: "user", content: messageText, timestamp: new Date() };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
     setInput("");
     setIsLoading(true);
+    isStreamingRef.current = true;
 
     let assistantSoFar = "";
 
@@ -206,6 +222,7 @@ export default function Advisor() {
       ]);
     }
 
+    isStreamingRef.current = false;
     setIsLoading(false);
   };
 
@@ -260,6 +277,7 @@ export default function Advisor() {
             {messages.map((msg, i) => (
               <motion.div
                 key={i}
+                ref={msg.role === "assistant" && i === messages.length - 1 ? lastAssistantRef : undefined}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.15 }}
