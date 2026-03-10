@@ -140,6 +140,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       wsp: form.wsp || null,
       bundle_type: form.bundle_type,
       available_sizes: form.available_sizes,
+      available_colours: form.bundle_type === "colour_chart" ? form.available_colours : [],
       combo_description: form.combo_description || null,
       category_id: form.category_id || null,
       image_url: form.image_url || null,
