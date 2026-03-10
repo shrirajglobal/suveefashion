@@ -412,6 +412,61 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Latest from Blog */}
+      {blogPosts.length > 0 && (
+        <section className="py-10 sm:py-16 md:py-24">
+          <div className="container">
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center">
+              <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">
+                {language === "hi" ? "📖 लेटेस्ट ब्लॉग" : language === "bn" ? "📖 সাম্প্রতিক ব্লগ" : "📖 Latest from Our Blog"}
+              </h2>
+              <p className="mt-1.5 text-sm text-muted-foreground sm:mt-2">
+                {language === "hi" ? "कुर्ती बिजनेस टिप्स और ट्रेंड्स" : language === "bn" ? "কুর্তি ব্যবসা টিপস এবং ট্রেন্ড" : "Tips, trends & insights for kurti retailers"}
+              </p>
+            </motion.div>
+            <div className="mt-6 grid gap-4 sm:mt-10 sm:grid-cols-3 sm:gap-6">
+              {blogPosts.map((post, i) => (
+                <motion.div key={post.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+                  <Link to={`/blog/${post.slug}`}>
+                    <Card className="group h-full overflow-hidden border-0 shadow-md hover:shadow-xl transition-shadow">
+                      <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+                        {post.cover_image_url ? (
+                          <img src={post.cover_image_url} alt={getBlogTitle(post)} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
+                            <span className="text-3xl">📝</span>
+                          </div>
+                        )}
+                        {post.category && (
+                          <Badge className="absolute left-2 top-2 bg-primary/90 text-primary-foreground text-[10px]">{post.category}</Badge>
+                        )}
+                      </div>
+                      <CardContent className="p-3 sm:p-4">
+                        <h3 className="font-display text-sm font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors sm:text-base">{getBlogTitle(post)}</h3>
+                        <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{getBlogExcerpt(post)}</p>
+                        {post.published_at && (
+                          <p className="mt-2 flex items-center gap-1 text-[10px] text-muted-foreground">
+                            <Calendar className="h-3 w-3" />
+                            {new Date(post.published_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+            <div className="mt-6 text-center sm:mt-8">
+              <Button variant="outline" asChild>
+                <Link to="/blog">
+                  {language === "hi" ? "सभी आर्टिकल पढ़ें" : language === "bn" ? "সব আর্টিকেল পড়ুন" : "Read All Articles"} <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* YouTube Section */}
       <section className="bg-card py-10 sm:py-16 md:py-24">
         <div className="container">
