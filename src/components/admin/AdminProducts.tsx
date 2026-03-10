@@ -24,7 +24,7 @@ const FABRICS = [
   "Gajji Silk",
 ];
 
-const ALL_SIZES = ["S", "M", "L", "XL", "XXL", "2XL", "3XL"];
+const ALL_SIZES = ["S", "M", "L", "XL", "XXL", "2XL", "3XL", "4XL", "5XL", "6XL", "7XL", "8XL", "9XL", "10XL"];
 
 interface ProductForm {
   name: string;
