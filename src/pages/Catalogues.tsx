@@ -69,6 +69,33 @@ async function shareProduct(product: Product) {
   }
 }
 
+// ─── Product Image Gallery ───
+function ProductImageGallery({ product }: { product: Product }) {
+  const allImages = [product.image_url, ...(product.additional_images || [])].filter(Boolean) as string[];
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  if (allImages.length === 0) return null;
+
+  return (
+    <div>
+      <img src={allImages[activeIdx]} alt={product.name} className="w-full object-cover aspect-square sm:rounded-t-lg" />
+      {allImages.length > 1 && (
+        <div className="flex gap-1.5 p-2 overflow-x-auto scrollbar-hide">
+          {allImages.map((url, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIdx(i)}
+              className={`shrink-0 h-14 w-12 rounded-md overflow-hidden border-2 transition-all ${i === activeIdx ? "border-primary ring-1 ring-primary" : "border-border opacity-70 hover:opacity-100"}`}
+            >
+              <img src={url} alt="" className="h-full w-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Colour dots ───
 function ColourDots({ colours }: { colours: string[] | null }) {
   if (!colours?.length) return null;
