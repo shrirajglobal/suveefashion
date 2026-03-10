@@ -78,11 +78,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setUser(null);
     setBuyerStatus(null);
+    setDiscountPercent(0);
     setIsAdmin(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, buyerStatus, isAdmin, loading, signOut }}>
+    <AuthContext.Provider value={{ user, buyerStatus, discountPercent, isAdmin, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );
