@@ -73,8 +73,9 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="buyers" className="mt-8">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-4 md:grid-cols-8">
             <TabsTrigger value="buyers"><Users className="mr-1 h-4 w-4" /> Buyers</TabsTrigger>
+            <TabsTrigger value="categories"><FolderOpen className="mr-1 h-4 w-4" /> Categories</TabsTrigger>
             <TabsTrigger value="products"><Package className="mr-1 h-4 w-4" /> Products</TabsTrigger>
             <TabsTrigger value="banners"><Image className="mr-1 h-4 w-4" /> Banners</TabsTrigger>
             <TabsTrigger value="orders"><ShoppingCart className="mr-1 h-4 w-4" /> Orders</TabsTrigger>
@@ -84,6 +85,7 @@ export default function Admin() {
           </TabsList>
 
           <TabsContent value="buyers"><AdminBuyers onUpdate={fetchStats} /></TabsContent>
+          <TabsContent value="categories"><AdminCategories /></TabsContent>
           <TabsContent value="products"><AdminProducts onUpdate={fetchStats} /></TabsContent>
           <TabsContent value="banners"><AdminBanners /></TabsContent>
           <TabsContent value="orders"><AdminOrders /></TabsContent>
