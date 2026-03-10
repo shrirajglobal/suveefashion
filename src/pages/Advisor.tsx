@@ -218,7 +218,7 @@ export default function Advisor() {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: `Arre yaar, kuch technical problem aa rahi hai. Thodi der mein phir try kar ya Team Suvee ko WhatsApp kar de. 🙏`, timestamp: new Date() },
+        { role: "assistant", content: t("advisor.error"), timestamp: new Date() },
       ]);
     }
 
