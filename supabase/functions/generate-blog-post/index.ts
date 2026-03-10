@@ -253,7 +253,87 @@ Return as JSON:
       } catch { console.error("Bengali translation parse failed"); }
     }
 
-    // Step 5: Save to database
+    // Step 5: Generate cover image using AI
+    let coverImageUrl: string | null = null;
+    try {
+      const imagePrompt = `Create a vibrant, professional blog cover illustration for an article titled "${parsed.title}". 
+The image should feature colorful Indian kurtis, relevant visual elements for the topic, warm maroon and gold color palette, modern flat illustration style. 
+Include text overlay: "${parsed.title.length > 40 ? parsed.title.substring(0, 40) + '...' : parsed.title}" in bold decorative font.
+Clean editorial blog cover composition, 1200x720 dimensions.`;
+
+      const imageResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3.1-flash-image-preview",
+          messages: [{ role: "user", content: imagePrompt }],
+        }),
+      });
+
+      if (imageResp.ok) {
+        const imageData = await imageResp.json();
+        const imageContent = imageData.choices?.[0]?.message?.content;
+        
+        // Check if response contains a base64 image
+        if (imageContent && typeof imageContent === "string") {
+          // Try to extract base64 image data
+          const base64Match = imageContent.match(/data:image\/(png|jpeg|jpg|webp);base64,([A-Za-z0-9+/=]+)/);
+          if (base64Match) {
+            const imageBytes = Uint8Array.from(atob(base64Match[2]), c => c.charCodeAt(0));
+            const ext = base64Match[1] === "png" ? "png" : "jpg";
+            const imagePath = `${parsed.slug}.${ext}`;
+            
+            const { error: uploadError } = await supabase.storage
+              .from("blog-covers")
+              .upload(imagePath, imageBytes, {
+                contentType: `image/${base64Match[1]}`,
+                upsert: true,
+              });
+
+            if (!uploadError) {
+              const { data: urlData } = supabase.storage.from("blog-covers").getPublicUrl(imagePath);
+              coverImageUrl = urlData.publicUrl;
+              console.log("Cover image uploaded:", coverImageUrl);
+            } else {
+              console.error("Cover image upload error:", uploadError);
+            }
+          } else {
+            // Check for inline_data in parts (Gemini image response format)
+            const parts = imageData.choices?.[0]?.message?.parts;
+            if (parts) {
+              for (const part of parts) {
+                if (part.inline_data?.data) {
+                  const mimeType = part.inline_data.mime_type || "image/png";
+                  const ext = mimeType.includes("png") ? "png" : "jpg";
+                  const imageBytes = Uint8Array.from(atob(part.inline_data.data), c => c.charCodeAt(0));
+                  const imagePath = `${parsed.slug}.${ext}`;
+
+                  const { error: uploadError } = await supabase.storage
+                    .from("blog-covers")
+                    .upload(imagePath, imageBytes, { contentType: mimeType, upsert: true });
+
+                  if (!uploadError) {
+                    const { data: urlData } = supabase.storage.from("blog-covers").getPublicUrl(imagePath);
+                    coverImageUrl = urlData.publicUrl;
+                    console.log("Cover image uploaded from parts:", coverImageUrl);
+                  }
+                  break;
+                }
+              }
+            }
+          }
+        }
+      } else {
+        console.error("Image generation failed:", imageResp.status);
+      }
+    } catch (imgErr) {
+      console.error("Cover image generation error:", imgErr);
+    }
+
+    // Step 6: Save to database
     const { data: insertData, error: insertError } = await supabase
       .from("blog_posts")
       .insert({
@@ -270,6 +350,7 @@ Return as JSON:
         meta_description: parsed.meta_description,
         keywords: parsed.keywords || [],
         category: parsed.category || "business-tips",
+        cover_image_url: coverImageUrl,
         status: "published",
         social_caption: parsed.social_caption,
         social_caption_hi: hiData.social_caption_hi || null,
