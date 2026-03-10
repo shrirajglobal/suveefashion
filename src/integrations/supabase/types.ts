@@ -21,6 +21,7 @@ export type Database = {
           city: string
           contact_person: string
           created_at: string
+          discount_percent: number | null
           email: string
           gst_number: string | null
           id: string
@@ -37,6 +38,7 @@ export type Database = {
           city: string
           contact_person: string
           created_at?: string
+          discount_percent?: number | null
           email: string
           gst_number?: string | null
           id?: string
@@ -53,6 +55,7 @@ export type Database = {
           city?: string
           contact_person?: string
           created_at?: string
+          discount_percent?: number | null
           email?: string
           gst_number?: string | null
           id?: string
