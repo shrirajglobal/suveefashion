@@ -395,7 +395,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
                 )}
               </div>
 
-              <ProductFormFields />
+              {formFieldsJSX}
 
               <Button onClick={handleBulkAdd} className="w-full" disabled={bulkUploading}>
                 {bulkUploading ? "Uploading & Creating..." : `Create ${bulkImages.length} Product(s)`}
