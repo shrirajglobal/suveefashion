@@ -109,13 +109,22 @@ serve(async (req) => {
       { role: "system", content: SYSTEM_PROMPT },
     ];
 
-    if (userContext?.state || userContext?.businessType) {
+    if (userContext?.state || userContext?.businessType || userContext?.language) {
       const parts: string[] = [];
       if (userContext.businessType) parts.push(`Business type: ${userContext.businessType}`);
       if (userContext.state) parts.push(`Location: ${userContext.state}`);
+
+      // Language instruction
+      const langMap: Record<string, string> = {
+        hi: "IMPORTANT: Respond ENTIRELY in Hindi using Devanagari script (हिंदी). Do NOT use Roman/Latin script.",
+        bn: "IMPORTANT: Respond ENTIRELY in Bengali using Bengali script (বাংলা). Do NOT use Roman/Latin script.",
+        en: "Respond in English or Hinglish (Roman script).",
+      };
+      const langInstruction = langMap[userContext.language] || langMap.en;
+
       contextMessages.push({
         role: "system",
-        content: `[User Context: ${parts.join(". ")}. Tailor ALL advice — fabric, colors, designs, pricing, festivals — specifically to this region and business type. Be specific, not generic.]`,
+        content: `[User Context: ${parts.join(". ")}. ${langInstruction} Tailor ALL advice — fabric, colors, designs, pricing, festivals — specifically to this region and business type. Be specific, not generic.]`,
       });
     }
 

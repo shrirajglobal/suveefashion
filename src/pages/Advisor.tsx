@@ -140,7 +140,7 @@ export default function Advisor() {
           messages: updatedMessages
             .filter((m) => m.role === "user" || m.role === "assistant")
             .map((m) => ({ role: m.role, content: m.content })),
-          userContext,
+          userContext: { ...userContext, language },
         }),
       });
 
@@ -218,7 +218,7 @@ export default function Advisor() {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: `Arre yaar, kuch technical problem aa rahi hai. Thodi der mein phir try kar ya Team Suvee ko WhatsApp kar de. 🙏`, timestamp: new Date() },
+        { role: "assistant", content: t("advisor.error"), timestamp: new Date() },
       ]);
     }
 
@@ -286,8 +286,11 @@ export default function Advisor() {
                 <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm ${msg.role === "assistant" ? "bg-gradient-to-br from-amber-500 to-orange-600" : "bg-secondary"}`}>
                   {msg.role === "assistant" ? "🧔" : <User className="h-3.5 w-3.5 text-secondary-foreground" />}
                 </div>
-                <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm ${msg.role === "user" ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-card text-card-foreground shadow-sm rounded-tl-sm"}`}>
-                  <div className="prose prose-sm max-w-none [&_p]:m-0 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0">
+                <div
+                  lang={language === "bn" ? "bn" : language === "hi" ? "hi" : undefined}
+                  className={`max-w-[85%] rounded-2xl px-4 py-3 text-[15px] leading-relaxed ${msg.role === "user" ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-card text-card-foreground shadow-sm rounded-tl-sm"}`}
+                >
+                  <div className="prose prose-sm max-w-none [&_p]:m-0 [&_p]:leading-relaxed [&_ul]:my-1.5 [&_ol]:my-1.5 [&_li]:my-0.5 [&_li]:ml-4 [&_h3]:font-semibold [&_h3]:mt-2 [&_h3]:mb-1 [&_h2]:font-semibold [&_h2]:mt-2 [&_h2]:mb-1 [&_strong]:font-semibold">
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
                   </div>
                   <div className="mt-1 flex items-center gap-2">
@@ -310,7 +313,7 @@ export default function Advisor() {
               </div>
               <div className="rounded-2xl rounded-tl-sm bg-card px-3.5 py-2.5 shadow-sm">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Dada soch raha hai...</span>
+                  <span className="text-xs text-muted-foreground">{t("advisor.loading")}</span>
                   <div className="flex gap-1">
                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "0ms" }} />
                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: "150ms" }} />
@@ -356,7 +359,7 @@ export default function Advisor() {
             </Button>
           </form>
           <p className="mt-1 hidden text-center text-[10px] text-muted-foreground/50 md:block">
-            Powered by Suvee Fashion · AI advice for your kurti business
+            {t("advisor.powered_by")}
           </p>
         </div>
       </div>

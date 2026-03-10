@@ -331,6 +331,23 @@ export const translations = {
     hi: "हम पूरे भारत में डिलीवरी करते हैं, पूर्वी भारत पर विशेष ध्यान",
     bn: "আমরা সমস্ত ভারতে ডেলিভারি করি, পূর্ব ভারতে বিশেষ ফোকাস",
   },
+
+  // Advisor UI strings
+  "advisor.loading": {
+    en: "Dada soch raha hai...",
+    hi: "दादा सोच रहा है...",
+    bn: "দাদা ভাবছে...",
+  },
+  "advisor.error": {
+    en: "Arre yaar, kuch technical problem aa rahi hai. Thodi der mein phir try karo ya Team Suvee ko WhatsApp karo. 🙏",
+    hi: "अरे यार, कुछ टेक्निकल प्रॉब्लम आ रही है। थोड़ी देर में फिर ट्राई करो या टीम सुवी को WhatsApp करो। 🙏",
+    bn: "আরে ইয়ার, কিছু টেকনিক্যাল সমস্যা হচ্ছে। একটু পরে আবার চেষ্টা করো বা টিম সুভিকে WhatsApp করো। 🙏",
+  },
+  "advisor.powered_by": {
+    en: "Powered by Suvee Fashion · AI advice for your kurti business",
+    hi: "Suvee Fashion द्वारा संचालित · आपके कुर्ती बिजनेस के लिए AI सलाह",
+    bn: "Suvee Fashion দ্বারা পরিচালিত · আপনার কুর্তি ব্যবসার জন্য AI পরামর্শ",
+  },
 } as const;
 
 export type TranslationKey = keyof typeof translations;
