@@ -442,7 +442,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
               </div>
 
-              <ProductFormFields />
+              {formFieldsJSX}
 
               <Button onClick={saveProduct} className="w-full">{editingId ? "Update Product" : "Create Product"}</Button>
             </DialogContent>
