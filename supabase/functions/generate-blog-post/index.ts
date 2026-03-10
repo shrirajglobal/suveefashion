@@ -283,8 +283,52 @@ Return as JSON:
       throw new Error(`Failed to save blog post: ${insertError.message}`);
     }
 
+    // Step 6: Auto-post to Buffer (if configured)
+    let bufferPosted = false;
+    const BUFFER_ACCESS_TOKEN = Deno.env.get("BUFFER_ACCESS_TOKEN");
+    if (BUFFER_ACCESS_TOKEN) {
+      try {
+        const postUrl = `https://suveefashion.lovable.app/blog/${insertData.slug}`;
+        const caption = parsed.social_caption || `📖 ${parsed.title}\n\nRead more: ${postUrl}`;
+
+        // Get Buffer profiles (channels)
+        const profilesResp = await fetch("https://api.bufferapp.com/1/profiles.json", {
+          headers: { Authorization: `Bearer ${BUFFER_ACCESS_TOKEN}` },
+        });
+
+        if (profilesResp.ok) {
+          const profiles = await profilesResp.json();
+          
+          // Post to all connected profiles
+          const postPromises = profiles.map((profile: any) =>
+            fetch("https://api.bufferapp.com/1/updates/create.json", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${BUFFER_ACCESS_TOKEN}`,
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: new URLSearchParams({
+                text: `${caption}\n\n${postUrl}`,
+                profile_ids: profile.id,
+                now: "false", // Queue it, don't post immediately
+              }).toString(),
+            })
+          );
+
+          await Promise.allSettled(postPromises);
+          bufferPosted = true;
+          console.log(`Buffer: queued to ${profiles.length} profile(s)`);
+        } else {
+          console.error("Buffer profiles fetch failed:", profilesResp.status);
+        }
+      } catch (bufferErr) {
+        console.error("Buffer posting error:", bufferErr);
+      }
+    }
+
     return new Response(JSON.stringify({
       ok: true,
+      bufferPosted,
       post: {
         id: insertData.id,
         title: insertData.title,
