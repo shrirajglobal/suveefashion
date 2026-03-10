@@ -1,0 +1,1 @@
+ALTER TABLE public.buyer_profiles ADD COLUMN discount_percent numeric DEFAULT 0;

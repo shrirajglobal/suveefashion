@@ -5,6 +5,7 @@ import type { User } from "@supabase/supabase-js";
 interface AuthContextType {
   user: User | null;
   buyerStatus: "pending" | "approved" | "rejected" | null;
+  discountPercent: number;
   isAdmin: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
@@ -13,6 +14,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   buyerStatus: null,
+  discountPercent: 0,
   isAdmin: false,
   loading: true,
   signOut: async () => {},
@@ -21,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [buyerStatus, setBuyerStatus] = useState<"pending" | "approved" | "rejected" | null>(null);
+  const [discountPercent, setDiscountPercent] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -28,11 +31,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check buyer profile status
     const { data: profile } = await supabase
       .from("buyer_profiles")
-      .select("status")
+      .select("status, discount_percent")
       .eq("user_id", u.id)
       .maybeSingle();
     
     setBuyerStatus(profile?.status ?? null);
+    setDiscountPercent(Number(profile?.discount_percent) || 0);
 
     // Check admin role
     const { data: roles } = await supabase
@@ -52,6 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setTimeout(() => fetchUserMeta(u), 0);
       } else {
         setBuyerStatus(null);
+        setDiscountPercent(0);
         setIsAdmin(false);
       }
       setLoading(false);
@@ -73,11 +78,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setUser(null);
     setBuyerStatus(null);
+    setDiscountPercent(0);
     setIsAdmin(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, buyerStatus, isAdmin, loading, signOut }}>
+    <AuthContext.Provider value={{ user, buyerStatus, discountPercent, isAdmin, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );
