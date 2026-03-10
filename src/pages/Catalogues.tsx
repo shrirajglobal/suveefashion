@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Search, Package, ShoppingCart, Eye, Layers, X, Share2, MessageCircle, ChevronUp } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
