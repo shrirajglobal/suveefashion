@@ -430,7 +430,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
 
               {/* Image upload */}
               <div>
-                <label className="mb-1 block text-xs font-medium">Product Image</label>
+                <label className="mb-1 block text-xs font-medium">Product Image *</label>
                 {form.image_url ? (
                   <div className="relative inline-block">
                     <img src={form.image_url} alt="Product" className="h-32 w-28 rounded-lg object-cover" />
