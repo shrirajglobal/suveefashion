@@ -246,17 +246,16 @@ export default function Index() {
           <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-6 lg:grid-cols-4">
             {categories.map(({ key, img }, i) => (
               <motion.div key={key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <Card className="overflow-hidden border-0 shadow-md">
-                  <div className="relative aspect-[3/4] sm:aspect-square overflow-hidden">
-                    <img src={img} alt={t(`categories.${key}` as any)} className="h-full w-full object-cover opacity-70" />
-                    <div className="absolute inset-0 flex items-center justify-center bg-foreground/20">
-                      <span className="rounded-full bg-background/90 px-3 py-1.5 text-[10px] font-bold text-foreground shadow sm:px-4 sm:py-2 sm:text-sm">Coming Soon</span>
+                <Link to="/catalogues">
+                  <Card className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-shadow">
+                    <div className="relative aspect-[3/4] sm:aspect-square overflow-hidden">
+                      <img src={img} alt={t(`categories.${key}` as any)} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
                     </div>
-                  </div>
-                  <CardContent className="p-2.5 text-center sm:p-4">
-                    <h3 className="font-display text-sm font-semibold text-foreground sm:text-lg">{t(`categories.${key}` as any)}</h3>
-                  </CardContent>
-                </Card>
+                    <CardContent className="p-2.5 text-center sm:p-4">
+                      <h3 className="font-display text-sm font-semibold text-foreground sm:text-lg">{t(`categories.${key}` as any)}</h3>
+                    </CardContent>
+                  </Card>
+                </Link>
               </motion.div>
             ))}
           </div>
