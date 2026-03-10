@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { X, ChevronDown, Search, Check } from "lucide-react";
 
 const GARMENT_COLOURS = [
+  "Multicolour",
   "Maroon", "Navy Blue", "Teal", "Mustard", "Peach", "Coral", "Wine",
   "Bottle Green", "Rani Pink", "Rust", "Magenta", "Olive", "Beige",
   "Off White", "Black", "White", "Grey", "Red", "Royal Blue", "Sky Blue",

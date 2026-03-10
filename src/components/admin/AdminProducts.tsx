@@ -126,11 +126,18 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
   };
 
   const saveProduct = async () => {
+    const resolvedFabric = getResolvedFabric();
     if (!form.name.trim()) { toast({ title: "Product name is required", variant: "destructive" }); return; }
+    if (!resolvedFabric) { toast({ title: "Fabric is required", variant: "destructive" }); return; }
+    if (!form.category_id) { toast({ title: "Category is required", variant: "destructive" }); return; }
+    if (!form.pcs_per_set || form.pcs_per_set < 1) { toast({ title: "Pcs per set is required", variant: "destructive" }); return; }
+    if (!form.wsp) { toast({ title: "WSP is required", variant: "destructive" }); return; }
+    if (!form.bundle_type) { toast({ title: "Bundle type is required", variant: "destructive" }); return; }
+    if (!form.sizes.trim()) { toast({ title: "Sizes display text is required", variant: "destructive" }); return; }
+    if (!form.image_url) { toast({ title: "Product image is required", variant: "destructive" }); return; }
     if (form.bundle_type === "colour_chart" && form.available_colours.length !== form.pcs_per_set) {
       toast({ title: `Please select exactly ${form.pcs_per_set} colours for the colour chart`, variant: "destructive" }); return;
     }
-    const resolvedFabric = getResolvedFabric();
     const payload: any = {
       name: form.name,
       description: form.description || null,
@@ -163,11 +170,21 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
   };
 
   const handleBulkAdd = async () => {
+    const resolvedFabric = getResolvedFabric();
     if (bulkImages.length === 0) { toast({ title: "Please select images", variant: "destructive" }); return; }
     if (!form.name.trim()) { toast({ title: "Product name is required", variant: "destructive" }); return; }
+    if (!resolvedFabric) { toast({ title: "Fabric is required", variant: "destructive" }); return; }
+    if (!form.category_id) { toast({ title: "Category is required", variant: "destructive" }); return; }
+    if (!form.pcs_per_set || form.pcs_per_set < 1) { toast({ title: "Pcs per set is required", variant: "destructive" }); return; }
+    if (!form.wsp) { toast({ title: "WSP is required", variant: "destructive" }); return; }
+    if (!form.bundle_type) { toast({ title: "Bundle type is required", variant: "destructive" }); return; }
+    if (!form.sizes.trim()) { toast({ title: "Sizes display text is required", variant: "destructive" }); return; }
+    if (form.bundle_type === "colour_chart" && form.available_colours.length !== form.pcs_per_set) {
+      toast({ title: `Please select exactly ${form.pcs_per_set} colours for the colour chart`, variant: "destructive" }); return;
+    }
     setBulkUploading(true);
 
-    const resolvedFabric = getResolvedFabric();
+    
     const products: any[] = [];
 
     for (let i = 0; i < bulkImages.length; i++) {
@@ -225,16 +242,16 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
     <div className="space-y-3">
       <div>
         <label className="mb-1 block text-xs font-medium">Product Name *</label>
-        <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} maxLength={200} />
+        <Input value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} maxLength={200} />
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium">Description</label>
-        <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} />
+        <Textarea value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} rows={2} />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="mb-1 block text-xs font-medium">Fabric</label>
-          <Select value={form.fabric} onValueChange={(v) => { setForm({ ...form, fabric: v }); if (v !== "__other__") setFabricOther(""); }}>
+          <label className="mb-1 block text-xs font-medium">Fabric *</label>
+          <Select value={form.fabric} onValueChange={(v) => { setForm(f => ({ ...f, fabric: v })); if (v !== "__other__") setFabricOther(""); }}>
             <SelectTrigger><SelectValue placeholder="Select fabric" /></SelectTrigger>
             <SelectContent>
               {FABRICS.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}
@@ -246,8 +263,8 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
           )}
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium">Category</label>
-          <Select value={form.category_id} onValueChange={(v) => setForm({ ...form, category_id: v })}>
+          <label className="mb-1 block text-xs font-medium">Category *</label>
+          <Select value={form.category_id} onValueChange={(v) => setForm(f => ({ ...f, category_id: v }))}>
             <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
             <SelectContent>
               {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
@@ -258,18 +275,18 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="mb-1 block text-xs font-medium">Pcs per Set/Bundle *</label>
-          <Input type="number" min={1} value={String(form.pcs_per_set)} onChange={(e) => setForm({ ...form, pcs_per_set: parseInt(e.target.value) || 1 })} />
+          <Input type="number" min={1} value={String(form.pcs_per_set)} onChange={(e) => setForm(f => ({ ...f, pcs_per_set: parseInt(e.target.value) || 1 }))} />
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium">WSP (₹) *</label>
-          <Input type="number" value={String(form.wsp ?? "")} onChange={(e) => setForm({ ...form, wsp: e.target.value ? Number(e.target.value) : null })} />
+          <Input type="number" value={String(form.wsp ?? "")} onChange={(e) => setForm(f => ({ ...f, wsp: e.target.value ? Number(e.target.value) : null }))} />
         </div>
       </div>
 
       {/* Bundle Type */}
       <div>
         <label className="mb-1 block text-xs font-medium">Bundle Type *</label>
-        <Select value={form.bundle_type} onValueChange={(v) => setForm({ ...form, bundle_type: v, available_colours: v === "colour_chart" ? form.available_colours : [] })}>
+        <Select value={form.bundle_type} onValueChange={(v) => setForm(f => ({ ...f, bundle_type: v, available_colours: v === "colour_chart" ? f.available_colours : [] }))}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="combo">Combo</SelectItem>
@@ -288,7 +305,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       {form.bundle_type === "colour_chart" && (
         <ColourPicker
           selected={form.available_colours}
-          onChange={(colours) => setForm({ ...form, available_colours: colours })}
+          onChange={(colours) => setForm(f => ({ ...f, available_colours: colours }))}
           max={form.pcs_per_set}
         />
       )}
@@ -319,7 +336,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
           <label className="mb-1 block text-xs font-medium">Assortment Description</label>
           <Textarea
             value={form.combo_description}
-            onChange={(e) => setForm({ ...form, combo_description: e.target.value })}
+            onChange={(e) => setForm(f => ({ ...f, combo_description: e.target.value }))}
             rows={2}
             placeholder="e.g., Mixed floral prints in S, M, L sizes with assorted colours"
           />
@@ -327,16 +344,16 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
       )}
 
       <div>
-        <label className="mb-1 block text-xs font-medium">Sizes (display text)</label>
-        <Input value={form.sizes} onChange={(e) => setForm({ ...form, sizes: e.target.value })} placeholder="e.g., S-XXL" />
+        <label className="mb-1 block text-xs font-medium">Sizes (display text) *</label>
+        <Input value={form.sizes} onChange={(e) => setForm(f => ({ ...f, sizes: e.target.value }))} placeholder="e.g., S-XXL" />
       </div>
 
       <div className="flex items-center gap-6">
         <label className="flex items-center gap-2 text-sm">
-          <Switch checked={form.is_featured} onCheckedChange={(v) => setForm({ ...form, is_featured: v })} /> Featured
+          <Switch checked={form.is_featured} onCheckedChange={(v) => setForm(f => ({ ...f, is_featured: v }))} /> Featured
         </label>
         <label className="flex items-center gap-2 text-sm">
-          <Switch checked={form.is_new_arrival} onCheckedChange={(v) => setForm({ ...form, is_new_arrival: v })} /> New Arrival
+          <Switch checked={form.is_new_arrival} onCheckedChange={(v) => setForm(f => ({ ...f, is_new_arrival: v }))} /> New Arrival
         </label>
       </div>
     </div>
@@ -413,13 +430,13 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
 
               {/* Image upload */}
               <div>
-                <label className="mb-1 block text-xs font-medium">Product Image</label>
+                <label className="mb-1 block text-xs font-medium">Product Image *</label>
                 {form.image_url ? (
                   <div className="relative inline-block">
                     <img src={form.image_url} alt="Product" className="h-32 w-28 rounded-lg object-cover" />
                     <button
                       className="absolute -right-1 -top-1 rounded-full bg-destructive p-0.5 text-destructive-foreground"
-                      onClick={() => setForm({ ...form, image_url: "" })}
+                      onClick={() => setForm(f => ({ ...f, image_url: "" }))}
                     >
                       <X className="h-3 w-3" />
                     </button>
