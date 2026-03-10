@@ -40,12 +40,12 @@ const testimonials = [
   },
 ];
 
-const categories = [
-  { key: "casual" as const, img: casualImg },
-  { key: "festive" as const, img: festiveImg },
-  { key: "cotton" as const, img: cottonImg },
-  { key: "designer" as const, img: designerImg },
-];
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  image_url: string | null;
+}
 
 const stats = [
   { icon: Users, key: "about.stat_retailers" as const },
