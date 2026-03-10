@@ -28,23 +28,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchUserMeta = async (u: User) => {
-    // Check buyer profile status
-    const { data: profile } = await supabase
-      .from("buyer_profiles")
-      .select("status, discount_percent")
-      .eq("user_id", u.id)
-      .maybeSingle();
-    
-    setBuyerStatus(profile?.status ?? null);
-    setDiscountPercent(Number(profile?.discount_percent) || 0);
+    try {
+      // Check buyer profile status
+      const { data: profile } = await supabase
+        .from("buyer_profiles")
+        .select("status, discount_percent")
+        .eq("user_id", u.id)
+        .maybeSingle();
+      
+      setBuyerStatus(profile?.status ?? null);
+      setDiscountPercent(Number(profile?.discount_percent) || 0);
 
-    // Check admin role
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", u.id);
-    
-    setIsAdmin(roles?.some((r) => r.role === "admin") ?? false);
+      // Check admin role
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", u.id);
+      
+      setIsAdmin(roles?.some((r) => r.role === "admin") ?? false);
+    } catch (err) {
+      console.error("fetchUserMeta error:", err);
+      // Don't stall — keep defaults
+      setBuyerStatus(null);
+      setDiscountPercent(0);
+      setIsAdmin(false);
+    }
   };
 
   useEffect(() => {
