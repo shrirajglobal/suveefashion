@@ -30,15 +30,28 @@ export default function Advisor() {
   const [isLoading, setIsLoading] = useState(false);
   const [exchangeCount, setExchangeCount] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const lastAssistantRef = useRef<HTMLDivElement>(null);
   const isNearBottomRef = useRef(true);
+  const isStreamingRef = useRef(false);
+  const hasScrolledToStartRef = useRef(false);
 
-  // Smart auto-scroll: only scroll if user is near bottom
-  const scrollToBottom = useCallback(() => {
+  // Scroll to the start of the latest assistant message, not the bottom
+  const scrollToAssistantStart = useCallback(() => {
     const el = scrollContainerRef.current;
-    if (!el) return;
-    if (isNearBottomRef.current) {
+    const msgEl = lastAssistantRef.current;
+    if (!el || !msgEl) return;
+    if (!isNearBottomRef.current) return;
+
+    if (isStreamingRef.current && !hasScrolledToStartRef.current) {
+      // First chunk: scroll so the new message starts at top of visible area with some padding
+      const msgTop = msgEl.offsetTop - el.offsetTop;
+      el.scrollTop = msgTop - 12;
+      hasScrolledToStartRef.current = true;
+    } else if (!isStreamingRef.current) {
+      // Not streaming (user message etc): scroll to bottom
       el.scrollTop = el.scrollHeight;
     }
+    // During streaming after first scroll: don't auto-scroll, let user read from top of message
   }, []);
 
   const handleScroll = useCallback(() => {
@@ -49,8 +62,8 @@ export default function Advisor() {
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, scrollToBottom]);
+    scrollToAssistantStart();
+  }, [messages, scrollToAssistantStart]);
 
   // Mobile keyboard: adjust layout using visualViewport
   useEffect(() => {
