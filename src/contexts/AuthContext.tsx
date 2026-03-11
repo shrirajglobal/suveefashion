@@ -6,6 +6,7 @@ interface AuthContextType {
   user: User | null;
   buyerStatus: "pending" | "approved" | "rejected" | null;
   discountPercent: number;
+  businessName: string | null;
   isAdmin: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
