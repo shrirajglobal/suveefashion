@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, Package, ShoppingCart, Eye, Layers, X, Share2, MessageCircle, ChevronUp, Filter, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { Search, Package, ShoppingCart, Eye, Layers, X, Share2, MessageCircle, ChevronUp, Filter, SlidersHorizontal, ArrowUpDown, Minus, Plus } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
