@@ -153,9 +153,12 @@ export default function Cart() {
                     <CardContent className="flex gap-4 p-4">
                       <img src={item.product?.image_url || casualImg} alt={item.product?.name} className="h-24 w-20 rounded-md object-cover" />
                       <div className="flex-1">
-                        <h3 className="font-display text-sm font-semibold text-foreground">{item.product?.name}</h3>
+                        <h3 className="font-display text-sm font-semibold text-foreground">
+                          {item.product?.name}
+                          {item.size && <span className="text-muted-foreground font-normal"> — {item.size}</span>}
+                        </h3>
                         {item.product?.fabric && <p className="text-xs text-muted-foreground">{item.product.fabric}</p>}
-                        <div className="mt-1">
+                        <div className="mt-1 font-body">
                           {hasDiscount ? (
                             <p className="text-sm">
                               <span className="text-muted-foreground line-through">₹{wsp}</span>{" "}
@@ -173,7 +176,7 @@ export default function Cart() {
                           </Button>
                           <Input type="number" value={item.quantity}
                             onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || step)}
-                            className="h-7 w-20 text-center text-sm" min={step} step={step} />
+                            className="h-7 w-20 text-center text-sm font-body" min={step} step={step} />
                           <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateQuantity(item.id, item.quantity + step)}>
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -181,7 +184,7 @@ export default function Cart() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        <p className="mt-1 text-xs font-medium text-secondary">Subtotal: ₹{(unitPrice * item.quantity).toLocaleString()}</p>
+                        <p className="mt-1 text-xs font-medium text-secondary font-body">Subtotal: ₹{(unitPrice * item.quantity).toLocaleString()}</p>
                       </div>
                     </CardContent>
                   </Card>
