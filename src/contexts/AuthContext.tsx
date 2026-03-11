@@ -41,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       setBuyerStatus(profile?.status ?? null);
       setDiscountPercent(Number(profile?.discount_percent) || 0);
+      setBusinessName(profile?.business_name ?? null);
 
       // Check admin role
       const { data: roles } = await supabase
