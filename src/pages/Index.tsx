@@ -215,7 +215,7 @@ export default function Index() {
       <SEOHead
         title="Suvee Fashion — Premium Wholesale Kurtis from Kolkata"
         description="Buy wholesale kurtis from Suvee Fashion, Howrah. 850+ designs, pan-India delivery, trusted by 3700+ retailers. Register as buyer for wholesale prices."
-        canonical="https://suveefashion.lovable.app"
+        canonical={SITE_URL}
         jsonLd={orgJsonLd}
       />
       {/* Hero Carousel */}
