@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, Package, ShoppingCart, Eye, Layers, X, Share2, MessageCircle, ChevronUp, Filter, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { Search, Package, ShoppingCart, Eye, Layers, X, Share2, MessageCircle, ChevronUp, Filter, SlidersHorizontal, ArrowUpDown, Minus, Plus } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -123,9 +123,9 @@ function PriceDisplay({ product, isApproved, discountPercent, size = "sm" }: { p
     const textSize = size === "lg" ? "text-2xl" : "text-base";
     const subSize = size === "lg" ? "text-sm" : "text-[10px]";
     return (
-      <div className="mt-2">
+      <div className="mt-2 font-body">
         {hasDiscount && <span className="text-muted-foreground line-through text-xs mr-1">₹{wsp}</span>}
-        <span className={`font-display ${textSize} font-bold text-primary`}>₹{displayPrice}</span>
+        <span className={`${textSize} font-bold text-primary`}>₹{displayPrice}</span>
         <span className={`${subSize} font-normal text-muted-foreground ml-1`}>
           {size === "lg" ? "per piece" : "/pc"} + 5% GST
         </span>
@@ -205,17 +205,39 @@ function ProductCard({
 function ProductDetailDialog({
   product, isApproved, discountPercent, onClose, onAddToCart,
 }: {
-  product: Product | null; isApproved: boolean; discountPercent: number; onClose: () => void; onAddToCart: (p: Product, qty: number) => void;
+  product: Product | null; isApproved: boolean; discountPercent: number; onClose: () => void; onAddToCart: (p: Product, qty: number, sizeQtys?: Record<string, number>) => void;
 }) {
   const { user } = useAuth();
   const [qty, setQty] = useState(1);
+  const [sizeQuantities, setSizeQuantities] = useState<Record<string, number>>({});
+
+  const hasSizes = !!(product?.available_sizes && product.available_sizes.length > 0);
 
   useEffect(() => {
-    if (product) setQty(product.pcs_per_set || 1);
+    if (product) {
+      setQty(product.pcs_per_set || 1);
+      if (product.available_sizes && product.available_sizes.length > 0) {
+        const init: Record<string, number> = {};
+        product.available_sizes.forEach(s => { init[s] = 0; });
+        setSizeQuantities(init);
+      } else {
+        setSizeQuantities({});
+      }
+    }
   }, [product]);
 
   if (!product) return null;
   const step = product.pcs_per_set || 1;
+
+  const totalSizeSets = Object.values(sizeQuantities).reduce((a, b) => a + b, 0);
+  const totalSizePcs = totalSizeSets * step;
+
+  const updateSizeQty = (size: string, delta: number) => {
+    setSizeQuantities(prev => ({
+      ...prev,
+      [size]: Math.max(0, (prev[size] || 0) + delta),
+    }));
+  };
 
   return (
     <Dialog open={!!product} onOpenChange={(o) => !o && onClose()}>
@@ -270,15 +292,6 @@ function ProductDetailDialog({
             </div>
           )}
 
-          {product.available_sizes && product.available_sizes.length > 0 && (
-            <div>
-              <p className="mb-1.5 text-xs font-semibold text-foreground">Available Sizes</p>
-              <div className="flex flex-wrap gap-1">
-                {product.available_sizes.map((s) => <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>)}
-              </div>
-            </div>
-          )}
-
           {product.combo_description && (
             <div className="rounded-lg bg-accent/50 p-3">
               <p className="text-xs font-semibold text-foreground">Combo Details</p>
@@ -294,14 +307,43 @@ function ProductDetailDialog({
             </p>
           )}
 
-          {/* Quantity selector for approved buyers */}
-          {isApproved && (
+          {/* Size-wise quantity selector for products with available_sizes */}
+          {isApproved && hasSizes && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-foreground">Select Quantity per Size <span className="font-normal text-muted-foreground">({step} pcs/set)</span></p>
+              <div className="space-y-1.5">
+                {product.available_sizes!.map(size => (
+                  <div key={size} className="flex items-center gap-3 rounded-lg border border-border p-2">
+                    <Badge variant={sizeQuantities[size] > 0 ? "default" : "outline"} className="min-w-[40px] justify-center text-xs">{size}</Badge>
+                    <div className="flex items-center gap-1">
+                      <Button size="icon" variant="outline" className="h-7 w-7" onClick={() => updateSizeQty(size, -1)} disabled={!sizeQuantities[size]}>
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      <span className="w-8 text-center text-sm font-medium font-body">{sizeQuantities[size] || 0}</span>
+                      <Button size="icon" variant="outline" className="h-7 w-7" onClick={() => updateSizeQty(size, 1)}>
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground ml-auto font-body">
+                      {sizeQuantities[size] > 0 ? `${sizeQuantities[size]} set${sizeQuantities[size] > 1 ? "s" : ""} = ${sizeQuantities[size] * step} pcs` : "—"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {totalSizeSets > 0 && (
+                <p className="text-xs font-medium text-secondary font-body">Total: {totalSizeSets} set{totalSizeSets > 1 ? "s" : ""} = {totalSizePcs} pcs</p>
+              )}
+            </div>
+          )}
+
+          {/* Simple quantity selector for products without available_sizes */}
+          {isApproved && !hasSizes && (
             <div className="flex items-center gap-3">
               <label className="text-xs font-medium text-foreground">Qty:</label>
               <div className="flex items-center gap-1">
                 <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => setQty(Math.max(step, qty - step))}>-</Button>
                 <Input type="number" value={qty} onChange={e => setQty(Math.max(step, Math.round((parseInt(e.target.value) || step) / step) * step))}
-                  className="h-8 w-20 text-center text-sm" min={step} step={step} />
+                  className="h-8 w-20 text-center text-sm font-body" min={step} step={step} />
                 <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => setQty(qty + step)}>+</Button>
               </div>
               <span className="text-[10px] text-muted-foreground">({step} pcs/set)</span>
@@ -314,7 +356,13 @@ function ProductDetailDialog({
                 <MessageCircle className="mr-2 h-4 w-4" fill="white" /> Ask on WhatsApp
               </a>
             </Button>
-            {isApproved && (
+            {isApproved && hasSizes && (
+              <Button variant="outline" className="shrink-0" disabled={totalSizeSets === 0}
+                onClick={() => { onAddToCart(product, totalSizePcs, sizeQuantities); onClose(); }}>
+                <ShoppingCart className="mr-2 h-4 w-4" /> Add {totalSizePcs} pcs
+              </Button>
+            )}
+            {isApproved && !hasSizes && (
               <Button variant="outline" className="shrink-0" onClick={() => { onAddToCart(product, qty); onClose(); }}>
                 <ShoppingCart className="mr-2 h-4 w-4" /> Add {qty} pcs
               </Button>
@@ -469,7 +517,7 @@ export default function Catalogues() {
   const newArrivals = sortBy === "default" ? filtered.filter((p) => p.is_new_arrival && !p.is_featured) : [];
   const regularProducts = sortBy === "default" ? filtered.filter((p) => !p.is_featured && !p.is_new_arrival) : filtered;
 
-  const addToCart = async (product: Product, quantity = 1) => {
+  const addToCart = async (product: Product, quantity = 1, sizeQtys?: Record<string, number>) => {
     if (!user) {
       toast({ title: "Please login first", description: "You need to register and get approved to order.", variant: "destructive" });
       return;
@@ -480,11 +528,33 @@ export default function Catalogues() {
     }
     setAddingToCart(product.id);
     const step = product.pcs_per_set || 1;
-    const qty = Math.max(step, Math.round(quantity / step) * step);
-    const { error } = await supabase.from("cart_items").insert({ user_id: user.id, product_id: product.id, quantity: qty });
-    if (error) {
-      toast({ title: "Error", description: "Could not add to cart. Try again.", variant: "destructive" });
+
+    // Size-wise cart items
+    if (sizeQtys && Object.values(sizeQtys).some(v => v > 0)) {
+      const entries = Object.entries(sizeQtys).filter(([, sets]) => sets > 0);
+      let totalPcs = 0;
+      for (const [size, sets] of entries) {
+        const pcs = sets * step;
+        totalPcs += pcs;
+        // Upsert: try insert, on conflict update quantity
+        const { data: existing } = await supabase.from("cart_items")
+          .select("id, quantity").eq("user_id", user.id).eq("product_id", product.id).eq("size", size).maybeSingle();
+        if (existing) {
+          await supabase.from("cart_items").update({ quantity: existing.quantity + pcs }).eq("id", existing.id);
+        } else {
+          await supabase.from("cart_items").insert({ user_id: user.id, product_id: product.id, quantity: pcs, size });
+        }
+      }
+      toast({ title: "Added to cart! 🛒", description: `${product.name} × ${totalPcs} pcs (${entries.length} size${entries.length > 1 ? "s" : ""}) added.` });
     } else {
+      // No sizes — single cart item
+      const qty = Math.max(step, Math.round(quantity / step) * step);
+      const { error } = await supabase.from("cart_items").insert({ user_id: user.id, product_id: product.id, quantity: qty });
+      if (error) {
+        toast({ title: "Error", description: "Could not add to cart. Try again.", variant: "destructive" });
+        setAddingToCart(null);
+        return;
+      }
       toast({ title: "Added to cart! 🛒", description: `${product.name} × ${qty} pcs added.` });
     }
     setAddingToCart(null);
