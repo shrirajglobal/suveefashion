@@ -73,13 +73,13 @@ export default function Blog() {
   });
 
   const shareWhatsApp = (p: BlogPost) => {
-    const url = `${window.location.origin}/blog/${p.slug}`;
+    const url = `${SITE_URL}/blog/${p.slug}`;
     const text = `📖 ${getTitle(p)}\n\n${getExcerpt(p) || ""}\n\nRead more: ${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const copyLink = (p: BlogPost) => {
-    navigator.clipboard.writeText(`${window.location.origin}/blog/${p.slug}`);
+    navigator.clipboard.writeText(`${SITE_URL}/blog/${p.slug}`);
     setCopiedId(p.id);
     setTimeout(() => setCopiedId(null), 2000);
   };
