@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead from "@/components/SEOHead";
+import { SITE_URL } from "@/lib/constants";
 import { format } from "date-fns";
 
 interface FullPost {
@@ -105,7 +106,7 @@ export default function BlogPost() {
   const content = language === "hi" ? (post.content_hi || post.content) : language === "bn" ? (post.content_bn || post.content) : post.content;
   const excerpt = language === "hi" ? (post.excerpt_hi || post.excerpt) : language === "bn" ? (post.excerpt_bn || post.excerpt) : post.excerpt;
 
-  const postUrl = `https://suveefashion.lovable.app/blog/${post.slug}`;
+  const postUrl = `${SITE_URL}/blog/${post.slug}`;
 
   const shareWhatsApp = () => {
     const text = `📖 ${title}\n\n${excerpt || ""}\n\nRead: ${postUrl}`;
@@ -126,13 +127,13 @@ export default function BlogPost() {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.meta_description || post.excerpt,
-    image: post.cover_image_url || "https://suveefashion.lovable.app/og-default.jpg",
+    image: post.cover_image_url || `${SITE_URL}/og-default.jpg`,
     datePublished: post.published_at,
     author: { "@type": "Organization", name: "Suvee Fashion" },
     publisher: {
       "@type": "Organization",
       name: "Suvee Fashion",
-      logo: { "@type": "ImageObject", url: "https://suveefashion.lovable.app/favicon.ico" },
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.ico` },
     },
     mainEntityOfPage: postUrl,
     keywords: post.keywords?.join(", "),

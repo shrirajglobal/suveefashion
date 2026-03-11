@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead from "@/components/SEOHead";
+import { SITE_URL } from "@/lib/constants";
 import { format } from "date-fns";
 
 interface BlogPost {
@@ -72,13 +73,13 @@ export default function Blog() {
   });
 
   const shareWhatsApp = (p: BlogPost) => {
-    const url = `${window.location.origin}/blog/${p.slug}`;
+    const url = `${SITE_URL}/blog/${p.slug}`;
     const text = `📖 ${getTitle(p)}\n\n${getExcerpt(p) || ""}\n\nRead more: ${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const copyLink = (p: BlogPost) => {
-    navigator.clipboard.writeText(`${window.location.origin}/blog/${p.slug}`);
+    navigator.clipboard.writeText(`${SITE_URL}/blog/${p.slug}`);
     setCopiedId(p.id);
     setTimeout(() => setCopiedId(null), 2000);
   };
@@ -94,7 +95,7 @@ export default function Blog() {
       <SEOHead
         title={seoTitle}
         description={seoDesc}
-        canonical="https://suveefashion.lovable.app/blog"
+        canonical={`${SITE_URL}/blog`}
       />
 
       {/* Hero */}

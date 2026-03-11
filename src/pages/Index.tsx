@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import factoryImage from "@/assets/factory.jpg";
 import SEOHead from "@/components/SEOHead";
+import { SITE_URL } from "@/lib/constants";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import heroProduct1 from "@/assets/hero-product-1.jpg";
@@ -195,8 +196,8 @@ export default function Index() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Suvee Fashion",
-    url: "https://suveefashion.lovable.app",
-    logo: "https://suveefashion.lovable.app/favicon.ico",
+    url: SITE_URL,
+    logo: `${SITE_URL}/favicon.ico`,
     description: "Premium wholesale kurti manufacturer from Howrah, Kolkata. 850+ designs, pan-India delivery.",
     address: {
       "@type": "PostalAddress",
@@ -214,7 +215,7 @@ export default function Index() {
       <SEOHead
         title="Suvee Fashion — Premium Wholesale Kurtis from Kolkata"
         description="Buy wholesale kurtis from Suvee Fashion, Howrah. 850+ designs, pan-India delivery, trusted by 3700+ retailers. Register as buyer for wholesale prices."
-        canonical="https://suveefashion.lovable.app"
+        canonical={SITE_URL}
         jsonLd={orgJsonLd}
       />
       {/* Hero Carousel */}
