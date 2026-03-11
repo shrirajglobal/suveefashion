@@ -517,7 +517,7 @@ export default function Catalogues() {
   const newArrivals = sortBy === "default" ? filtered.filter((p) => p.is_new_arrival && !p.is_featured) : [];
   const regularProducts = sortBy === "default" ? filtered.filter((p) => !p.is_featured && !p.is_new_arrival) : filtered;
 
-  const addToCart = async (product: Product, quantity = 1) => {
+  const addToCart = async (product: Product, quantity = 1, sizeQtys?: Record<string, number>) => {
     if (!user) {
       toast({ title: "Please login first", description: "You need to register and get approved to order.", variant: "destructive" });
       return;
@@ -528,11 +528,33 @@ export default function Catalogues() {
     }
     setAddingToCart(product.id);
     const step = product.pcs_per_set || 1;
-    const qty = Math.max(step, Math.round(quantity / step) * step);
-    const { error } = await supabase.from("cart_items").insert({ user_id: user.id, product_id: product.id, quantity: qty });
-    if (error) {
-      toast({ title: "Error", description: "Could not add to cart. Try again.", variant: "destructive" });
+
+    // Size-wise cart items
+    if (sizeQtys && Object.values(sizeQtys).some(v => v > 0)) {
+      const entries = Object.entries(sizeQtys).filter(([, sets]) => sets > 0);
+      let totalPcs = 0;
+      for (const [size, sets] of entries) {
+        const pcs = sets * step;
+        totalPcs += pcs;
+        // Upsert: try insert, on conflict update quantity
+        const { data: existing } = await supabase.from("cart_items")
+          .select("id, quantity").eq("user_id", user.id).eq("product_id", product.id).eq("size", size).maybeSingle();
+        if (existing) {
+          await supabase.from("cart_items").update({ quantity: existing.quantity + pcs }).eq("id", existing.id);
+        } else {
+          await supabase.from("cart_items").insert({ user_id: user.id, product_id: product.id, quantity: pcs, size });
+        }
+      }
+      toast({ title: "Added to cart! 🛒", description: `${product.name} × ${totalPcs} pcs (${entries.length} size${entries.length > 1 ? "s" : ""}) added.` });
     } else {
+      // No sizes — single cart item
+      const qty = Math.max(step, Math.round(quantity / step) * step);
+      const { error } = await supabase.from("cart_items").insert({ user_id: user.id, product_id: product.id, quantity: qty });
+      if (error) {
+        toast({ title: "Error", description: "Could not add to cart. Try again.", variant: "destructive" });
+        setAddingToCart(null);
+        return;
+      }
       toast({ title: "Added to cart! 🛒", description: `${product.name} × ${qty} pcs added.` });
     }
     setAddingToCart(null);
