@@ -196,8 +196,8 @@ export default function Index() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Suvee Fashion",
-    url: "https://suveefashion.lovable.app",
-    logo: "https://suveefashion.lovable.app/favicon.ico",
+    url: SITE_URL,
+    logo: `${SITE_URL}/favicon.ico`,
     description: "Premium wholesale kurti manufacturer from Howrah, Kolkata. 850+ designs, pan-India delivery.",
     address: {
       "@type": "PostalAddress",
