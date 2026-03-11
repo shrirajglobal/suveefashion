@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, ShoppingBag } from "lucide-react";
+import { ShoppingCart, Trash2, Minus, Plus, ArrowRight, ShoppingBag, Truck } from "lucide-react";
 import casualImg from "@/assets/category-casual.jpg";
 
 interface CartItem {
@@ -53,7 +53,7 @@ export default function Cart() {
     if (!product) return 0;
     const wsp = Number(product.wsp) || 0;
     if (discountPercent > 0) {
-      return Math.round(wsp * (1 - discountPercent / 100) * 100) / 100;
+      return Math.round(wsp * (1 - discountPercent / 100));
     }
     return wsp;
   };
@@ -62,7 +62,6 @@ export default function Cart() {
     const item = items.find((i) => i.id === itemId);
     if (!item?.product) return;
     const step = item.product.pcs_per_set || 1;
-    // Snap to nearest valid multiple
     const snapped = Math.max(step, Math.round(newQty / step) * step);
     await supabase.from("cart_items").update({ quantity: snapped }).eq("id", itemId);
     setItems((prev) => prev.map((i) => (i.id === itemId ? { ...i, quantity: snapped } : i)));
@@ -74,11 +73,9 @@ export default function Cart() {
     toast({ title: "Item removed from cart" });
   };
 
-  const totalAmount = items.reduce((sum, item) => {
-    const price = getUnitPrice(item.product);
-    return sum + price * item.quantity;
-  }, 0);
-
+  const subtotal = items.reduce((sum, item) => sum + getUnitPrice(item.product) * item.quantity, 0);
+  const gstAmount = Math.round(subtotal * 0.05);
+  const grandTotal = subtotal + gstAmount;
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const placeOrder = async () => {
@@ -90,7 +87,7 @@ export default function Cart() {
       .insert({
         user_id: user!.id,
         order_number: "temp",
-        total_amount: totalAmount,
+        total_amount: grandTotal,
         total_items: totalItems,
         shipping_address: shippingAddress.trim() || null,
         notes: notes.trim() || null,
@@ -152,11 +149,7 @@ export default function Cart() {
                 return (
                   <Card key={item.id} className="border-0 shadow-md">
                     <CardContent className="flex gap-4 p-4">
-                      <img
-                        src={item.product?.image_url || casualImg}
-                        alt={item.product?.name}
-                        className="h-24 w-20 rounded-md object-cover"
-                      />
+                      <img src={item.product?.image_url || casualImg} alt={item.product?.name} className="h-24 w-20 rounded-md object-cover" />
                       <div className="flex-1">
                         <h3 className="font-display text-sm font-semibold text-foreground">{item.product?.name}</h3>
                         {item.product?.fabric && <p className="text-xs text-muted-foreground">{item.product.fabric}</p>}
@@ -164,12 +157,11 @@ export default function Cart() {
                           {hasDiscount ? (
                             <p className="text-sm">
                               <span className="text-muted-foreground line-through">₹{wsp}</span>{" "}
-                              <span className="font-semibold text-foreground">₹{unitPrice}</span>{" "}
-                              <span className="text-xs text-green-600">({discountPercent}% off)</span>{" "}
-                              <span className="text-xs text-muted-foreground">+ GST (5%)</span>
+                              <span className="font-semibold text-foreground">₹{unitPrice}/pc</span>{" "}
+                              <span className="text-xs text-green-600">({discountPercent}% off)</span>
                             </p>
                           ) : (
-                            <p className="text-sm font-semibold text-foreground">₹{unitPrice} / pc <span className="text-xs font-normal text-muted-foreground">+ GST (5%)</span></p>
+                            <p className="text-sm font-semibold text-foreground">₹{unitPrice}/pc</p>
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground">{step} pcs/set</p>
@@ -177,14 +169,9 @@ export default function Cart() {
                           <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateQuantity(item.id, item.quantity - step)}>
                             <Minus className="h-3 w-3" />
                           </Button>
-                          <Input
-                            type="number"
-                            value={item.quantity}
+                          <Input type="number" value={item.quantity}
                             onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || step)}
-                            className="h-7 w-20 text-center text-sm"
-                            min={step}
-                            step={step}
-                          />
+                            className="h-7 w-20 text-center text-sm" min={step} step={step} />
                           <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateQuantity(item.id, item.quantity + step)}>
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -192,7 +179,7 @@ export default function Cart() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        <p className="mt-1 text-xs font-medium text-secondary">Subtotal: ₹{(unitPrice * item.quantity).toLocaleString()} + GST</p>
+                        <p className="mt-1 text-xs font-medium text-secondary">Subtotal: ₹{(unitPrice * item.quantity).toLocaleString()}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -205,7 +192,7 @@ export default function Cart() {
                 <CardHeader>
                   <CardTitle className="font-display text-lg">Order Summary</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Total Items</span>
                     <span className="font-medium">{totalItems} pcs</span>
@@ -216,10 +203,26 @@ export default function Cart() {
                       <span className="font-medium text-green-600">{discountPercent}% off</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-lg font-bold">
-                    <span>Total</span>
-                    <span className="text-primary">₹{totalAmount.toLocaleString()} <span className="text-xs font-normal text-muted-foreground">+ GST (5%)</span></span>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="font-medium">₹{subtotal.toLocaleString()}</span>
                   </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">GST (5%)</span>
+                    <span className="font-medium">₹{gstAmount.toLocaleString()}</span>
+                  </div>
+                  <hr className="border-border" />
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Grand Total</span>
+                    <span className="text-primary">₹{grandTotal.toLocaleString()}</span>
+                  </div>
+
+                  {/* Estimated delivery */}
+                  <div className="rounded-lg bg-accent/50 p-2.5 flex items-center gap-2">
+                    <Truck className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <p className="text-[11px] text-muted-foreground">Estimated delivery: 5–7 business days</p>
+                  </div>
+
                   <hr className="border-border" />
                   <div>
                     <label className="mb-1 block text-xs font-medium">Shipping Address</label>
