@@ -55,6 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Don't stall — keep defaults
       setBuyerStatus(null);
       setDiscountPercent(0);
+      setBusinessName(null);
       setIsAdmin(false);
     }
   };
