@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { Package, FlaskConical, User, Clock, CheckCircle, Truck, XCircle, Edit, FileText } from "lucide-react";
+import { Package, FlaskConical, User, Clock, CheckCircle, Truck, XCircle, Edit, FileText, RefreshCw, Percent } from "lucide-react";
 
 const statusColors: Record<string, string> = {
   placed: "bg-secondary text-secondary-foreground",
@@ -23,18 +23,12 @@ const statusColors: Record<string, string> = {
 };
 
 const statusIcons: Record<string, any> = {
-  placed: Clock,
-  confirmed: CheckCircle,
-  dispatched: Truck,
-  delivered: CheckCircle,
-  cancelled: XCircle,
-  requested: Clock,
-  approved: CheckCircle,
-  rejected: XCircle,
+  placed: Clock, confirmed: CheckCircle, dispatched: Truck, delivered: CheckCircle, cancelled: XCircle,
+  requested: Clock, approved: CheckCircle, rejected: XCircle,
 };
 
 export default function Dashboard() {
-  const { user, buyerStatus } = useAuth();
+  const { user, buyerStatus, discountPercent } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
   const [samples, setSamples] = useState<any[]>([]);
@@ -42,6 +36,7 @@ export default function Dashboard() {
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState<any>({});
   const [loading, setLoading] = useState(true);
+  const [reordering, setReordering] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) { navigate("/login"); return; }
@@ -70,13 +65,33 @@ export default function Dashboard() {
       state: profileForm.state,
       gst_number: profileForm.gst_number,
     }).eq("user_id", user!.id);
-
     if (error) {
       toast({ title: "Update failed", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Profile updated!" });
       setEditingProfile(false);
       fetchData();
+    }
+  };
+
+  const reorder = async (order: any) => {
+    if (!order.order_items?.length) return;
+    setReordering(order.id);
+    try {
+      const inserts = order.order_items.map((item: any) => ({
+        user_id: user!.id,
+        product_id: item.product_id,
+        quantity: item.quantity,
+      })).filter((i: any) => i.product_id);
+      if (inserts.length > 0) {
+        await supabase.from("cart_items").insert(inserts);
+      }
+      toast({ title: "Items added to cart! 🛒", description: "Go to cart to review and place order." });
+      navigate("/cart");
+    } catch {
+      toast({ title: "Reorder failed", variant: "destructive" });
+    } finally {
+      setReordering(null);
     }
   };
 
@@ -149,55 +164,54 @@ export default function Dashboard() {
                           ))}
                         </div>
                       )}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="mt-3"
-                        onClick={async () => {
-                          try {
-                            const { data, error } = await supabase.functions.invoke("generate-invoice", { body: { order_id: order.id } });
-                            if (error) throw error;
-                            // Open invoice as printable page
-                            const w = window.open("", "_blank");
-                            if (!w) return;
-                            w.document.write(`<html><head><title>Invoice ${data.invoice_number}</title><style>
-                              body{font-family:Arial,sans-serif;max-width:800px;margin:20px auto;padding:20px;font-size:13px}
-                              table{width:100%;border-collapse:collapse;margin:15px 0}
-                              th,td{border:1px solid #ddd;padding:8px;text-align:left}
-                              th{background:#f5f5f5}
-                              .header{display:flex;justify-content:space-between;border-bottom:2px solid #333;padding-bottom:10px}
-                              .section{margin:15px 0}
-                              .right{text-align:right}
-                              .bold{font-weight:bold}
-                              @media print{button{display:none}}
-                            </style></head><body>
-                              <button onclick="window.print()" style="float:right;padding:8px 16px;cursor:pointer">🖨️ Print</button>
-                              <div class="header">
-                                <div><h2 style="margin:0;color:#5a1a2a">Suvee Fashion</h2><p>${data.seller.address}</p><p>GSTIN: ${data.seller.gstin}</p></div>
-                                <div style="text-align:right"><h3 style="margin:0">TAX INVOICE</h3><p>${data.invoice_number}</p><p>Date: ${data.invoice_date}</p></div>
-                              </div>
-                              <div class="section" style="display:flex;gap:40px">
-                                <div><h4>Bill To:</h4><p class="bold">${data.buyer.name}</p><p>${data.buyer.contact}</p><p>${data.buyer.address}</p><p>GSTIN: ${data.buyer.gstin}</p><p>Phone: ${data.buyer.phone}</p></div>
-                              </div>
-                              <table><thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Unit Price (₹)</th><th>Total (₹)</th></tr></thead>
-                              <tbody>${data.items.map((it: any) => `<tr><td>${it.sno}</td><td>${it.name}</td><td>${it.quantity}</td><td class="right">${it.unit_price.toLocaleString()}</td><td class="right">${it.total.toLocaleString()}</td></tr>`).join("")}</tbody></table>
-                              <div style="text-align:right">
-                                <p>Subtotal: ₹${data.subtotal.toLocaleString()}</p>
-                                <p>CGST @${data.cgst_rate}%: ₹${data.cgst_amount.toLocaleString()}</p>
-                                <p>SGST @${data.sgst_rate}%: ₹${data.sgst_amount.toLocaleString()}</p>
-                                <p class="bold" style="font-size:16px">Grand Total: ₹${data.grand_total.toLocaleString()}</p>
-                              </div>
-                              <p style="margin-top:10px;font-style:italic">${data.amount_in_words}</p>
-                              <div style="margin-top:40px;text-align:right"><p>For Suvee Fashion</p><br/><p>Authorized Signatory</p></div>
-                            </body></html>`);
-                            w.document.close();
-                          } catch (err) {
-                            toast({ title: "Invoice generation failed", variant: "destructive" });
-                          }
-                        }}
-                      >
-                        <FileText className="mr-1 h-3 w-3" /> Download Invoice
-                      </Button>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button variant="outline" size="sm"
+                          onClick={async () => {
+                            try {
+                              const { data, error } = await supabase.functions.invoke("generate-invoice", { body: { order_id: order.id } });
+                              if (error) throw error;
+                              const w = window.open("", "_blank");
+                              if (!w) return;
+                              w.document.write(`<html><head><title>Invoice ${data.invoice_number}</title><style>
+                                body{font-family:Arial,sans-serif;max-width:800px;margin:20px auto;padding:20px;font-size:13px}
+                                table{width:100%;border-collapse:collapse;margin:15px 0}
+                                th,td{border:1px solid #ddd;padding:8px;text-align:left}
+                                th{background:#f5f5f5}
+                                .header{display:flex;justify-content:space-between;border-bottom:2px solid #333;padding-bottom:10px}
+                                .right{text-align:right}
+                                .bold{font-weight:bold}
+                                @media print{button{display:none}}
+                              </style></head><body>
+                                <button onclick="window.print()" style="float:right;padding:8px 16px;cursor:pointer">🖨️ Print</button>
+                                <div class="header">
+                                  <div><h2 style="margin:0;color:#5a1a2a">Suvee Fashion</h2><p>${data.seller.address}</p><p>GSTIN: ${data.seller.gstin}</p></div>
+                                  <div style="text-align:right"><h3 style="margin:0">TAX INVOICE</h3><p>${data.invoice_number}</p><p>Date: ${data.invoice_date}</p></div>
+                                </div>
+                                <div style="margin:15px 0"><h4>Bill To:</h4><p class="bold">${data.buyer.name}</p><p>${data.buyer.contact}</p><p>${data.buyer.address}</p><p>GSTIN: ${data.buyer.gstin}</p><p>Phone: ${data.buyer.phone}</p></div>
+                                <table><thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Unit Price (₹)</th><th>Total (₹)</th></tr></thead>
+                                <tbody>${data.items.map((it: any) => `<tr><td>${it.sno}</td><td>${it.name}</td><td>${it.quantity}</td><td class="right">${it.unit_price.toLocaleString()}</td><td class="right">${it.total.toLocaleString()}</td></tr>`).join("")}</tbody></table>
+                                <div style="text-align:right">
+                                  <p>Subtotal: ₹${data.subtotal.toLocaleString()}</p>
+                                  <p>CGST @${data.cgst_rate}%: ₹${data.cgst_amount.toLocaleString()}</p>
+                                  <p>SGST @${data.sgst_rate}%: ₹${data.sgst_amount.toLocaleString()}</p>
+                                  <p class="bold" style="font-size:16px">Grand Total: ₹${data.grand_total.toLocaleString()}</p>
+                                </div>
+                                <p style="margin-top:10px;font-style:italic">${data.amount_in_words}</p>
+                                <div style="margin-top:40px;text-align:right"><p>For Suvee Fashion</p><br/><p>Authorized Signatory</p></div>
+                              </body></html>`);
+                              w.document.close();
+                            } catch {
+                              toast({ title: "Invoice generation failed", variant: "destructive" });
+                            }
+                          }}>
+                          <FileText className="mr-1 h-3 w-3" /> Invoice
+                        </Button>
+                        {(order.status === "delivered" || order.status === "confirmed" || order.status === "dispatched") && (
+                          <Button variant="outline" size="sm" disabled={reordering === order.id} onClick={() => reorder(order)}>
+                            <RefreshCw className="mr-1 h-3 w-3" /> {reordering === order.id ? "Adding..." : "Reorder"}
+                          </Button>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 );
@@ -246,8 +260,13 @@ export default function Dashboard() {
                       <Edit className="mr-1 h-4 w-4" /> {editingProfile ? "Cancel" : "Edit"}
                     </Button>
                   </div>
-                  <CardDescription>
+                  <CardDescription className="flex items-center gap-2 flex-wrap">
                     Status: <Badge className={statusColors[profile.status] || ""}>{profile.status}</Badge>
+                    {discountPercent > 0 && (
+                      <Badge className="bg-green-100 text-green-800 text-xs">
+                        <Percent className="mr-0.5 h-3 w-3" /> Your Discount: {discountPercent}% off
+                      </Badge>
+                    )}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
