@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead from "@/components/SEOHead";
+import { SITE_URL } from "@/lib/constants";
 import { format } from "date-fns";
 
 interface BlogPost {
