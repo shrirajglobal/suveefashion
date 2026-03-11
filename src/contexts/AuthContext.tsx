@@ -26,6 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [buyerStatus, setBuyerStatus] = useState<"pending" | "approved" | "rejected" | null>(null);
   const [discountPercent, setDiscountPercent] = useState(0);
+  const [businessName, setBusinessName] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
