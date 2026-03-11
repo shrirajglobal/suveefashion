@@ -95,7 +95,7 @@ export default function Blog() {
       <SEOHead
         title={seoTitle}
         description={seoDesc}
-        canonical="https://suveefashion.lovable.app/blog"
+        canonical={`${SITE_URL}/blog`}
       />
 
       {/* Hero */}

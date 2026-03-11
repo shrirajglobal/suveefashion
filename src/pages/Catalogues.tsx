@@ -66,7 +66,7 @@ function buildWhatsAppUrl(product: Product) {
 
 // ─── Share helper ───
 async function shareProduct(product: Product) {
-  const url = `${window.location.origin}/catalogues?product=${product.id}`;
+  const url = `${SITE_URL}/catalogues?product=${product.id}`;
   const text = `${product.name}${product.fabric ? ` - ${product.fabric}` : ""} | ${product.pcs_per_set} pcs/set`;
   if (navigator.share) {
     try { await navigator.share({ title: product.name, text, url }); } catch { /* cancelled */ }

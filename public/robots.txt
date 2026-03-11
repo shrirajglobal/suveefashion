@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://suveefashion.lovable.app/sitemap.xml
+Sitemap: https://suveewholesale.com/sitemap.xml
