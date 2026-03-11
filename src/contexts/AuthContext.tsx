@@ -70,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setBuyerStatus(null);
         setDiscountPercent(0);
+        setBusinessName(null);
         setIsAdmin(false);
       }
       setLoading(false);
