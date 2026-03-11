@@ -45,7 +45,8 @@ export default function Cart() {
     const { data } = await supabase
       .from("cart_items")
       .select("*, product:products(id, name, wsp, pcs_per_set, image_url, fabric)")
-      .eq("user_id", user!.id);
+      .eq("user_id", user!.id)
+      .order("created_at", { ascending: true });
     setItems((data as any) ?? []);
     setLoading(false);
   };
