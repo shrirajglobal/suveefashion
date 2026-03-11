@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Check buyer profile status
       const { data: profile } = await supabase
         .from("buyer_profiles")
-        .select("status, discount_percent")
+        .select("status, discount_percent, business_name")
         .eq("user_id", u.id)
         .maybeSingle();
       
