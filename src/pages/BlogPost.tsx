@@ -106,7 +106,7 @@ export default function BlogPost() {
   const content = language === "hi" ? (post.content_hi || post.content) : language === "bn" ? (post.content_bn || post.content) : post.content;
   const excerpt = language === "hi" ? (post.excerpt_hi || post.excerpt) : language === "bn" ? (post.excerpt_bn || post.excerpt) : post.excerpt;
 
-  const postUrl = `https://suveefashion.lovable.app/blog/${post.slug}`;
+  const postUrl = `${SITE_URL}/blog/${post.slug}`;
 
   const shareWhatsApp = () => {
     const text = `📖 ${title}\n\n${excerpt || ""}\n\nRead: ${postUrl}`;
