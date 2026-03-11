@@ -106,7 +106,7 @@ export default function Cart() {
     const orderItems = items.map((item) => ({
       order_id: order.id,
       product_id: item.product_id,
-      product_name: item.product?.name ?? "Unknown",
+      product_name: item.size ? `${item.product?.name ?? "Unknown"} (${item.size})` : (item.product?.name ?? "Unknown"),
       quantity: item.quantity,
       unit_price: getUnitPrice(item.product),
       total_price: getUnitPrice(item.product) * item.quantity,
