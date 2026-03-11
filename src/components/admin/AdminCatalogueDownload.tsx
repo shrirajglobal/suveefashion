@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { SITE_URL } from "@/lib/constants";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -90,7 +91,10 @@ export default function AdminCatalogueDownload() {
 
   const shareOnWhatsApp = () => {
     const catName = selectedCategory === "all" ? "All Categories" : categories.find(c => c.id === selectedCategory)?.name || "Selected";
-    const msg = `Check out our latest ${catName} catalogue from Suvee Fashion!${discountPercent > 0 ? ` Special ${discountPercent}% discount included.` : ""} Contact us for the full catalogue PDF.`;
+    const catalogueUrl = selectedCategory === "all"
+      ? `${SITE_URL}/catalogues`
+      : `${SITE_URL}/catalogues?category=${selectedCategory}`;
+    const msg = `🛍️ *Suvee Fashion — ${catName} Catalogue*\n\nBrowse our latest collection here:\n${catalogueUrl}${discountPercent > 0 ? `\n\n🎉 Special ${discountPercent}% discount available!` : ""}\n\nWhatsApp: +91 98316 40808`;
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
