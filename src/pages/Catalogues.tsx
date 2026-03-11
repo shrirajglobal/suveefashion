@@ -205,17 +205,39 @@ function ProductCard({
 function ProductDetailDialog({
   product, isApproved, discountPercent, onClose, onAddToCart,
 }: {
-  product: Product | null; isApproved: boolean; discountPercent: number; onClose: () => void; onAddToCart: (p: Product, qty: number) => void;
+  product: Product | null; isApproved: boolean; discountPercent: number; onClose: () => void; onAddToCart: (p: Product, qty: number, sizeQtys?: Record<string, number>) => void;
 }) {
   const { user } = useAuth();
   const [qty, setQty] = useState(1);
+  const [sizeQuantities, setSizeQuantities] = useState<Record<string, number>>({});
+
+  const hasSizes = !!(product?.available_sizes && product.available_sizes.length > 0);
 
   useEffect(() => {
-    if (product) setQty(product.pcs_per_set || 1);
+    if (product) {
+      setQty(product.pcs_per_set || 1);
+      if (product.available_sizes && product.available_sizes.length > 0) {
+        const init: Record<string, number> = {};
+        product.available_sizes.forEach(s => { init[s] = 0; });
+        setSizeQuantities(init);
+      } else {
+        setSizeQuantities({});
+      }
+    }
   }, [product]);
 
   if (!product) return null;
   const step = product.pcs_per_set || 1;
+
+  const totalSizeSets = Object.values(sizeQuantities).reduce((a, b) => a + b, 0);
+  const totalSizePcs = totalSizeSets * step;
+
+  const updateSizeQty = (size: string, delta: number) => {
+    setSizeQuantities(prev => ({
+      ...prev,
+      [size]: Math.max(0, (prev[size] || 0) + delta),
+    }));
+  };
 
   return (
     <Dialog open={!!product} onOpenChange={(o) => !o && onClose()}>
@@ -270,15 +292,6 @@ function ProductDetailDialog({
             </div>
           )}
 
-          {product.available_sizes && product.available_sizes.length > 0 && (
-            <div>
-              <p className="mb-1.5 text-xs font-semibold text-foreground">Available Sizes</p>
-              <div className="flex flex-wrap gap-1">
-                {product.available_sizes.map((s) => <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>)}
-              </div>
-            </div>
-          )}
-
           {product.combo_description && (
             <div className="rounded-lg bg-accent/50 p-3">
               <p className="text-xs font-semibold text-foreground">Combo Details</p>
@@ -294,14 +307,43 @@ function ProductDetailDialog({
             </p>
           )}
 
-          {/* Quantity selector for approved buyers */}
-          {isApproved && (
+          {/* Size-wise quantity selector for products with available_sizes */}
+          {isApproved && hasSizes && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-foreground">Select Quantity per Size <span className="font-normal text-muted-foreground">({step} pcs/set)</span></p>
+              <div className="space-y-1.5">
+                {product.available_sizes!.map(size => (
+                  <div key={size} className="flex items-center gap-3 rounded-lg border border-border p-2">
+                    <Badge variant={sizeQuantities[size] > 0 ? "default" : "outline"} className="min-w-[40px] justify-center text-xs">{size}</Badge>
+                    <div className="flex items-center gap-1">
+                      <Button size="icon" variant="outline" className="h-7 w-7" onClick={() => updateSizeQty(size, -1)} disabled={!sizeQuantities[size]}>
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      <span className="w-8 text-center text-sm font-medium font-body">{sizeQuantities[size] || 0}</span>
+                      <Button size="icon" variant="outline" className="h-7 w-7" onClick={() => updateSizeQty(size, 1)}>
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground ml-auto font-body">
+                      {sizeQuantities[size] > 0 ? `${sizeQuantities[size]} set${sizeQuantities[size] > 1 ? "s" : ""} = ${sizeQuantities[size] * step} pcs` : "—"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {totalSizeSets > 0 && (
+                <p className="text-xs font-medium text-secondary font-body">Total: {totalSizeSets} set{totalSizeSets > 1 ? "s" : ""} = {totalSizePcs} pcs</p>
+              )}
+            </div>
+          )}
+
+          {/* Simple quantity selector for products without available_sizes */}
+          {isApproved && !hasSizes && (
             <div className="flex items-center gap-3">
               <label className="text-xs font-medium text-foreground">Qty:</label>
               <div className="flex items-center gap-1">
                 <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => setQty(Math.max(step, qty - step))}>-</Button>
                 <Input type="number" value={qty} onChange={e => setQty(Math.max(step, Math.round((parseInt(e.target.value) || step) / step) * step))}
-                  className="h-8 w-20 text-center text-sm" min={step} step={step} />
+                  className="h-8 w-20 text-center text-sm font-body" min={step} step={step} />
                 <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => setQty(qty + step)}>+</Button>
               </div>
               <span className="text-[10px] text-muted-foreground">({step} pcs/set)</span>
@@ -314,7 +356,13 @@ function ProductDetailDialog({
                 <MessageCircle className="mr-2 h-4 w-4" fill="white" /> Ask on WhatsApp
               </a>
             </Button>
-            {isApproved && (
+            {isApproved && hasSizes && (
+              <Button variant="outline" className="shrink-0" disabled={totalSizeSets === 0}
+                onClick={() => { onAddToCart(product, totalSizePcs, sizeQuantities); onClose(); }}>
+                <ShoppingCart className="mr-2 h-4 w-4" /> Add {totalSizePcs} pcs
+              </Button>
+            )}
+            {isApproved && !hasSizes && (
               <Button variant="outline" className="shrink-0" onClick={() => { onAddToCart(product, qty); onClose(); }}>
                 <ShoppingCart className="mr-2 h-4 w-4" /> Add {qty} pcs
               </Button>
