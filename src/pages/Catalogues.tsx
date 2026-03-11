@@ -123,9 +123,9 @@ function PriceDisplay({ product, isApproved, discountPercent, size = "sm" }: { p
     const textSize = size === "lg" ? "text-2xl" : "text-base";
     const subSize = size === "lg" ? "text-sm" : "text-[10px]";
     return (
-      <div className="mt-2">
+      <div className="mt-2 font-body">
         {hasDiscount && <span className="text-muted-foreground line-through text-xs mr-1">₹{wsp}</span>}
-        <span className={`font-display ${textSize} font-bold text-primary`}>₹{displayPrice}</span>
+        <span className={`${textSize} font-bold text-primary`}>₹{displayPrice}</span>
         <span className={`${subSize} font-normal text-muted-foreground ml-1`}>
           {size === "lg" ? "per piece" : "/pc"} + 5% GST
         </span>
