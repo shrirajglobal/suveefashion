@@ -582,7 +582,7 @@ export default function Catalogues() {
   const renderGrid = (title: string, prods: Product[]) => (
     <div className="mb-8">
       <h2 className="mb-4 font-display text-lg font-bold text-foreground sm:text-xl">{title}</h2>
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
         {prods.map((p) => (
           <ProductCard key={p.id} product={p} isApproved={isApproved} discountPercent={discountPercent}
             addingToCart={addingToCart} onView={() => setSelectedProduct(p)} onAddToCart={() => addToCart(p)} />
@@ -665,55 +665,68 @@ export default function Catalogues() {
         </div>
       </section>
 
-      {/* Desktop filter bar */}
-      <div className="hidden md:block border-b border-border bg-muted/30">
-        <div className="container py-3 flex items-center gap-6 flex-wrap">
-          <FilterContent fabrics={fabrics} selectedFabrics={selectedFabrics} toggleFabric={toggleFabric}
-            priceRange={priceRange} setPriceRange={setPriceRange} maxPrice={maxPrice}
-            sortBy={sortBy} setSortBy={setSortBy} />
-          {activeFilterCount > 0 && (
-            <Button variant="ghost" size="sm" className="text-xs" onClick={() => { setSelectedFabrics([]); setPriceRange([0, maxPrice]); setSortBy("default"); }}>
-              Clear All
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {/* Results count + active filter chips */}
-      <div className="container pt-4 pb-1 flex items-center gap-2 flex-wrap">
-        <p className="text-xs text-muted-foreground">
-          Showing <span className="font-semibold text-foreground">{filtered.length}</span> of {products.length} products
-        </p>
-        {selectedCategoryObj && (
-          <Badge variant="secondary" className="gap-1 text-xs cursor-pointer" onClick={() => setSelectedCategory(null)}>
-            {getCategoryName(selectedCategoryObj)} <X className="h-3 w-3" />
-          </Badge>
-        )}
-        {search && (
-          <Badge variant="secondary" className="gap-1 text-xs cursor-pointer" onClick={() => setSearch("")}>
-            "{search}" <X className="h-3 w-3" />
-          </Badge>
-        )}
-        {selectedFabrics.map(f => (
-          <Badge key={f} variant="secondary" className="gap-1 text-xs cursor-pointer" onClick={() => toggleFabric(f)}>
-            {f} <X className="h-3 w-3" />
-          </Badge>
-        ))}
-      </div>
-
+      {/* Main content: sidebar + products */}
       <div className="container py-4 sm:py-6">
-        {filtered.length === 0 ? (
-          <div className="flex min-h-[30vh] flex-col items-center justify-center text-center">
-            <Package className="mb-4 h-12 w-12 text-muted-foreground/40" />
-            <p className="text-muted-foreground">No products found. Try a different search or category.</p>
+        <div className="flex gap-6">
+          {/* Desktop sidebar filters */}
+          <aside className="hidden md:block w-[260px] shrink-0">
+            <div className="sticky top-32 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display text-sm font-bold text-foreground flex items-center gap-1.5">
+                  <SlidersHorizontal className="h-4 w-4" /> Filters
+                </h3>
+                {activeFilterCount > 0 && (
+                  <Button variant="ghost" size="sm" className="text-xs h-7 px-2" onClick={() => { setSelectedFabrics([]); setPriceRange([0, maxPrice]); setSortBy("default"); }}>
+                    Clear All
+                  </Button>
+                )}
+              </div>
+              <div className="rounded-lg border border-border bg-card p-4">
+                <FilterContent fabrics={fabrics} selectedFabrics={selectedFabrics} toggleFabric={toggleFabric}
+                  priceRange={priceRange} setPriceRange={setPriceRange} maxPrice={maxPrice}
+                  sortBy={sortBy} setSortBy={setSortBy} />
+              </div>
+            </div>
+          </aside>
+
+          {/* Products area */}
+          <div className="flex-1 min-w-0">
+            {/* Results count + active filter chips */}
+            <div className="pb-3 flex items-center gap-2 flex-wrap">
+              <p className="text-xs text-muted-foreground">
+                Showing <span className="font-semibold text-foreground">{filtered.length}</span> of {products.length} products
+              </p>
+              {selectedCategoryObj && (
+                <Badge variant="secondary" className="gap-1 text-xs cursor-pointer" onClick={() => setSelectedCategory(null)}>
+                  {getCategoryName(selectedCategoryObj)} <X className="h-3 w-3" />
+                </Badge>
+              )}
+              {search && (
+                <Badge variant="secondary" className="gap-1 text-xs cursor-pointer" onClick={() => setSearch("")}>
+                  "{search}" <X className="h-3 w-3" />
+                </Badge>
+              )}
+              {selectedFabrics.map(f => (
+                <Badge key={f} variant="secondary" className="gap-1 text-xs cursor-pointer" onClick={() => toggleFabric(f)}>
+                  {f} <X className="h-3 w-3" />
+                </Badge>
+              ))}
+            </div>
+
+            {filtered.length === 0 ? (
+              <div className="flex min-h-[30vh] flex-col items-center justify-center text-center">
+                <Package className="mb-4 h-12 w-12 text-muted-foreground/40" />
+                <p className="text-muted-foreground">No products found. Try a different search or category.</p>
+              </div>
+            ) : (
+              <>
+                {featuredProducts.length > 0 && renderGrid("⭐ Featured Products", featuredProducts)}
+                {newArrivals.length > 0 && renderGrid(t("new_arrivals.title"), newArrivals)}
+                {regularProducts.length > 0 && renderGrid(sortBy === "default" ? `All Products (${regularProducts.length})` : `${filtered.length} Products`, regularProducts)}
+              </>
+            )}
           </div>
-        ) : (
-          <>
-            {featuredProducts.length > 0 && renderGrid("⭐ Featured Products", featuredProducts)}
-            {newArrivals.length > 0 && renderGrid(t("new_arrivals.title"), newArrivals)}
-            {regularProducts.length > 0 && renderGrid(sortBy === "default" ? `All Products (${regularProducts.length})` : `${filtered.length} Products`, regularProducts)}
-          </>
-        )}
+        </div>
       </div>
 
       {!user && (
