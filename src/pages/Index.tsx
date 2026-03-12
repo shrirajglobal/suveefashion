@@ -197,7 +197,7 @@ export default function Index() {
     "@type": "Organization",
     name: "Suvee Fashion",
     url: SITE_URL,
-    logo: `${SITE_URL}/favicon.ico`,
+    logo: `${SITE_URL}/favicon.png`,
     description: "Premium wholesale kurti manufacturer from Howrah, Kolkata. 850+ designs, pan-India delivery.",
     address: {
       "@type": "PostalAddress",
