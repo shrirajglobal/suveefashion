@@ -133,7 +133,7 @@ export default function BlogPost() {
     publisher: {
       "@type": "Organization",
       name: "Suvee Fashion",
-      logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.ico` },
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.png` },
     },
     mainEntityOfPage: postUrl,
     keywords: post.keywords?.join(", "),
