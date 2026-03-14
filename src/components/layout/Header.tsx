@@ -18,7 +18,7 @@ const languages: { code: Language; label: string; flag: string }[] = [
 
 export default function Header() {
   const { t, language, setLanguage } = useLanguage();
-  const { user, buyerStatus, isAdmin, signOut } = useAuth();
+  const { user, buyerStatus, isAdmin, isSubAdmin, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [langOpen, setLangOpen] = useState(false);
@@ -113,7 +113,7 @@ export default function Header() {
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/dashboard"><LayoutDashboard className="h-4 w-4" /></Link>
               </Button>
-              {isAdmin && (
+              {(isAdmin || isSubAdmin) && (
                 <Button variant="outline" size="sm" asChild><Link to="/admin">Admin</Link></Button>
               )}
               <Button variant="ghost" size="sm" onClick={handleSignOut}><LogOut className="h-4 w-4" /></Button>
@@ -147,7 +147,7 @@ export default function Header() {
                         Cart {cartCount > 0 && `(${cartCount})`}
                       </Link>
                     )}
-                    {isAdmin && (
+                    {(isAdmin || isSubAdmin) && (
                       <Link to="/admin" onClick={() => setMobileOpen(false)} className="rounded-md px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-muted">Admin Panel</Link>
                     )}
                     <Button variant="outline" className="mt-4" onClick={() => { handleSignOut(); setMobileOpen(false); }}>Sign Out</Button>

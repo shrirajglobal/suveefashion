@@ -8,6 +8,7 @@ interface AuthContextType {
   discountPercent: number;
   businessName: string | null;
   isAdmin: boolean;
+  isSubAdmin: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   discountPercent: 0,
   businessName: null,
   isAdmin: false,
+  isSubAdmin: false,
   loading: true,
   signOut: async () => {},
 });
@@ -28,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [discountPercent, setDiscountPercent] = useState(0);
   const [businessName, setBusinessName] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSubAdmin, setIsSubAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchUserMeta = async (u: User) => {
@@ -50,13 +53,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("user_id", u.id);
       
       setIsAdmin(roles?.some((r) => r.role === "admin") ?? false);
+      setIsSubAdmin(roles?.some((r) => r.role === "sub_admin") ?? false);
     } catch (err) {
       console.error("fetchUserMeta error:", err);
-      // Don't stall — keep defaults
       setBuyerStatus(null);
       setDiscountPercent(0);
       setBusinessName(null);
       setIsAdmin(false);
+      setIsSubAdmin(false);
     }
   };
 
@@ -72,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setDiscountPercent(0);
         setBusinessName(null);
         setIsAdmin(false);
+        setIsSubAdmin(false);
       }
       setLoading(false);
     });
@@ -95,10 +100,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setDiscountPercent(0);
     setBusinessName(null);
     setIsAdmin(false);
+    setIsSubAdmin(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, buyerStatus, discountPercent, businessName, isAdmin, loading, signOut }}>
+    <AuthContext.Provider value={{ user, buyerStatus, discountPercent, businessName, isAdmin, isSubAdmin, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );
