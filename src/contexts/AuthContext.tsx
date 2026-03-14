@@ -53,13 +53,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("user_id", u.id);
       
       setIsAdmin(roles?.some((r) => r.role === "admin") ?? false);
+      setIsSubAdmin(roles?.some((r) => r.role === "sub_admin") ?? false);
     } catch (err) {
       console.error("fetchUserMeta error:", err);
-      // Don't stall — keep defaults
       setBuyerStatus(null);
       setDiscountPercent(0);
       setBusinessName(null);
       setIsAdmin(false);
+      setIsSubAdmin(false);
     }
   };
 
