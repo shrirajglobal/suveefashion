@@ -279,14 +279,14 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
           </Select>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label className="mb-1 block text-xs font-medium">Pcs per Set/Bundle *</label>
-          <Input type="number" min={1} value={String(form.pcs_per_set)} onChange={(e) => setForm(f => ({ ...f, pcs_per_set: parseInt(e.target.value) || 1 }))} />
+          <Input type="text" inputMode="numeric" pattern="[0-9]*" min={1} value={String(form.pcs_per_set)} onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, ''); setForm(f => ({ ...f, pcs_per_set: parseInt(v) || 1 })); }} />
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium">WSP (₹) *</label>
-          <Input type="number" value={String(form.wsp ?? "")} onChange={(e) => setForm(f => ({ ...f, wsp: e.target.value ? Number(e.target.value) : null }))} />
+          <Input type="text" inputMode="decimal" pattern="[0-9.]*" value={String(form.wsp ?? "")} onChange={(e) => { const v = e.target.value.replace(/[^0-9.]/g, ''); setForm(f => ({ ...f, wsp: v ? Number(v) : null })); }} />
         </div>
       </div>
 
