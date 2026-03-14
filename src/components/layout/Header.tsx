@@ -113,7 +113,7 @@ export default function Header() {
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/dashboard"><LayoutDashboard className="h-4 w-4" /></Link>
               </Button>
-              {isAdmin && (
+              {(isAdmin || isSubAdmin) && (
                 <Button variant="outline" size="sm" asChild><Link to="/admin">Admin</Link></Button>
               )}
               <Button variant="ghost" size="sm" onClick={handleSignOut}><LogOut className="h-4 w-4" /></Button>
