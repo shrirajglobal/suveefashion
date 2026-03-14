@@ -19,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   discountPercent: 0,
   businessName: null,
   isAdmin: false,
+  isSubAdmin: false,
   loading: true,
   signOut: async () => {},
 });
