@@ -18,7 +18,7 @@ const languages: { code: Language; label: string; flag: string }[] = [
 
 export default function Header() {
   const { t, language, setLanguage } = useLanguage();
-  const { user, buyerStatus, isAdmin, signOut } = useAuth();
+  const { user, buyerStatus, isAdmin, isSubAdmin, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [langOpen, setLangOpen] = useState(false);
