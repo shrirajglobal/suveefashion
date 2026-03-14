@@ -30,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [discountPercent, setDiscountPercent] = useState(0);
   const [businessName, setBusinessName] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSubAdmin, setIsSubAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchUserMeta = async (u: User) => {
