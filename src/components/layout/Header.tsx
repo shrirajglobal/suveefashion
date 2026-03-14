@@ -147,7 +147,7 @@ export default function Header() {
                         Cart {cartCount > 0 && `(${cartCount})`}
                       </Link>
                     )}
-                    {isAdmin && (
+                    {(isAdmin || isSubAdmin) && (
                       <Link to="/admin" onClick={() => setMobileOpen(false)} className="rounded-md px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-muted">Admin Panel</Link>
                     )}
                     <Button variant="outline" className="mt-4" onClick={() => { handleSignOut(); setMobileOpen(false); }}>Sign Out</Button>
