@@ -19,6 +19,7 @@ import Admin from "./pages/Admin";
 import Delivery from "./pages/Delivery";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
