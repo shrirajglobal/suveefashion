@@ -76,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setDiscountPercent(0);
         setBusinessName(null);
         setIsAdmin(false);
+        setIsSubAdmin(false);
       }
       setLoading(false);
     });
