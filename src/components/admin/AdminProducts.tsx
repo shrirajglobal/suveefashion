@@ -255,7 +255,7 @@ export default function AdminProducts({ onUpdate }: { onUpdate: () => void }) {
         <label className="mb-1 block text-xs font-medium">Description</label>
         <Textarea value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} rows={2} />
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label className="mb-1 block text-xs font-medium">Fabric *</label>
           <Select value={form.fabric} onValueChange={(v) => { setForm(f => ({ ...f, fabric: v })); if (v !== "__other__") setFabricOther(""); }}>
