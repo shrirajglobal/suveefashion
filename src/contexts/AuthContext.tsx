@@ -8,6 +8,7 @@ interface AuthContextType {
   discountPercent: number;
   businessName: string | null;
   isAdmin: boolean;
+  isSubAdmin: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
 }
