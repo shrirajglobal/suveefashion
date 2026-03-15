@@ -12,14 +12,6 @@ import SEOHead from "@/components/SEOHead";
 import { SITE_URL } from "@/lib/constants";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import heroProduct1 from "@/assets/hero-product-1.jpg";
-import heroProduct2 from "@/assets/hero-product-2.jpg";
-import heroProduct3 from "@/assets/hero-product-3.jpg";
-import heroProduct4 from "@/assets/hero-product-4.jpg";
-import heroProduct5 from "@/assets/hero-product-5.jpg";
-import heroProduct6 from "@/assets/hero-product-6.jpg";
-
-const fallbackSlides = [heroProduct1, heroProduct2, heroProduct3, heroProduct4, heroProduct5, heroProduct6];
 
 const testimonials = [
   {
