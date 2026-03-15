@@ -280,7 +280,7 @@ export default function Index() {
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
-        </div>
+        </div>}
       </section>
 
       {/* Trust Bar — single row, no wrapping issues */}
