@@ -81,7 +81,7 @@ export default function AdminCatalogueDownload() {
       if (!w) { toast({ title: "Pop-up blocked. Please allow pop-ups.", variant: "destructive" }); return; }
       w.document.write(data.html);
       w.document.close();
-      toast({ title: "Catalogue generated! Use Ctrl+P to save as PDF." });
+      toast({ title: "Catalogue generated! Tap the 'Print / Save PDF' button at the top of the page." });
     } catch (err: any) {
       toast({ title: "Generation failed", description: err.message, variant: "destructive" });
     } finally {

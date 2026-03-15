@@ -12,14 +12,6 @@ import SEOHead from "@/components/SEOHead";
 import { SITE_URL } from "@/lib/constants";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import heroProduct1 from "@/assets/hero-product-1.jpg";
-import heroProduct2 from "@/assets/hero-product-2.jpg";
-import heroProduct3 from "@/assets/hero-product-3.jpg";
-import heroProduct4 from "@/assets/hero-product-4.jpg";
-import heroProduct5 from "@/assets/hero-product-5.jpg";
-import heroProduct6 from "@/assets/hero-product-6.jpg";
-
-const fallbackSlides = [heroProduct1, heroProduct2, heroProduct3, heroProduct4, heroProduct5, heroProduct6];
 
 const testimonials = [
   {
@@ -109,7 +101,8 @@ export default function Index() {
   const { t, language } = useLanguage();
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPostPreview[]>([]);
-  const [heroSlides, setHeroSlides] = useState<string[]>(fallbackSlides);
+  const [heroSlides, setHeroSlides] = useState<string[]>([]);
+  const [heroLoading, setHeroLoading] = useState(true);
   const [dbCategories, setDbCategories] = useState<Category[]>([]);
   const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
   const [heroEmblaRef, heroApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: false })]);
@@ -128,6 +121,7 @@ export default function Index() {
         if (data && data.length > 0) {
           setHeroSlides(data.map(b => b.image_url));
         }
+        setHeroLoading(false);
       });
   }, []);
 
@@ -220,20 +214,24 @@ export default function Index() {
       />
       {/* Hero Carousel */}
       <section className="relative overflow-hidden">
-        <div className="overflow-hidden" ref={heroEmblaRef}>
-          <div className="flex">
-            {heroSlides.map((slide, i) => (
-              <div key={i} className="relative min-w-0 flex-[0_0_100%]">
-                <img
-                  src={slide}
-                  alt={`Suvee Fashion Collection ${i + 1}`}
-                  className="h-[55vh] w-full object-cover object-top sm:h-[60vh] md:h-[80vh]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/50 to-transparent" />
-              </div>
-            ))}
+        {heroLoading || heroSlides.length === 0 ? (
+          <div className="h-[55vh] w-full sm:h-[60vh] md:h-[80vh] bg-gradient-to-r from-primary/90 via-primary/60 to-secondary/40 animate-pulse" />
+        ) : (
+          <div className="overflow-hidden" ref={heroEmblaRef}>
+            <div className="flex">
+              {heroSlides.map((slide, i) => (
+                <div key={i} className="relative min-w-0 flex-[0_0_100%]">
+                  <img
+                    src={slide}
+                    alt={`Suvee Fashion Collection ${i + 1}`}
+                    className="h-[55vh] w-full object-cover object-top sm:h-[60vh] md:h-[80vh]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/50 to-transparent" />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center">
           <div className="container pointer-events-auto px-5 sm:px-6">
             <motion.div
@@ -271,7 +269,7 @@ export default function Index() {
           </div>
         </div>
         {/* Dot indicators */}
-        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5 sm:bottom-6 sm:gap-2">
+        {heroSlides.length > 1 && <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5 sm:bottom-6 sm:gap-2">
           {heroSlides.map((_, i) => (
             <button
               key={i}
@@ -282,7 +280,7 @@ export default function Index() {
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
-        </div>
+        </div>}
       </section>
 
       {/* Trust Bar — single row, no wrapping issues */}
@@ -361,7 +359,7 @@ export default function Index() {
               {/* Slider nav buttons */}
               <button
                 onClick={() => catApi?.scrollPrev()}
-                className="absolute -left-2 top-1/2 z-10 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-card shadow-lg border border-border text-foreground hover:bg-accent transition-colors disabled:opacity-30 sm:-left-4 sm:h-10 sm:w-10"
+                className="absolute left-1 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-card/90 shadow-lg border border-border text-foreground hover:bg-accent transition-colors disabled:opacity-30 sm:-left-4 sm:h-10 sm:w-10"
                 disabled={!canScrollCatPrev}
                 aria-label="Previous categories"
               >
@@ -369,7 +367,7 @@ export default function Index() {
               </button>
               <button
                 onClick={() => catApi?.scrollNext()}
-                className="absolute -right-2 top-1/2 z-10 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-card shadow-lg border border-border text-foreground hover:bg-accent transition-colors disabled:opacity-30 sm:-right-4 sm:h-10 sm:w-10"
+                className="absolute right-1 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-card/90 shadow-lg border border-border text-foreground hover:bg-accent transition-colors disabled:opacity-30 sm:-right-4 sm:h-10 sm:w-10"
                 disabled={!canScrollCatNext}
                 aria-label="Next categories"
               >
