@@ -121,6 +121,7 @@ export default function Index() {
         if (data && data.length > 0) {
           setHeroSlides(data.map(b => b.image_url));
         }
+        setHeroLoading(false);
       });
   }, []);
 
