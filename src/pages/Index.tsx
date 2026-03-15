@@ -214,20 +214,24 @@ export default function Index() {
       />
       {/* Hero Carousel */}
       <section className="relative overflow-hidden">
-        <div className="overflow-hidden" ref={heroEmblaRef}>
-          <div className="flex">
-            {heroSlides.map((slide, i) => (
-              <div key={i} className="relative min-w-0 flex-[0_0_100%]">
-                <img
-                  src={slide}
-                  alt={`Suvee Fashion Collection ${i + 1}`}
-                  className="h-[55vh] w-full object-cover object-top sm:h-[60vh] md:h-[80vh]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/50 to-transparent" />
-              </div>
-            ))}
+        {heroLoading || heroSlides.length === 0 ? (
+          <div className="h-[55vh] w-full sm:h-[60vh] md:h-[80vh] bg-gradient-to-r from-primary/90 via-primary/60 to-secondary/40 animate-pulse" />
+        ) : (
+          <div className="overflow-hidden" ref={heroEmblaRef}>
+            <div className="flex">
+              {heroSlides.map((slide, i) => (
+                <div key={i} className="relative min-w-0 flex-[0_0_100%]">
+                  <img
+                    src={slide}
+                    alt={`Suvee Fashion Collection ${i + 1}`}
+                    className="h-[55vh] w-full object-cover object-top sm:h-[60vh] md:h-[80vh]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/50 to-transparent" />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center">
           <div className="container pointer-events-auto px-5 sm:px-6">
             <motion.div
