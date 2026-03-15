@@ -269,7 +269,7 @@ export default function Index() {
           </div>
         </div>
         {/* Dot indicators */}
-        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5 sm:bottom-6 sm:gap-2">
+        {heroSlides.length > 1 && <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5 sm:bottom-6 sm:gap-2">
           {heroSlides.map((_, i) => (
             <button
               key={i}
