@@ -82,17 +82,17 @@ export default function Admin() {
         )}
 
         <Tabs defaultValue={isAdmin ? "buyers" : subAdminDefaultTab} className="mt-8">
-          <TabsList className={`grid w-full ${isAdmin ? "grid-cols-4 md:grid-cols-10" : "grid-cols-3"}`}>
-            {isAdmin && <TabsTrigger value="buyers"><Users className="mr-1 h-4 w-4" /> Buyers</TabsTrigger>}
-            <TabsTrigger value="categories"><FolderOpen className="mr-1 h-4 w-4" /> Categories</TabsTrigger>
-            <TabsTrigger value="products"><Package className="mr-1 h-4 w-4" /> Products</TabsTrigger>
-            {isAdmin && <TabsTrigger value="banners"><Image className="mr-1 h-4 w-4" /> Banners</TabsTrigger>}
-            <TabsTrigger value="catalogue"><FileDown className="mr-1 h-4 w-4" /> Catalogue</TabsTrigger>
-            {isAdmin && <TabsTrigger value="orders"><ShoppingCart className="mr-1 h-4 w-4" /> Orders</TabsTrigger>}
-            {isAdmin && <TabsTrigger value="inquiries"><MessageSquare className="mr-1 h-4 w-4" /> Inquiries</TabsTrigger>}
-            {isAdmin && <TabsTrigger value="insights"><Brain className="mr-1 h-4 w-4" /> Insights</TabsTrigger>}
-            {isAdmin && <TabsTrigger value="analytics"><BarChart3 className="mr-1 h-4 w-4" /> Analytics</TabsTrigger>}
-            {isAdmin && <TabsTrigger value="subadmins"><ShieldCheck className="mr-1 h-4 w-4" /> Sub-Admins</TabsTrigger>}
+          <TabsList className="flex w-full overflow-x-auto scrollbar-hide h-auto p-1">
+            {isAdmin && <TabsTrigger value="buyers" className="flex-shrink-0 px-2 sm:px-3"><Users className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Buyers</span></TabsTrigger>}
+            <TabsTrigger value="categories" className="flex-shrink-0 px-2 sm:px-3"><FolderOpen className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Categories</span></TabsTrigger>
+            <TabsTrigger value="products" className="flex-shrink-0 px-2 sm:px-3"><Package className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Products</span></TabsTrigger>
+            {isAdmin && <TabsTrigger value="banners" className="flex-shrink-0 px-2 sm:px-3"><Image className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Banners</span></TabsTrigger>}
+            <TabsTrigger value="catalogue" className="flex-shrink-0 px-2 sm:px-3"><FileDown className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Catalogue</span></TabsTrigger>
+            {isAdmin && <TabsTrigger value="orders" className="flex-shrink-0 px-2 sm:px-3"><ShoppingCart className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Orders</span></TabsTrigger>}
+            {isAdmin && <TabsTrigger value="inquiries" className="flex-shrink-0 px-2 sm:px-3"><MessageSquare className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Inquiries</span></TabsTrigger>}
+            {isAdmin && <TabsTrigger value="insights" className="flex-shrink-0 px-2 sm:px-3"><Brain className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Insights</span></TabsTrigger>}
+            {isAdmin && <TabsTrigger value="analytics" className="flex-shrink-0 px-2 sm:px-3"><BarChart3 className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Analytics</span></TabsTrigger>}
+            {isAdmin && <TabsTrigger value="subadmins" className="flex-shrink-0 px-2 sm:px-3"><ShieldCheck className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Sub-Admins</span></TabsTrigger>}
           </TabsList>
 
           {isAdmin && <TabsContent value="buyers"><AdminBuyers onUpdate={fetchStats} /></TabsContent>}

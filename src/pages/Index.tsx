@@ -367,7 +367,7 @@ export default function Index() {
               </button>
               <button
                 onClick={() => catApi?.scrollNext()}
-                className="absolute -right-2 top-1/2 z-10 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-card shadow-lg border border-border text-foreground hover:bg-accent transition-colors disabled:opacity-30 sm:-right-4 sm:h-10 sm:w-10"
+                className="absolute right-1 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-card/90 shadow-lg border border-border text-foreground hover:bg-accent transition-colors disabled:opacity-30 sm:-right-4 sm:h-10 sm:w-10"
                 disabled={!canScrollCatNext}
                 aria-label="Next categories"
               >
