@@ -369,7 +369,7 @@ Clean editorial blog cover composition, 1200x720 dimensions.`;
     const BUFFER_ACCESS_TOKEN = Deno.env.get("BUFFER_ACCESS_TOKEN");
     if (BUFFER_ACCESS_TOKEN) {
       try {
-        const postUrl = `https://suveewholesale.com/blog/${insertData.slug}`;
+        const postUrl = `https://suveefashion.lovable.app/blog/${insertData.slug}`;
         const caption = parsed.social_caption || `📖 ${parsed.title}\n\nRead more: ${postUrl}`;
 
         // Get Buffer profiles (channels)

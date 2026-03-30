@@ -12,7 +12,7 @@ interface SEOHeadProps {
 export default function SEOHead({
   title,
   description,
-  ogImage = "https://suveewholesale.com/og-default.jpg",
+  ogImage = "https://suveefashion.lovable.app/og-default.jpg",
   ogType = "website",
   canonical,
   jsonLd,
