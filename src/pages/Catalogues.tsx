@@ -66,15 +66,10 @@ function buildWhatsAppUrl(product: Product) {
 }
 
 // ─── Share helper ───
-async function shareProduct(product: Product) {
+function shareProduct(product: Product) {
   const url = `${SITE_URL}/catalogues?product=${product.id}`;
-  const text = `${product.name}${product.fabric ? ` - ${product.fabric}` : ""} | ${product.pcs_per_set} pcs/set`;
-  if (navigator.share) {
-    try { await navigator.share({ title: product.name, text, url }); } catch { /* cancelled */ }
-  } else {
-    await navigator.clipboard.writeText(url);
-    toast({ title: "Link copied!", description: "Product link copied to clipboard." });
-  }
+  const msg = `🛍️ Check out *${product.name}*${product.fabric ? ` (${product.fabric})` : ""} | ${product.pcs_per_set} pcs/set\n\n${url}\n\nBrowse more at Suvee Fashion!`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
 }
 
 // ─── Product Image Gallery ───
