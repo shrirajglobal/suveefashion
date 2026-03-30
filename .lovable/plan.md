@@ -1,33 +1,48 @@
 
 
-# Fix: WhatsApp Share Links Still Showing SSL Error
+# Fix: Share Button to Open WhatsApp Directly
 
-## Root Cause (Deep Analysis)
+## Problem
+The share button on product cards uses `navigator.share()` (native browser share sheet) on supported browsers, and falls back to clipboard copy on others. The user wants it to always open WhatsApp directly with a pre-filled message containing the product link.
 
-The previous fix only updated `src/lib/constants.ts`. However, **5 other locations** still hardcode `suveewholesale.com`:
+Additionally, the shared URL (`https://suveefashion.lovable.app/catalogues?product=...`) redirects to `https://www.suveewholesale.com` which works, but the current share function doesn't reliably open WhatsApp.
 
-Additionally, when I navigated to `https://suveefashion.lovable.app`, it **redirects to `https://www.suveewholesale.com`** via your custom domain setup. The SSL certificate is valid for `www.suveewholesale.com` but **NOT for `suveewholesale.com`** (without `www`). So any link pointing to `suveewholesale.com` (no www) fails with the SSL error.
+## Fix
 
-**The real fix has two parts:**
+Change the `shareProduct` function in `Catalogues.tsx` to always open a WhatsApp share link (`wa.me/?text=...`) instead of using `navigator.share` or clipboard copy. Apply the same pattern to the Blog share buttons and BlogPost page for consistency.
 
-1. **Code fix**: Replace all remaining `suveewholesale.com` references with `www.suveewholesale.com` (which has a working SSL cert), OR keep using `suveefashion.lovable.app` until the bare domain SSL is fixed.
+## Files to Change
 
-2. **Domain fix**: In your Lovable project settings under Domains, make sure both `suveewholesale.com` AND `www.suveewholesale.com` are added. Currently only `www` appears to be working.
+| File | Change |
+|------|--------|
+| `src/pages/Catalogues.tsx` | Replace `shareProduct()` — remove `navigator.share` and clipboard logic, use `window.open("https://wa.me/?text=...")` instead |
+| `src/pages/Blog.tsx` | Already uses WhatsApp — no change needed |
+| `src/pages/BlogPost.tsx` | Already uses WhatsApp — no change needed |
 
-## Files to Fix
+## Technical Detail
 
-| File | Current | Fix |
-|------|---------|-----|
-| `src/lib/constants.ts` | `https://suveefashion.lovable.app` | Keep as-is (redirects to www correctly) |
-| `index.html` (line 15) | `https://suveewholesale.com` canonical | Change to `https://suveefashion.lovable.app` |
-| `src/components/SEOHead.tsx` (line 15) | `https://suveewholesale.com/og-default.jpg` | Change to `https://suveefashion.lovable.app/og-default.jpg` |
-| `public/robots.txt` (line 16) | `https://suveewholesale.com/sitemap.xml` | Change to `https://suveefashion.lovable.app/sitemap.xml` |
-| `supabase/functions/generate-catalogue-pdf/index.ts` (line 8) | `const SITE_URL = "https://suveewholesale.com"` | Change to `https://suveefashion.lovable.app` |
-| `supabase/functions/generate-blog-post/index.ts` (line 372) | `https://suveewholesale.com/blog/...` | Change to `https://suveefashion.lovable.app/blog/...` |
+**Before** (Catalogues.tsx line 69-78):
+```typescript
+async function shareProduct(product: Product) {
+  const url = `${SITE_URL}/catalogues?product=${product.id}`;
+  const text = `...`;
+  if (navigator.share) {
+    try { await navigator.share({ title: product.name, text, url }); } catch {}
+  } else {
+    await navigator.clipboard.writeText(url);
+    toast({ title: "Link copied!" });
+  }
+}
+```
 
-## Important Note
-After these code fixes, you should also **republish** the app (click Update in the publish dialog) so the frontend changes go live. Backend function changes deploy automatically.
+**After**:
+```typescript
+function shareProduct(product: Product) {
+  const url = `${SITE_URL}/catalogues?product=${product.id}`;
+  const msg = `🛍️ Check out *${product.name}*${product.fabric ? ` (${product.fabric})` : ""} | ${product.pcs_per_set} pcs/set\n\n${url}\n\nBrowse more at Suvee Fashion!`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+}
+```
 
-## Domain Recommendation
-To permanently fix this, check your domain settings and ensure both `suveewholesale.com` (root) and `www.suveewholesale.com` are configured. You can check this in Project Settings > Domains.
+This ensures every tap on the share icon opens WhatsApp with a rich pre-filled message containing the product name, fabric, and direct link.
 
