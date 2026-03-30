@@ -1,1 +1,1 @@
-export const SITE_URL = "https://suveewholesale.com";
+export const SITE_URL = "https://suveefashion.lovable.app";
