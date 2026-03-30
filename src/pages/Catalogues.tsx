@@ -69,7 +69,7 @@ function buildWhatsAppUrl(product: Product) {
 function shareProduct(product: Product) {
   const url = `${SITE_URL}/catalogues?product=${product.id}`;
   const msg = `🛍️ Check out *${product.name}*${product.fabric ? ` (${product.fabric})` : ""} | ${product.pcs_per_set} pcs/set\n\n${url}\n\nBrowse more at Suvee Fashion!`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+  window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
 }
 
 // ─── Product Image Gallery ───
