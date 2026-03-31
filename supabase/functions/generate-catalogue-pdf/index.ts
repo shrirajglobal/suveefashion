@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
         <div class="product-page" ${!isLast ? 'style="page-break-after:always"' : ''}>
           <div class="product-image">
             ${p.image_url
-              ? `<img src="${p.image_url}" alt="${p.name}" crossorigin="anonymous" />`
+              ? `<img src="${p.image_url}" alt="${p.name}" />`
               : `<div class="no-image">No Image Available</div>`}
           </div>
           <div class="product-details">
@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
     const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Suvee Fashion — ${categoryName} Catalogue</title>
     <style>
       *{box-sizing:border-box;margin:0;padding:0}
-      body{font-family:'Segoe UI',Arial,sans-serif;background:#fff;color:#333}
+      body{font-family:'Segoe UI',Arial,sans-serif;background:#fff;color:#333;-webkit-print-color-adjust:exact;print-color-adjust:exact}
       .cover{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;page-break-after:always;padding:40px}
       .cover h1{color:#5a1a2a;font-size:36px;margin-bottom:8px}
       .cover .subtitle{color:#888;font-size:15px;margin-bottom:24px}
@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
 
       .product-page{height:100vh;display:flex;flex-direction:column;padding:20px 30px}
       .product-image{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
-      .product-image img{max-width:100%;max-height:100%;object-fit:contain}
+      .product-image img{max-width:100%;max-height:100%;object-fit:contain;image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges}
       .no-image{width:100%;height:300px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;color:#999;border-radius:8px}
 
       .product-details{padding:16px 0;border-top:2px solid #5a1a2a;margin-top:12px;flex-shrink:0}
@@ -94,7 +94,10 @@ Deno.serve(async (req) => {
       .footer-page p{margin-bottom:4px}
 
       .no-print{position:fixed;top:16px;right:16px;padding:12px 24px;background:#5a1a2a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;z-index:99;display:none}
-      @media print{.no-print{display:none}}
+      @media print{
+        .no-print{display:none}
+        .product-image img{max-width:100%;max-height:100%;image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges}
+      }
     </style></head><body>
       <button class="no-print" id="printBtn" onclick="window.print()">🖨️ Print / Save PDF</button>
 
@@ -119,10 +122,21 @@ Deno.serve(async (req) => {
           var imgs = document.querySelectorAll('img');
           var loaded = 0;
           var total = imgs.length;
-          function check(){ if(++loaded >= total) document.getElementById('printBtn').style.display='block'; }
+          var status = document.createElement('div');
+          status.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:8px 20px;background:#5a1a2a;color:#fff;border-radius:8px;font-size:13px;z-index:99';
+          status.textContent='Loading images: 0/' + total;
+          if(total > 0) document.body.appendChild(status);
+          function check(){
+            loaded++;
+            if(status.parentNode) status.textContent='Loading images: '+loaded+'/'+total;
+            if(loaded >= total){
+              if(status.parentNode) status.remove();
+              document.getElementById('printBtn').style.display='block';
+            }
+          }
           if(total === 0){ document.getElementById('printBtn').style.display='block'; return; }
           imgs.forEach(function(img){
-            if(img.complete) check();
+            if(img.complete && img.naturalWidth > 0) check();
             else { img.onload = check; img.onerror = check; }
           });
         })();
