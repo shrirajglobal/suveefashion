@@ -7,23 +7,6 @@ const corsHeaders = {
 
 const SITE_URL = "https://suveefashion.lovable.app";
 
-async function fetchImageAsBase64(url: string): Promise<string> {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
-    const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeout);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const buf = await res.arrayBuffer();
-    const contentType = res.headers.get("content-type") || "image/jpeg";
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
-    return `data:${contentType};base64,${base64}`;
-  } catch (e) {
-    console.error(`Failed to fetch image ${url}:`, e);
-    return "";
-  }
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -51,29 +34,17 @@ Deno.serve(async (req) => {
       if (cat) categoryName = cat.name;
     }
 
-    // Fetch all images in parallel and convert to base64
-    const imageResults = await Promise.allSettled(
-      (products || []).map((p: any) =>
-        p.image_url ? fetchImageAsBase64(p.image_url) : Promise.resolve("")
-      )
-    );
-    const imageMap = new Map<number, string>();
-    imageResults.forEach((r, i) => {
-      imageMap.set(i, r.status === "fulfilled" ? r.value : "");
-    });
-
     const productPages = (products || []).map((p: any, i: number) => {
       const wsp = Number(p.wsp) || 0;
       const price = disc > 0 ? Math.round(wsp * (1 - disc / 100)) : wsp;
       const productUrl = `${SITE_URL}/catalogues?product=${p.id}`;
       const isLast = i === (products || []).length - 1;
-      const imgSrc = imageMap.get(i) || "";
 
       return `
         <div class="product-page" ${!isLast ? 'style="page-break-after:always"' : ''}>
           <div class="product-image">
-            ${imgSrc
-              ? `<img src="${imgSrc}" alt="${p.name}" />`
+            ${p.image_url
+              ? `<img src="${p.image_url}" alt="${p.name}" crossorigin="anonymous" />`
               : `<div class="no-image">No Image Available</div>`}
           </div>
           <div class="product-details">
