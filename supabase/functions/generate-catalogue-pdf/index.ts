@@ -7,6 +7,23 @@ const corsHeaders = {
 
 const SITE_URL = "https://suveefashion.lovable.app";
 
+async function fetchImageAsBase64(url: string): Promise<string> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const buf = await res.arrayBuffer();
+    const contentType = res.headers.get("content-type") || "image/jpeg";
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+    return `data:${contentType};base64,${base64}`;
+  } catch (e) {
+    console.error(`Failed to fetch image ${url}:`, e);
+    return "";
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -34,17 +51,29 @@ Deno.serve(async (req) => {
       if (cat) categoryName = cat.name;
     }
 
+    // Fetch all images in parallel and convert to base64
+    const imageResults = await Promise.allSettled(
+      (products || []).map((p: any) =>
+        p.image_url ? fetchImageAsBase64(p.image_url) : Promise.resolve("")
+      )
+    );
+    const imageMap = new Map<number, string>();
+    imageResults.forEach((r, i) => {
+      imageMap.set(i, r.status === "fulfilled" ? r.value : "");
+    });
+
     const productPages = (products || []).map((p: any, i: number) => {
       const wsp = Number(p.wsp) || 0;
       const price = disc > 0 ? Math.round(wsp * (1 - disc / 100)) : wsp;
       const productUrl = `${SITE_URL}/catalogues?product=${p.id}`;
       const isLast = i === (products || []).length - 1;
+      const imgSrc = imageMap.get(i) || "";
 
       return `
         <div class="product-page" ${!isLast ? 'style="page-break-after:always"' : ''}>
           <div class="product-image">
-            ${p.image_url
-              ? `<img src="${p.image_url}" alt="${p.name}" />`
+            ${imgSrc
+              ? `<img src="${imgSrc}" alt="${p.name}" />`
               : `<div class="no-image">No Image Available</div>`}
           </div>
           <div class="product-details">
@@ -93,10 +122,10 @@ Deno.serve(async (req) => {
       .footer-page{text-align:center;padding:60px 20px;font-size:12px;color:#888}
       .footer-page p{margin-bottom:4px}
 
-      .no-print{position:fixed;top:16px;right:16px;padding:12px 24px;background:#5a1a2a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;z-index:99}
+      .no-print{position:fixed;top:16px;right:16px;padding:12px 24px;background:#5a1a2a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;z-index:99;display:none}
       @media print{.no-print{display:none}}
     </style></head><body>
-      <button class="no-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+      <button class="no-print" id="printBtn" onclick="window.print()">🖨️ Print / Save PDF</button>
 
       <div class="cover">
         <h1>Suvee Fashion</h1>
@@ -113,6 +142,20 @@ Deno.serve(async (req) => {
         <p>All prices exclusive of 5% GST • Minimum order in set quantities</p>
         <p style="margin-top:8px"><a href="${SITE_URL}" style="color:#5a1a2a">${SITE_URL}</a></p>
       </div>
+
+      <script>
+        (function(){
+          var imgs = document.querySelectorAll('img');
+          var loaded = 0;
+          var total = imgs.length;
+          function check(){ if(++loaded >= total) document.getElementById('printBtn').style.display='block'; }
+          if(total === 0){ document.getElementById('printBtn').style.display='block'; return; }
+          imgs.forEach(function(img){
+            if(img.complete) check();
+            else { img.onload = check; img.onerror = check; }
+          });
+        })();
+      </script>
     </body></html>`;
 
     return new Response(JSON.stringify({ html }), {
