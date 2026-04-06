@@ -159,6 +159,7 @@ export default function Index() {
       });
   }, []);
 
+  useEffect(() => {
     if (!catApi) return;
     const onSelect = () => {
       setCanScrollCatPrev(catApi.canScrollPrev());
