@@ -322,6 +322,33 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          buyer_type: string
+          city: string
+          created_at: string
+          id: string
+          name: string
+          whatsapp: string
+        }
+        Insert: {
+          buyer_type: string
+          city: string
+          created_at?: string
+          id?: string
+          name: string
+          whatsapp: string
+        }
+        Update: {
+          buyer_type?: string
+          city?: string
+          created_at?: string
+          id?: string
+          name?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           id: string

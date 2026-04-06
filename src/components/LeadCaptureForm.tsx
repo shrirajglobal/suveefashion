@@ -13,9 +13,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
-
-// ─── REPLACE THESE WITH YOUR ACTUAL IDS ───
-const FORMSPREE_ID = "xYzAbCdE"; // ← Your Formspree form ID
+import { supabase } from "@/integrations/supabase/client";
 // ───────────────────────────────────────────
 
 const BUYER_TYPES = [
@@ -61,17 +59,13 @@ export default function LeadCaptureForm({ compact = false }: LeadFormProps) {
 
     setLoading(true);
 
-    // 1. Send to Formspree
+    // 1. Save lead to database
     try {
-      await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          city: formData.city.trim(),
-          buyer_type: formData.buyerType,
-          whatsapp: formData.whatsapp.trim(),
-        }),
+      await supabase.from("leads").insert({
+        name: formData.name.trim(),
+        city: formData.city.trim(),
+        buyer_type: formData.buyerType,
+        whatsapp: formData.whatsapp.trim(),
       });
     } catch {
       // Silently fail — WhatsApp redirect still works
