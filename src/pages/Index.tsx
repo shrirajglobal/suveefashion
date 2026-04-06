@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote, Sparkles, ShieldCheck, Phone, CheckCircle, Play, MessageCircle, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { ArrowRight, Users, Palette, Clock, Truck, Star, Quote, Sparkles, ShieldCheck, Phone, CheckCircle, Play, MessageCircle, ChevronLeft, ChevronRight, Calendar, Package } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -97,6 +97,15 @@ function YouTubeCard({ video }: { video: YouTubeVideo }) {
   );
 }
 
+interface NewArrivalProduct {
+  id: string;
+  name: string;
+  fabric: string | null;
+  image_url: string | null;
+  wsp: number | null;
+  pcs_per_set: number;
+}
+
 export default function Index() {
   const { t, language } = useLanguage();
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
@@ -104,6 +113,7 @@ export default function Index() {
   const [heroSlides, setHeroSlides] = useState<string[]>([]);
   const [heroLoading, setHeroLoading] = useState(true);
   const [dbCategories, setDbCategories] = useState<Category[]>([]);
+  const [newArrivals, setNewArrivals] = useState<NewArrivalProduct[]>([]);
   const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
   const [heroEmblaRef, heroApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: false })]);
   const [catEmblaRef, catApi] = useEmblaCarousel({ loop: true, align: "start", slidesToScroll: 2 });
@@ -134,6 +144,18 @@ export default function Index() {
         if (data && data.length > 0) {
           setDbCategories(data as Category[]);
         }
+      });
+  }, []);
+
+  useEffect(() => {
+    supabase
+      .from("products")
+      .select("id, name, fabric, image_url, wsp, pcs_per_set")
+      .eq("is_new_arrival", true)
+      .order("created_at", { ascending: false })
+      .limit(8)
+      .then(({ data }) => {
+        if (data) setNewArrivals(data as NewArrivalProduct[]);
       });
   }, []);
 
@@ -380,7 +402,67 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Testimonials — horizontal scroll on mobile */}
+      {/* New Arrivals This Season */}
+      {newArrivals.length > 0 && (
+        <section className="py-10 sm:py-16 md:py-24">
+          <div className="container">
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center">
+              <Badge className="mb-3 bg-secondary/20 text-secondary border-secondary/30">
+                <Sparkles className="h-3 w-3 mr-1" /> Fresh This Season
+              </Badge>
+              <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">New Arrivals This Season</h2>
+              <p className="mt-1.5 text-sm text-muted-foreground sm:mt-2">Latest wholesale kurti designs, updated every season</p>
+            </motion.div>
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+              {newArrivals.map((p, i) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <Card className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-shadow h-full flex flex-col">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+                      {p.image_url ? (
+                        <img src={p.image_url} alt={p.name} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-muted-foreground text-xs">No Image</div>
+                      )}
+                      <Badge className="absolute top-2 left-2 bg-secondary text-secondary-foreground text-[10px]">
+                        <Sparkles className="h-3 w-3 mr-1" /> New
+                      </Badge>
+                    </div>
+                    <CardContent className="p-2.5 sm:p-4 flex flex-col flex-1 gap-1.5">
+                      <h3 className="font-display text-xs font-semibold text-foreground line-clamp-2 sm:text-sm">{p.name}</h3>
+                      <div className="flex flex-wrap gap-1">
+                        {p.fabric && <Badge variant="outline" className="text-[9px] sm:text-xs font-normal">{p.fabric}</Badge>}
+                        <Badge variant="outline" className="text-[9px] sm:text-xs font-normal">
+                          <Package className="h-2.5 w-2.5 mr-0.5" /> {p.pcs_per_set} pcs/set
+                        </Badge>
+                      </div>
+                      {p.wsp && <p className="text-xs font-bold text-primary mt-auto sm:text-sm">₹{p.wsp} per piece</p>}
+                      <Button size="sm" className="w-full bg-green-600 hover:bg-green-700 text-white text-xs h-8 mt-1" asChild>
+                        <a href={`https://wa.me/919831640808?text=${encodeURIComponent(`Hi Suvee, I'm interested in "${p.name}" from new arrivals.`)}`} target="_blank" rel="noopener noreferrer">
+                          <MessageCircle className="h-3.5 w-3.5 mr-1" /> Get Catalogue
+                        </a>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+            <div className="mt-6 text-center sm:mt-8">
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/new-arrivals">
+                  View All New Arrivals <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="py-10 sm:py-16 md:py-24">
         <div className="container">
           <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center font-display text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">
