@@ -52,6 +52,7 @@ const App = () => (
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/install" element={<Install />} />
                 <Route path="/new-arrivals" element={<NewArrivals />} />
+                <Route path="/get-catalogue" element={<GetCatalogue />} />
                 <Route path="/kurti-wholesale-supplier-kolkata" element={<KurtiWholesaleKolkata />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
