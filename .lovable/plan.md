@@ -1,32 +1,70 @@
 
 
-# Fix: Catalogue PDF Images — RangeError & CPU Timeout
+# Add New Arrivals Page + Homepage Section
 
-## Root Cause
+## Overview
+Create a `/new-arrivals` page and a "New Arrivals This Season" section on the homepage, both driven by a static JSON data file for easy editing. Products will be fetched from the existing catalogue (products table) filtered by `is_new_arrival = true`, but the JSON file will provide curated display overrides (style name, price range text, MOQ text) for the landing page cards.
 
-Two issues in `fetchImageAsBase64`:
+**Revised approach**: Since the user wants to fetch from existing live catalogues, we'll query the `products` table for `is_new_arrival = true` products directly. The JSON file will serve as an optional override/curation layer — but the primary data source is the database. This keeps things in sync with the live catalogue.
 
-1. **`RangeError: Maximum call stack size exceeded`** on line 19: `btoa(String.fromCharCode(...new Uint8Array(buf)))` — the spread operator (`...`) pushes every byte onto the call stack. For images >100KB this exceeds the stack limit.
+## Files to Create/Modify
 
-2. **CPU Time exceeded** — with 385 products, fetching and encoding all images server-side overwhelms the edge function's CPU budget.
+### 1. `public/data/arrivals.json` (New)
+Static JSON file with curated new arrival product IDs and optional display overrides:
+```json
+[
+  { "productId": "uuid-from-db", "priceRange": "₹199–₹499", "moq": "1 Set (6 pcs)" },
+  ...
+]
+```
+If `productId` matches a DB product, the card pulls image/name/fabric from DB and uses JSON overrides for priceRange/moq. Fallback: if no JSON match, show DB `is_new_arrival` products directly.
 
-## Solution: Skip server-side base64, use direct URLs + Blob origin
+### 2. `src/pages/NewArrivals.tsx` (New)
+- Full page at `/new-arrivals`
+- SEO: title "New Arrivals — Latest Kurti Designs | Suvee Wholesale", meta description, canonical
+- Fetches products where `is_new_arrival = true` from DB
+- Merges with `arrivals.json` overrides
+- Product cards: image, style name, fabric, MOQ badge, price range, "Get Catalogue" WhatsApp button
+- Product schema JSON-LD for each item (name, description, brand "Suvee Wholesale", offers with priceRange, availability InStock)
 
-Since product images are in a **public** storage bucket, they load fine from any origin — the original problem was the `about:blank` null origin from `document.write()`. The client already uses Blob URLs now, which provides a valid origin. So base64 encoding is unnecessary.
+### 3. `src/pages/Index.tsx` (Modify)
+- Add a "New Arrivals This Season" section after the Collections carousel
+- Show up to 8 new arrival products in a responsive grid (2 cols mobile, 4 cols desktop)
+- Each card mirrors the NewArrivals page card design
+- "View All New Arrivals →" link to `/new-arrivals`
 
-### Changes
+### 4. `src/App.tsx` (Modify)
+- Add route: `<Route path="/new-arrivals" element={<NewArrivals />} />`
 
-**File: `supabase/functions/generate-catalogue-pdf/index.ts`**
-- Remove the `fetchImageAsBase64` function entirely
-- Remove the `Promise.allSettled` image-fetching block
-- Use `p.image_url` directly in `<img src="">` tags
-- Add `crossorigin="anonymous"` to img tags for print compatibility
+## Card Design
+Each product card will show:
+- Product image (from DB `image_url`)
+- Style name (product `name`)
+- Fabric badge
+- MOQ badge (from JSON override or `pcs_per_set`)
+- Price range text (from JSON override or formatted from `wsp`)
+- Green "Get Catalogue" WhatsApp button linking to `wa.me/919831640808` with pre-filled product inquiry message
 
-**No changes needed** to `AdminCatalogueDownload.tsx` — it already uses Blob URLs correctly.
+## JSON-LD Schema
+On `/new-arrivals`, emit a combined JSON-LD with individual `Product` entries:
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    {
+      "@type": "Product",
+      "name": "...",
+      "description": "...",
+      "brand": { "@type": "Brand", "name": "Suvee Wholesale" },
+      "offers": { "@type": "AggregateOffer", "priceCurrency": "INR", "availability": "https://schema.org/InStock", "lowPrice": "...", "highPrice": "..." },
+      "image": "..."
+    }
+  ]
+}
+```
 
-### Why this works
-- Images are in a public bucket — no auth needed
-- Blob URL gives the page a real origin (not `about:blank`)
-- No server-side image processing = no CPU timeout, no stack overflow
-- The print button script already waits for all images to load before showing
+## Technical Notes
+- Reuses existing patterns: `supabase` client, `SEOHead`, `motion` animations, `Card`/`Badge` components, WhatsApp URL builder
+- The JSON file at `public/data/arrivals.json` can be edited without touching code — just update product IDs and override fields
 
