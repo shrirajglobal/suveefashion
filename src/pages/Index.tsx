@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import factoryImage from "@/assets/factory.jpg";
 import SEOHead from "@/components/SEOHead";
+import LeadCaptureForm from "@/components/LeadCaptureForm";
 import { SITE_URL } from "@/lib/constants";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
