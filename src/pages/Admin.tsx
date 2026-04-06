@@ -5,7 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { LayoutDashboard, Users, Package, ShoppingCart, MessageSquare, BarChart3, Image, Brain, FolderOpen, FileDown, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Users, Package, ShoppingCart, MessageSquare, BarChart3, Image, Brain, FolderOpen, FileDown, ShieldCheck, Contact } from "lucide-react";
+import AdminLeads from "@/components/admin/AdminLeads";
 import AdminBuyers from "@/components/admin/AdminBuyers";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminCategories from "@/components/admin/AdminCategories";
@@ -84,6 +85,7 @@ export default function Admin() {
         <Tabs defaultValue={isAdmin ? "buyers" : subAdminDefaultTab} className="mt-8">
           <TabsList className="flex w-full overflow-x-auto scrollbar-hide h-auto p-1">
             {isAdmin && <TabsTrigger value="buyers" className="flex-shrink-0 px-2 sm:px-3"><Users className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Buyers</span></TabsTrigger>}
+            {isAdmin && <TabsTrigger value="leads" className="flex-shrink-0 px-2 sm:px-3"><Contact className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Leads</span></TabsTrigger>}
             <TabsTrigger value="categories" className="flex-shrink-0 px-2 sm:px-3"><FolderOpen className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Categories</span></TabsTrigger>
             <TabsTrigger value="products" className="flex-shrink-0 px-2 sm:px-3"><Package className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Products</span></TabsTrigger>
             {isAdmin && <TabsTrigger value="banners" className="flex-shrink-0 px-2 sm:px-3"><Image className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Banners</span></TabsTrigger>}
@@ -96,6 +98,7 @@ export default function Admin() {
           </TabsList>
 
           {isAdmin && <TabsContent value="buyers"><AdminBuyers onUpdate={fetchStats} /></TabsContent>}
+          {isAdmin && <TabsContent value="leads"><AdminLeads /></TabsContent>}
           <TabsContent value="categories"><AdminCategories /></TabsContent>
           <TabsContent value="products"><AdminProducts onUpdate={fetchStats} /></TabsContent>
           {isAdmin && <TabsContent value="banners"><AdminBanners /></TabsContent>}
