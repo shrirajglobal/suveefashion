@@ -119,7 +119,7 @@ RULES:
 3. Include practical, actionable advice — not vague theory
 4. Use short paragraphs, bullet points, and subheadings for easy reading
 5. Naturally mention Suvee Fashion where relevant (we offer wholesale kurtis, 850+ designs, pan-India delivery)
-6. Include a strong call-to-action at the end (register as buyer or WhatsApp us)
+6. Include a strong call-to-action at the end (register as buyer or WhatsApp us on +91-9831640808). ALWAYS use the real WhatsApp number +91-9831640808 — NEVER mask, redact, or replace it with placeholders like XXXXXXXXXX
 7. Make it SEO-friendly with the topic keywords appearing naturally
 
 Return your response as valid JSON with this exact structure:

@@ -646,7 +646,7 @@ export default function Index() {
                 </Button>
               </a>
               <a href="https://chat.whatsapp.com/EPcMwkcqbhXBSGL2ZhZInL" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white w-full">
+                <Button size="lg" variant="outline" className="border-white/60 text-white hover:bg-white/10 hover:text-white w-full">
                   📢 Join WhatsApp Community
                 </Button>
               </a>
