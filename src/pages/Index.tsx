@@ -489,6 +489,17 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Lead Capture Form */}
+      <section className="bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/10 py-10 sm:py-16 md:py-20">
+        <div className="container">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-6">
+            <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl">Get Your Free Catalogue</h2>
+            <p className="mt-1.5 text-sm text-muted-foreground">850+ kurti designs delivered to your WhatsApp — instantly</p>
+          </motion.div>
+          <LeadCaptureForm />
+        </div>
+      </section>
+
       {/* Dada Se Pucho Highlight */}
       <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 py-10 sm:py-16 md:py-24 dark:from-amber-950/20 dark:to-orange-950/20">
         <div className="container">
