@@ -277,7 +277,7 @@ export default function Index() {
                     🧔 {t("hero.cta_advisor")}
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="<Button size="lg" variant="outline" className="border-white/60 bg-white/10 text-white hover:bg-white/20 hover:text-white flex-1 sm:flex-none text-sm sm:text-base h-11 sm:h-12" asChild> text-sm sm:text-base h-11 sm:h-12" asChild>
+                <Button size="lg" variant="outline" className="border-white/60 bg-white/10 text-white hover:bg-white/20 hover:text-white flex-1 sm:flex-none text-sm sm:text-base h-11 sm:h-12" asChild>
                   <Link to="/register">Register Free →</Link>
                 </Button>
               </div>
