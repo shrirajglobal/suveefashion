@@ -32,6 +32,7 @@ export default function Header() {
     { path: "/contact", label: t("nav.contact") },
     { path: "/blog", label: t("nav.blog") },
     { path: "/advisor", label: t("nav.advisor") },
+    { path: "/get-catalogue", label: "Get Catalogue" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
