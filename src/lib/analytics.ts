@@ -1,6 +1,6 @@
 // ─── Google Analytics 4 ───
 // REPLACE with your actual GA4 Measurement ID
-const GA4_ID = "G-XXXXXXXXXX";
+const GA4_ID = "G-WBHPBKQ9S5";
 
 // Load gtag.js script dynamically
 export function initGA4() {
