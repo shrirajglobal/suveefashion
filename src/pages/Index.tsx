@@ -277,7 +277,7 @@ export default function Index() {
                     🧔 {t("hero.cta_advisor")}
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white flex-1 sm:flex-none text-sm sm:text-base h-11 sm:h-12" asChild>
+                <Button size="lg" variant="outline" className="border-white/60 bg-white/10 text-white hover:bg-white/20 hover:text-white flex-1 sm:flex-none text-sm sm:text-base h-11 sm:h-12" asChild>
                   <Link to="/register">Register Free →</Link>
                 </Button>
               </div>
@@ -641,12 +641,12 @@ export default function Index() {
                 <Link to="/register">Register Free — Takes 2 Min →</Link>
               </Button>
               <a href="https://wa.me/919831640808?text=Hi%20Suvee%20Fashion!%20I%20want%20to%20know%20about%20wholesale%20pricing." target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white w-full">
+                <Button size="lg" variant="outline" className="border-white/60 text-white hover:bg-white/10 hover:text-white w-full">
                   💬 WhatsApp Us
                 </Button>
               </a>
               <a href="https://chat.whatsapp.com/EPcMwkcqbhXBSGL2ZhZInL" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white w-full">
+                <Button size="lg" variant="outline" className="border-white/60 text-white hover:bg-white/10 hover:text-white w-full">
                   📢 Join WhatsApp Community
                 </Button>
               </a>
