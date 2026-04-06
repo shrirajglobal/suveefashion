@@ -13,9 +13,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
-
-// ─── REPLACE THESE WITH YOUR ACTUAL IDS ───
-const FORMSPREE_ID = "xYzAbCdE"; // ← Your Formspree form ID
+import { supabase } from "@/integrations/supabase/client";
 // ───────────────────────────────────────────
 
 const BUYER_TYPES = [
