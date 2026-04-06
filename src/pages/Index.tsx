@@ -148,6 +148,17 @@ export default function Index() {
   }, []);
 
   useEffect(() => {
+    supabase
+      .from("products")
+      .select("id, name, fabric, image_url, wsp, pcs_per_set")
+      .eq("is_new_arrival", true)
+      .order("created_at", { ascending: false })
+      .limit(8)
+      .then(({ data }) => {
+        if (data) setNewArrivals(data as NewArrivalProduct[]);
+      });
+  }, []);
+
     if (!catApi) return;
     const onSelect = () => {
       setCanScrollCatPrev(catApi.canScrollPrev());
