@@ -98,6 +98,7 @@ export default function Admin() {
           </TabsList>
 
           {isAdmin && <TabsContent value="buyers"><AdminBuyers onUpdate={fetchStats} /></TabsContent>}
+          {isAdmin && <TabsContent value="leads"><AdminLeads /></TabsContent>}
           <TabsContent value="categories"><AdminCategories /></TabsContent>
           <TabsContent value="products"><AdminProducts onUpdate={fetchStats} /></TabsContent>
           {isAdmin && <TabsContent value="banners"><AdminBanners /></TabsContent>}
