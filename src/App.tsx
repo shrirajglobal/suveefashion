@@ -21,6 +21,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Install from "./pages/Install";
 import KurtiWholesaleKolkata from "./pages/KurtiWholesaleKolkata";
+import NewArrivals from "./pages/NewArrivals";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
