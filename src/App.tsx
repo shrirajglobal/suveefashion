@@ -22,6 +22,7 @@ import BlogPost from "./pages/BlogPost";
 import Install from "./pages/Install";
 import KurtiWholesaleKolkata from "./pages/KurtiWholesaleKolkata";
 import NewArrivals from "./pages/NewArrivals";
+import GetCatalogue from "./pages/GetCatalogue";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/install" element={<Install />} />
                 <Route path="/new-arrivals" element={<NewArrivals />} />
+                <Route path="/get-catalogue" element={<GetCatalogue />} />
                 <Route path="/kurti-wholesale-supplier-kolkata" element={<KurtiWholesaleKolkata />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

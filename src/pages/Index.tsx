@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import factoryImage from "@/assets/factory.jpg";
 import SEOHead from "@/components/SEOHead";
+import LeadCaptureForm from "@/components/LeadCaptureForm";
 import { SITE_URL } from "@/lib/constants";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -485,6 +486,17 @@ export default function Index() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Lead Capture Form */}
+      <section className="bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/10 py-10 sm:py-16 md:py-20">
+        <div className="container">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-6">
+            <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl">Get Your Free Catalogue</h2>
+            <p className="mt-1.5 text-sm text-muted-foreground">850+ kurti designs delivered to your WhatsApp — instantly</p>
+          </motion.div>
+          <LeadCaptureForm />
         </div>
       </section>
 
