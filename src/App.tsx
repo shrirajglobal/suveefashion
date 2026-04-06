@@ -22,6 +22,7 @@ import BlogPost from "./pages/BlogPost";
 import Install from "./pages/Install";
 import KurtiWholesaleKolkata from "./pages/KurtiWholesaleKolkata";
 import NewArrivals from "./pages/NewArrivals";
+import GetCatalogue from "./pages/GetCatalogue";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
