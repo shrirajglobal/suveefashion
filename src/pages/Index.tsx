@@ -97,6 +97,15 @@ function YouTubeCard({ video }: { video: YouTubeVideo }) {
   );
 }
 
+interface NewArrivalProduct {
+  id: string;
+  name: string;
+  fabric: string | null;
+  image_url: string | null;
+  wsp: number | null;
+  pcs_per_set: number;
+}
+
 export default function Index() {
   const { t, language } = useLanguage();
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
@@ -104,6 +113,7 @@ export default function Index() {
   const [heroSlides, setHeroSlides] = useState<string[]>([]);
   const [heroLoading, setHeroLoading] = useState(true);
   const [dbCategories, setDbCategories] = useState<Category[]>([]);
+  const [newArrivals, setNewArrivals] = useState<NewArrivalProduct[]>([]);
   const [ytEmblaRef] = useEmblaCarousel({ loop: false, align: "start", slidesToScroll: 1 });
   const [heroEmblaRef, heroApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: false })]);
   const [catEmblaRef, catApi] = useEmblaCarousel({ loop: true, align: "start", slidesToScroll: 2 });
