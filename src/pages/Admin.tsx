@@ -85,6 +85,7 @@ export default function Admin() {
         <Tabs defaultValue={isAdmin ? "buyers" : subAdminDefaultTab} className="mt-8">
           <TabsList className="flex w-full overflow-x-auto scrollbar-hide h-auto p-1">
             {isAdmin && <TabsTrigger value="buyers" className="flex-shrink-0 px-2 sm:px-3"><Users className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Buyers</span></TabsTrigger>}
+            {isAdmin && <TabsTrigger value="leads" className="flex-shrink-0 px-2 sm:px-3"><Contact className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Leads</span></TabsTrigger>}
             <TabsTrigger value="categories" className="flex-shrink-0 px-2 sm:px-3"><FolderOpen className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Categories</span></TabsTrigger>
             <TabsTrigger value="products" className="flex-shrink-0 px-2 sm:px-3"><Package className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Products</span></TabsTrigger>
             {isAdmin && <TabsTrigger value="banners" className="flex-shrink-0 px-2 sm:px-3"><Image className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Banners</span></TabsTrigger>}
