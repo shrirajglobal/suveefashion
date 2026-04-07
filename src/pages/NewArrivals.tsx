@@ -102,6 +102,7 @@ export function NewArrivalCard({ product, user, buyerStatus }: { product: Merged
 }
 
 export default function NewArrivals() {
+  const { user, buyerStatus } = useAuth();
   const [products, setProducts] = useState<MergedProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
