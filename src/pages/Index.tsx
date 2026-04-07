@@ -110,6 +110,7 @@ interface NewArrivalProduct {
 
 export default function Index() {
   const { t, language } = useLanguage();
+  const { user, buyerStatus } = useAuth();
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPostPreview[]>([]);
   const [heroSlides, setHeroSlides] = useState<string[]>([]);
