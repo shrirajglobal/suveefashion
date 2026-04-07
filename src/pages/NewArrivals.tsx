@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MessageCircle, Package, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,7 +49,7 @@ function whatsappUrl(productName: string) {
   return `https://wa.me/919831640808?text=${encodeURIComponent(text)}`;
 }
 
-export function NewArrivalCard({ product }: { product: MergedProduct }) {
+export function NewArrivalCard({ product, user, buyerStatus }: { product: MergedProduct; user: any; buyerStatus: string | null }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -82,7 +83,13 @@ export function NewArrivalCard({ product }: { product: MergedProduct }) {
               <Package className="h-3 w-3 mr-0.5" /> {product.moq}
             </Badge>
           </div>
-          <p className="text-sm font-bold text-primary mt-auto">{product.priceRange}</p>
+          {buyerStatus === "approved" ? (
+            <p className="text-sm font-bold text-primary mt-auto">{product.priceRange}</p>
+          ) : !user ? (
+            <Link to="/login" className="text-sm font-medium text-primary hover:underline mt-auto">Login to see prices</Link>
+          ) : (
+            <p className="text-sm text-muted-foreground mt-auto">Approval pending</p>
+          )}
           <Button size="sm" className="w-full bg-green-600 hover:bg-green-700 text-white mt-1" asChild>
             <a href={whatsappUrl(product.name)} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="h-4 w-4 mr-1.5" /> Get Catalogue

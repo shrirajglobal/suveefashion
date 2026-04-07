@@ -11,6 +11,7 @@ import factoryImage from "@/assets/factory.jpg";
 import SEOHead from "@/components/SEOHead";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import { SITE_URL } from "@/lib/constants";
+import { useAuth } from "@/contexts/AuthContext";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 
@@ -442,7 +443,15 @@ export default function Index() {
                           <Package className="h-2.5 w-2.5 mr-0.5" /> {p.pcs_per_set} pcs/set
                         </Badge>
                       </div>
-                      {p.wsp && <p className="text-xs font-bold text-primary mt-auto sm:text-sm">₹{p.wsp} per piece</p>}
+                      {p.wsp && (
+                        buyerStatus === "approved" ? (
+                          <p className="text-xs font-bold text-primary mt-auto sm:text-sm">₹{p.wsp} per piece</p>
+                        ) : !user ? (
+                          <Link to="/login" className="text-xs font-medium text-primary hover:underline mt-auto">Login to see prices</Link>
+                        ) : (
+                          <p className="text-xs text-muted-foreground mt-auto">Approval pending</p>
+                        )
+                      )}
                       <Button size="sm" className="w-full bg-green-600 hover:bg-green-700 text-white text-xs h-8 mt-1" asChild>
                         <a href={`https://wa.me/919831640808?text=${encodeURIComponent(`Hi Suvee, I'm interested in "${p.name}" from new arrivals.`)}`} target="_blank" rel="noopener noreferrer">
                           <MessageCircle className="h-3.5 w-3.5 mr-1" /> Get Catalogue
