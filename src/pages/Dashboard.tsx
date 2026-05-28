@@ -40,8 +40,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) { navigate("/login"); return; }
+    if (buyerStatus === "rejected") {
+      toast({ title: "Account rejected", description: "Please contact us to resolve your account status.", variant: "destructive" });
+      navigate("/contact");
+      return;
+    }
     fetchData();
-  }, [user]);
+  }, [user, buyerStatus]);
 
   const fetchData = async () => {
     const [ordersRes, samplesRes, profileRes] = await Promise.all([
