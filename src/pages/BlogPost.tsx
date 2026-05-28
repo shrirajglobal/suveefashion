@@ -110,7 +110,13 @@ export default function BlogPost() {
 
   const shareWhatsApp = () => {
     const text = `📖 ${title}\n\n${excerpt || ""}\n\nRead: ${postUrl}`;
-    window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    if (typeof navigator !== "undefined" && navigator.share) {
+      navigator.share({ title, text, url: postUrl }).catch(() => {
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+      });
+    } else {
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    }
   };
 
   const copyLink = () => {
