@@ -37,9 +37,9 @@ export default function Contact() {
       return;
     }
 
-    // Also open WhatsApp with the message
-    const msg = `Hi Suvee Fashion!%0A%0AName: ${form.name}%0APhone: ${form.phone}%0A${form.email ? `Email: ${form.email}%0A` : ""}Message: ${form.message}`;
-    window.open(`https://wa.me/919831640808?text=${msg}`, "_blank");
+    // Also open WhatsApp with the message (properly URL-encoded)
+    const msg = `Hi Suvee Fashion!\n\nName: ${form.name}\nPhone: ${form.phone}\n${form.email ? `Email: ${form.email}\n` : ""}Message: ${form.message}`;
+    window.open(`https://wa.me/919831640808?text=${encodeURIComponent(msg)}`, "_blank");
 
     toast({ title: "Message sent! ✅", description: "We'll get back to you within 24 hours. You're also being redirected to WhatsApp." });
     setForm({ name: "", email: "", phone: "", message: "" });
