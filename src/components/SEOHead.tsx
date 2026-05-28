@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 
+const DEFAULT_OG_IMAGE = "https://suveefashion.lovable.app/og-default.jpg";
+
 interface SEOHeadProps {
   title: string;
   description?: string;
@@ -12,7 +14,7 @@ interface SEOHeadProps {
 export default function SEOHead({
   title,
   description,
-  ogImage = "https://suveefashion.lovable.app/og-default.jpg",
+  ogImage = DEFAULT_OG_IMAGE,
   ogType = "website",
   canonical,
   jsonLd,
@@ -41,6 +43,8 @@ export default function SEOHead({
     setMeta("property", "og:title", title);
     setMeta("property", "og:type", ogType);
     setMeta("property", "og:image", ogImage);
+    setMeta("property", "og:image:width", "1200");
+    setMeta("property", "og:image:height", "630");
     setMeta("name", "twitter:card", "summary_large_image");
     setMeta("name", "twitter:title", title);
     setMeta("name", "twitter:image", ogImage);
@@ -70,6 +74,10 @@ export default function SEOHead({
     return () => {
       const jsonLdScript = document.getElementById("seo-jsonld");
       if (jsonLdScript) jsonLdScript.remove();
+      // Reset og:image to default on unmount so stale per-page images
+      // don't leak into the next route's social previews.
+      const ogImg = document.querySelector('meta[property="og:image"]') as HTMLMetaElement | null;
+      if (ogImg) ogImg.setAttribute("content", DEFAULT_OG_IMAGE);
     };
   }, [title, description, ogImage, ogType, canonical, jsonLd]);
 
