@@ -75,7 +75,13 @@ export default function Blog() {
   const shareWhatsApp = (p: BlogPost) => {
     const url = `${SITE_URL}/blog/${p.slug}`;
     const text = `📖 ${getTitle(p)}\n\n${getExcerpt(p) || ""}\n\nRead more: ${url}`;
-    window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    if (typeof navigator !== "undefined" && navigator.share) {
+      navigator.share({ title: getTitle(p), text, url }).catch(() => {
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+      });
+    } else {
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    }
   };
 
   const copyLink = (p: BlogPost) => {
