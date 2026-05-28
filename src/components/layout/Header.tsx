@@ -24,6 +24,7 @@ export default function Header() {
   const [langOpen, setLangOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const langRef = useRef<HTMLDivElement>(null);
 
   const navItems = [
     { path: "/", label: t("nav.home") },
