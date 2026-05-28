@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Globe, Menu, LogOut, User, ShoppingCart, LayoutDashboard } from "lucide-react";
 import { motion } from "framer-motion";
@@ -24,6 +24,7 @@ export default function Header() {
   const [langOpen, setLangOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const langRef = useRef<HTMLDivElement>(null);
 
   const navItems = [
     { path: "/", label: t("nav.home") },
@@ -37,18 +38,36 @@ export default function Header() {
 
   const isActive = (path: string) => location.pathname === path;
 
-  // Fetch cart count for approved buyers
+  // Fetch cart count for approved buyers — refresh on nav and on cart mutations
   useEffect(() => {
-    if (user && buyerStatus === "approved") {
-      supabase
-        .from("cart_items")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .then(({ count }) => setCartCount(count ?? 0));
-    } else {
-      setCartCount(0);
-    }
+    const loadCount = () => {
+      if (user && buyerStatus === "approved") {
+        supabase
+          .from("cart_items")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .then(({ count }) => setCartCount(count ?? 0));
+      } else {
+        setCartCount(0);
+      }
+    };
+    loadCount();
+    const handler = () => loadCount();
+    window.addEventListener("cart:updated", handler);
+    return () => window.removeEventListener("cart:updated", handler);
   }, [user, buyerStatus, location.pathname]);
+
+  // Close language dropdown on outside click
+  useEffect(() => {
+    if (!langOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [langOpen]);
 
   const handleSignOut = async () => {
     await signOut();

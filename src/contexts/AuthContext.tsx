@@ -65,11 +65,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // onAuthStateChange fires an INITIAL_SESSION event on mount,
+    // so a separate getSession() call would double-fetch user metadata.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
-        // Use setTimeout to avoid Supabase auth deadlock
+        // setTimeout avoids Supabase auth deadlock when calling supabase methods inside the listener
         setTimeout(() => fetchUserMeta(u), 0);
       } else {
         setBuyerStatus(null);
@@ -77,15 +79,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setBusinessName(null);
         setIsAdmin(false);
         setIsSubAdmin(false);
-      }
-      setLoading(false);
-    });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      const u = session?.user ?? null;
-      setUser(u);
-      if (u) {
-        fetchUserMeta(u);
       }
       setLoading(false);
     });

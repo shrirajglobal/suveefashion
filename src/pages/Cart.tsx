@@ -37,7 +37,16 @@ export default function Cart() {
 
   useEffect(() => {
     if (!user) { navigate("/login"); return; }
-    if (buyerStatus !== "approved") { navigate("/catalogues"); return; }
+    if (buyerStatus !== "approved") {
+      toast({
+        title: "Approval required",
+        description: buyerStatus === "pending"
+          ? "Your buyer account is being reviewed. You can browse the catalogue while you wait."
+          : "Please register as a buyer to place orders.",
+      });
+      navigate("/catalogues");
+      return;
+    }
     fetchCart();
   }, [user, buyerStatus]);
 

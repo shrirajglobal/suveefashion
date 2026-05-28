@@ -69,7 +69,13 @@ function buildWhatsAppUrl(product: Product) {
 function shareProduct(product: Product) {
   const url = `${SITE_URL}/catalogues?product=${product.id}`;
   const msg = `🛍️ Check out *${product.name}*${product.fabric ? ` (${product.fabric})` : ""} | ${product.pcs_per_set} pcs/set\n\n${url}\n\nBrowse more at Suvee Fashion!`;
-  window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+  if (typeof navigator !== "undefined" && navigator.share) {
+    navigator.share({ title: product.name, text: msg, url }).catch(() => {
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+    });
+  } else {
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+  }
 }
 
 // ─── Product Image Gallery ───
@@ -446,31 +452,46 @@ export default function Catalogues() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [catRes, prodRes] = await Promise.all([
-        supabase.from("categories").select("*").order("display_order"),
-        supabase.from("products").select("*").order("is_featured", { ascending: false }).order("is_new_arrival", { ascending: false }).order("created_at", { ascending: false }),
-      ]);
-      setCategories(catRes.data ?? []);
-      const prods = prodRes.data ?? [];
-      setProducts(prods);
+      try {
+        const [catRes, prodRes] = await Promise.all([
+          supabase.from("categories").select("*").order("display_order"),
+          supabase.from("products").select("*").order("is_featured", { ascending: false }).order("is_new_arrival", { ascending: false }).order("created_at", { ascending: false }),
+        ]);
+        if (catRes.error) throw catRes.error;
+        if (prodRes.error) throw prodRes.error;
+        setCategories(catRes.data ?? []);
+        const prods = prodRes.data ?? [];
+        setProducts(prods);
 
-      // Compute max price
-      const wspValues = prods.map(p => Number(p.wsp) || 0).filter(v => v > 0);
-      if (wspValues.length > 0) {
-        const max = Math.ceil(Math.max(...wspValues) / 100) * 100;
-        setMaxPrice(max);
-        setPriceRange([0, max]);
-      }
-
-      setLoading(false);
-      const productId = searchParams.get("product");
-      if (productId) {
-        const found = prods.find((p) => p.id === productId);
-        if (found) setSelectedProduct(found);
+        // Compute max price
+        const wspValues = prods.map(p => Number(p.wsp) || 0).filter(v => v > 0);
+        if (wspValues.length > 0) {
+          const max = Math.ceil(Math.max(...wspValues) / 100) * 100;
+          setMaxPrice(max);
+          setPriceRange([0, max]);
+        }
+      } catch (err) {
+        console.error("Failed to load catalogues:", err);
+        toast({ title: "Failed to load products", description: "Please refresh the page.", variant: "destructive" });
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
+
+  // Sync deep-link ?product= with the open dialog
+  useEffect(() => {
+    if (products.length === 0) return;
+    const productId = searchParams.get("product");
+    if (productId) {
+      const found = products.find((p) => p.id === productId);
+      if (found) setSelectedProduct(found);
+      else setSelectedProduct(null);
+    } else {
+      setSelectedProduct(null);
+    }
+  }, [searchParams, products]);
 
   // Unique fabrics
   const fabrics = useMemo(() => [...new Set(products.map(p => p.fabric).filter(Boolean))] as string[], [products]);
