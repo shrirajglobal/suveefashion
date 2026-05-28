@@ -52,7 +52,7 @@ const Install = () => {
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10">
             <Smartphone className="h-10 w-10 text-primary" />
           </div>
-          <h1 className="font-playfair text-3xl font-bold text-foreground">
+          <h1 className="font-display text-3xl font-bold text-foreground">
             Install Suvee Fashion
           </h1>
           <p className="mt-2 text-muted-foreground">
