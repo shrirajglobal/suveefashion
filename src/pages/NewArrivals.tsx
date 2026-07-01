@@ -108,21 +108,26 @@ export default function NewArrivals() {
 
   useEffect(() => {
     async function load() {
+      // `wsp` is only granted to authenticated users; omit it for guests.
+      const cols = user
+        ? "id, name, fabric, image_url, wsp, pcs_per_set, sizes, description"
+        : "id, name, fabric, image_url, pcs_per_set, sizes, description";
       const [{ data: dbProducts }, overridesRes] = await Promise.all([
         supabase
           .from("products")
-          .select("id, name, fabric, image_url, wsp, pcs_per_set, sizes, description")
+          .select(cols)
           .eq("is_new_arrival", true)
           .order("created_at", { ascending: false }),
         fetch("/data/arrivals.json").then(r => r.json()).catch(() => [] as ArrivalOverride[]),
       ]);
       if (dbProducts) {
-        setProducts(mergeProducts(dbProducts as Product[], overridesRes));
+        const normalized = dbProducts.map((p: any) => ({ ...p, wsp: p.wsp ?? null })) as Product[];
+        setProducts(mergeProducts(normalized, overridesRes));
       }
       setLoading(false);
     }
     load();
-  }, []);
+  }, [user]);
 
   const jsonLd = products.length > 0 ? {
     "@context": "https://schema.org",

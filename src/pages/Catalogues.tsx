@@ -453,17 +453,27 @@ export default function Catalogues() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // `wsp` (wholesale price) column is only readable by authenticated users.
+        // Anonymous requests must omit it or PostgREST rejects the whole query.
+        const productCols = [
+          "id", "name", "description", "fabric", "sizes", "pcs_per_set",
+          "bundle_type", "available_sizes", "available_colours", "combo_description",
+          "category_id", "image_url", "additional_images",
+          "is_featured", "is_new_arrival", "created_at",
+          ...(user ? ["wsp"] : []),
+        ].join(", ");
+
         const [catRes, prodRes] = await Promise.all([
           supabase.from("categories").select("*").order("display_order"),
-          supabase.from("products").select("*").order("is_featured", { ascending: false }).order("is_new_arrival", { ascending: false }).order("created_at", { ascending: false }),
+          supabase.from("products").select(productCols).order("is_featured", { ascending: false }).order("is_new_arrival", { ascending: false }).order("created_at", { ascending: false }),
         ]);
         if (catRes.error) throw catRes.error;
         if (prodRes.error) throw prodRes.error;
         setCategories(catRes.data ?? []);
-        const prods = prodRes.data ?? [];
+        const prods = (prodRes.data ?? []).map((p: any) => ({ ...p, wsp: p.wsp ?? null })) as Product[];
         setProducts(prods);
 
-        // Compute max price
+        // Compute max price (only meaningful when wsp is present)
         const wspValues = prods.map(p => Number(p.wsp) || 0).filter(v => v > 0);
         if (wspValues.length > 0) {
           const max = Math.ceil(Math.max(...wspValues) / 100) * 100;
@@ -478,7 +488,7 @@ export default function Catalogues() {
       }
     };
     fetchData();
-  }, []);
+  }, [user]);
 
   // Sync deep-link ?product= with the open dialog
   useEffect(() => {
