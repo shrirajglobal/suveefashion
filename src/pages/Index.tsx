@@ -151,16 +151,20 @@ export default function Index() {
   }, []);
 
   useEffect(() => {
+    // `wsp` is only granted to authenticated users; omit it for guests.
+    const cols = user
+      ? "id, name, fabric, image_url, wsp, pcs_per_set"
+      : "id, name, fabric, image_url, pcs_per_set";
     supabase
       .from("products")
-      .select("id, name, fabric, image_url, wsp, pcs_per_set")
+      .select(cols)
       .eq("is_new_arrival", true)
       .order("created_at", { ascending: false })
       .limit(8)
       .then(({ data }) => {
-        if (data) setNewArrivals(data as NewArrivalProduct[]);
+        if (data) setNewArrivals(data.map((p: any) => ({ ...p, wsp: p.wsp ?? null })) as NewArrivalProduct[]);
       });
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!catApi) return;
